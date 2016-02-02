@@ -9,3 +9,16 @@ Util.strToFloat = function(str) {
 	if (typeof str !== 'string') return str;
 	return parseFloat(str.replace(/[^\d\.\-]/g, ""));
 };
+
+// formats the value for an input
+Util.formatInputVal = function(input) {
+	input = $(input);
+	var val = Util.strToFloat(input.val());
+	var valText = Util.comma(val);
+	if (input.hasClass('percent-input')) {
+		val /= 100;
+		valText = Util.percentize(val);
+	}
+	input.val(valText);
+	return val;
+};

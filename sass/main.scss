@@ -2,3 +2,95 @@
 @import 'helpers/mixins';
 
 body { font-family: 'Open Sans', sans-serif; }
+
+/* --- General Elements --- */
+.table,
+input.form-control,
+select.form-control {
+  width: auto;
+}
+select.form-control { display: inline-block; }
+table input.form-control {
+  height: auto;
+  padding: 4px 12px;
+}
+
+/* --- Custom Elements --- */
+.container {
+  max-width: 900px;
+  padding: 0px 20px 50px;
+}
+.select-label {
+  display: inline-block;
+  width: 140px;
+}
+
+/* --- Nav Bar --- */
+.navbar { margin-bottom: 0px; }
+.header-wrapper {
+  position: relative;
+  padding: 20px;
+  text-align: center;
+}
+.header {
+  position: relative;
+  display: inline-block;
+}
+.header-title {
+  font-size: 2.5em;
+  font-weight: 300;
+  cursor: pointer;
+}
+.logo {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+}
+
+
+/* --- Input Page --- */
+.home-description {
+  display: inline-block;
+  text-align: left;
+  font-size: 1.1em;
+  max-width: 700px;
+  margin: 20px;
+}
+.input-submit-container {
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+  text-align: center;
+}
+
+/* --- Input Sections --- */
+.input-section {
+  padding: 20px;
+  border-top: 1px solid #ccc;
+  .title {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+  .subtitle { font-size: 1.1em; }
+  .description { font-size: 1em; }
+  .contents { margin-top: 20px; }
+}
+.input-subsection {
+  margin-top: 20px;
+  margin-left: 20px;
+  border-left: 1px solid #ccc;
+  padding-left: 20px;
+  .title {
+    font-size: 1.1em;
+  }
+}
+.pop-age-table {
+  tbody td:first-child {
+    position: relative;
+    top: 5px;
+    width: 120px;
+  }
+  input {
+    text-align: right;
+    width: 90px;
+  }
+}

@@ -6,7 +6,9 @@ var App = App || {};
 	};
 	
 	App.initHome = function() {
-
+		$('.pop-age-table input').on('change', function() {
+			Util.formatInputVal(this);
+		});
 	};
 	
 	App.initialize();
