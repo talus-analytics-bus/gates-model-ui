@@ -17,6 +17,11 @@ var Routing = {};
             App.initHome();
             window.scrollTo(0, 0);
         });
+        crossroads.addRoute('/output', function() {
+        	loadTemplate('output');
+        	App.initOutput();
+        	window.scrollTo(0, 0);
+        });
 
         // setup hasher for subscribing to hash changes and browser history
         hasher.prependHash = '';

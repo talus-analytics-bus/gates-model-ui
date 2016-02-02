@@ -32,42 +32,97 @@
 	    		</div>
 	    	</div>
     		<div class="input-section" name="pop-age">
-    			<div class="title">Population Age Bins</div>
-    			<div class="description">% distribution should add up to 100%.</div>
-    			<div class="contents">
-	    			<table class="pop-age-table table table-condensed table-hover">
-	    				<thead>
-	    					<tr>
-	    						<td>Age Range</td>
-	    						<td>% Distribution</td>
-	    					</tr>
-	    				</thead>
-	    				<tbody>
-			    			<tr>
-			    				<td>0-4</td>
-			    				<td><input class="percent-input form-control" value="5%"></td>
-			    			</tr>
-			    			<tr>
-			    				<td>5-10</td>
-			    				<td><input class="percent-input form-control" value="25%"></td>
-			    			</tr>
-			    			<tr>
-			    				<td>11-17</td>
-			    				<td><input class="percent-input form-control" value="35%"></td>
-			    			</tr>
-			    			<tr>
-			    				<td>18+</td>
-			    				<td><input class="percent-input form-control" value="45%"></td>
-			    			</tr>
-	    				</tbody>
-	    			</table>
-	    		</div>
+    			<div class="title">Population</div>
+    			<div class="input-subsection">
+    				<div class="subtitle">Age Distribution</div>
+	    			<div class="description">Please input the closest estimate of age distribution. Distributions will automatically sum to 100%.</div>
+	    			<div class="contents row">
+	    				<div class="col-md-4">
+			    			<table class="pop-age-table table table-condensed table-hover">
+			    				<thead>
+			    					<tr>
+			    						<td>Age Range</td>
+			    						<td>% Distribution</td>
+			    					</tr>
+			    				</thead>
+			    				<tbody>
+					    			<tr>
+					    				<td>0-4</td>
+					    				<td><input class="percent-input form-control"></td>
+					    			</tr>
+					    			<tr>
+					    				<td>5-10</td>
+					    				<td><input class="percent-input form-control"></td>
+					    			</tr>
+					    			<tr>
+					    				<td>11-17</td>
+					    				<td><input class="percent-input form-control"></td>
+					    			</tr>
+					    			<tr>
+					    				<td>18+</td>
+					    				<td><input class="percent-input form-control"></td>
+					    			</tr>
+			    				</tbody>
+			    			</table>
+			    		</div>
+			    		<div class="col-md-8">
+			    			<svg class="pop-age-chart"></svg>
+			    		</div>
+		    		</div>
+		    	</div>
     		</div>
     		<div class="input-section" name="schisto">
     			<div class="title">Schistosomiasis</div>
-    			<div class="subtitle">Praziquantel Mass Drug Administration</div>
-    			<div class="contents">
-    				<div>
+    			<div class="input-subsection">
+	    			<div class="subtitle">Praziquantel Mass Drug Administration</div>
+	    			<div class="contents">
+	    				<div>
+		    				<div class="select-label">Target % Coverage</div>
+		    				<select class="form-control">
+		    					<option value="0.3">30%</option>
+		    					<option value="0.5">50%</option>
+		    					<option value="0.8" selected>80%</option>
+		    					<option value="1">100%</option>
+		    				</select>
+		    			</div>
+		    			<div class="margin-top-5">
+		    				<div class="select-label">Age Range</div>
+		    				<select class="form-control">
+		    					<option value="0-4">0-4 years old</option>
+		    					<option value="5-10">5-10 years old</option>
+		    					<option value="11-17">11-17 years old</option>
+		    					<option value="18+">18+ years old</option>
+		    				</select>
+		    			</div>
+	    			</div>
+	    		</div>
+    		</div>
+    		<div class="input-section" name="malaria">
+    			<div class="title">Malaria</div>
+    			<div class="input-subsection" name="malaria-transmission-pattern">
+	    			<div class="subtitle">Malaria Transmission Pattern</div>
+	    			<div class="contents">
+		    			<div class="select-label">Timing</div>
+		    			<select class="form-control">
+		    				<option value="seasonal">Seasonal</option>
+		    				<option value="constant">Constant</option>
+		    			</select>
+		    		</div>
+		    	</div>
+	    		<div class="input-subsection" name="malaria-transmission-rate">
+	    			<div class="subtitle">Malaria Transmission Rate</div>
+	    			<div class="contents">
+		    			<div class="select-label">How often are there infectious bites per year?</div>
+		    			<select class="form-control">
+		    				<option value="20">< 20 (Low)</option>
+		    				<option value="100">20-200 (Medium)</option>
+		    				<option value="250">201+ (High)</option>
+		    			</select>
+		    		</div>
+	    		</div>
+	    		<div class="input-subsection" name="irs">
+	    			<div class="subtitle">Indoor Residual Insecticide Spraying (IRS)</div>
+	    			<div class="contents">
 	    				<div class="select-label">Target % Coverage</div>
 	    				<select class="form-control">
 	    					<option value="0.3">30%</option>
@@ -76,73 +131,71 @@
 	    					<option value="1">100%</option>
 	    				</select>
 	    			</div>
-	    			<div>
-	    				<div class="select-label">Age Range</div>
+	    		</div>
+	    		<div class="input-subsection" name="nets">
+	    			<div class="subtitle">Insecticide Treated Bed Nets (ITN)</div>
+	    			<div class="contents">
+	    				<div class="select-label">Target % Coverage</div>
 	    				<select class="form-control">
-	    					<option value="0-4">0-4</option>
-	    					<option value="5-10">5-10</option>
-	    					<option value="11-17">11-17</option>
-	    					<option value="18+">18+</option>
+	    					<option value="0.3">30%</option>
+	    					<option value="0.5">50%</option>
+	    					<option value="0.8" selected>80%</option>
+	    					<option value="1">100%</option>
 	    				</select>
 	    			</div>
-    			</div>
-    		</div>
-    		<div class="input-section" name="malaria-time">
-    			<div class="title">Malaria Transmission Pattern</div>
-    			<div class="select-label">Timing</div>
-    			<select class="form-control">
-    				<option value="seasonal">Seasonal</option>
-    				<option value="constant">Constant</option>
-    			</select>
-    		</div>
-    		<div class="input-section" name="malaria-rate">
-    			<div class="title">Malaria Transmission Rate</div>
-    			<div class="description">How often are there infectious bites per year?</div>
-    			<select class="form-control">
-    				<option value="20">< 20 (Low)</option>
-    				<option value="100">20-200 (Medium)</option>
-    				<option value="250">201+ (High)</option>
-    			</select>
-    		</div>
-    		<div class="input-section" name="irs">
-    			<div class="title">Indoor Residual Insecticide Spraying (IRS)</div>
-    			<div class="contents">
-    				<div class="select-label">Target % Coverage</div>
-    				<select class="form-control">
-    					<option value="0.3">30%</option>
-    					<option value="0.5">50%</option>
-    					<option value="0.8" selected>80%</option>
-    					<option value="1">100%</option>
-    				</select>
-    			</div>
-    		</div>
-    		<div class="input-section" name="nets">
-    			<div class="title">Insecticide Treated Bed Nets</div>
-    			<div class="contents">
-    				<div class="select-label">Target % Coverage</div>
-    				<select class="form-control">
-    					<option value="0.3">30%</option>
-    					<option value="0.5">50%</option>
-    					<option value="0.8" selected>80%</option>
-    					<option value="1">100%</option>
-    				</select>
-    			</div>
-    		</div>
-    		<div class="input-section" name="distribution-strategy">
-    			<div class="title">IRS/Nets Distribution Strategy</div>
-    			<div class="contents">
-    				<select class="form-control">
-    					<option value="both">Offer both</option>
-    					<option value="one">Offer either spray or nets</option>
-    				</select>
-    			</div>
+	    		</div>
+	    		<div class="input-subsection" name="distribution-strategy">
+	    			<div class="subtitle">IRS/Nets Distribution Strategy</div>
+	    			<div class="contents">
+	    				<select class="form-control">
+	    					<option value="both">Offer both</option>
+	    					<option value="one">Offer either spray or nets</option>
+	    				</select>
+	    			</div>
+	    		</div>
     		</div>
     		<div class="input-submit-container">
-    			<div class="btn btn-primary">Submit</div>
+    			<div class="input-submit-button btn btn-primary">Submit</div>
     		</div>
     	</div>
     </script>
-	
+
+    <script id="output-template" type="text/x-handlebars-template">
+		<div class="output-container container">
+			<div class="title center">Prevalence</div>
+			<div class="description">
+				Below shows the <span class="text-success">reduced</span> or <span class="text-danger">increased</span> prevalence
+				of schisto and malaria treatment when using integrated treatment.
+			</div>
+			<div class="output-table-container">
+				<table class="output-table table table-condensed table-hover">
+					<thead>
+						<tr>
+							<td></td>
+							<td>Schistosomiasis</td>
+							<td>Malaria</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>without integration</td>
+							<td>36%</td>
+							<td>42%</td>
+						</tr>
+						<tr>
+							<td>with integration</td>
+							<td class="text-success">23%</td>
+							<td class="text-success">30%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="output-chart-container">
+				<svg class="output-bar-chart"></svg>
+			</div>
+		</div>
+	</script>
+		
 	
 	<!-- General Libraries -->
 	<script src="lib/jquery-2.2.0.min.js"></script>

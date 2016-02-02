@@ -17,8 +17,19 @@ Util.formatInputVal = function(input) {
 	var valText = Util.comma(val);
 	if (input.hasClass('percent-input')) {
 		val /= 100;
+		if (isNaN(val) || val < 0) val = 0;
+		else if (val > 100) val = 100;
 		valText = Util.percentize(val);
 	}
 	input.val(valText);
 	return val;
+};
+
+// get unique values from an array
+Util.getUnique = function(array) {
+	var result = [];
+	for (var i = 0; i < array.length; i++) {
+		if (result.indexOf(array[i]) === -1) result.push(array[i]);
+	}
+	return result;
 };
