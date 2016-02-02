@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Framework</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="img/favicon.ico">
+    
+    <!-- ----- CSS Files ----- -->
+ 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:800,600,400,300' rel='stylesheet' type='text/css'>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+   	<link href='css/main.css' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <div class="navbar navbar-default">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="index.html">Framework</a>
+        </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a class="link-about">About</a></li>
+           </ul>
+        </div>
+    </div>
+    <div id="page-content"></div>
+    
+    <!-- ----------- TEMPLATES ------------- -->
+    <script id="home-template" type="text/x-handlebars-template">
+    	Framework
+    </script>
+    
+   	<script id="about-template" type="text/x-handlebars-template">
+		About
+	</script>
+	
+	
+	<!-- General Libraries -->
+	<script src="lib/jquery-2.2.0.min.js"></script>
+	<script src="lib/d3.min.js"></script>
+	
+	<!-- Routing Libraries -->
+    <script src="lib/signals.min.js"></script>
+    <script src="lib/crossroads.min.js"></script>
+    <script src="lib/hasher.min.js"></script>
+	<script src="lib/handlebars-v3.0.0.js"></script>	
+    
+    <!-- Project Specific Files -->
+    <script src="js/utility.js"></script>
+    <script src="js/routing.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/init.js"></script>
+</body>
+</html>
