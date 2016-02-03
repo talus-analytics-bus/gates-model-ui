@@ -7,15 +7,17 @@
 	<link rel="icon" href="img/favicon.ico">
     
     <!-- ----- CSS Files ----- -->
- 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:800,600,400,300' rel='stylesheet' type='text/css'>
+ 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,600,400,300' rel='stylesheet' type='text/css'>
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
    	<link href='css/main.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
     <div class="navbar navbar-default">
     	<div class="header-wrapper">
     		<div class="header">
-    			<div class="header-title">Gates Model</div>
+    			<!--<div class="header-title">Malaria/Schisto Integration - Decision Support Tool</div>-->
+    			<div class="header-title">Integrated Malaria/Schisto Control Strategies</div>
     		</div>
 			<img class="logo" src="img/gates-logo.png" alt="Bill & Melinda Gates Foundation" width="300" height="60">
     	</div>
@@ -24,7 +26,7 @@
     
     <!-- ----------- TEMPLATES ------------- -->
     <script id="home-template" type="text/x-handlebars-template">
-    	<div class="container">
+    	<div class="input-container container">
     		<div class="center">
 	    		<div class="home-description">
 	    			The model analyzes the efficiency of treatment integration for schisto and malaria.
@@ -35,10 +37,11 @@
     			<div class="title">Population</div>
     			<div class="input-subsection">
     				<div class="subtitle">Age Distribution</div>
-	    			<div class="description">Please input the closest estimate of age distribution. Distributions will automatically sum to 100%.</div>
+	    			<div class="description">Please input the closest estimate of age distribution relative to your location.</div>
+	    			<div class="pop-age-warning warning margin-top-10">Age distribution percentages must add up to 100%.</div>
 	    			<div class="contents row">
 	    				<div class="col-md-4">
-			    			<table class="pop-age-table table table-condensed table-hover">
+			    			<table class="pop-age-table table table-condensed">
 			    				<thead>
 			    					<tr>
 			    						<td>Age Range</td>
@@ -62,6 +65,10 @@
 					    				<td>18+</td>
 					    				<td><input class="percent-input form-control"></td>
 					    			</tr>
+					    			<tr>
+					    				<td>Total</td>
+					    				<td>100%</td>
+					    			</tr>
 			    				</tbody>
 			    			</table>
 			    		</div>
@@ -77,7 +84,7 @@
 	    			<div class="subtitle">Praziquantel Mass Drug Administration</div>
 	    			<div class="contents">
 	    				<div>
-		    				<div class="select-label">Target % Coverage</div>
+		    				<div class="select-label">Target % Coverage:</div>
 		    				<select class="form-control">
 		    					<option value="0.3">30%</option>
 		    					<option value="0.5">50%</option>
@@ -85,9 +92,9 @@
 		    					<option value="1">100%</option>
 		    				</select>
 		    			</div>
-		    			<div class="margin-top-5">
-		    				<div class="select-label">Age Range</div>
-		    				<select class="form-control">
+		    			<div class="margin-top-10">
+		    				<div class="select-label">Age Range:</div>
+		    				<select class="schisto-age-select form-control" multiple="multiple">
 		    					<option value="0-4">0-4 years old</option>
 		    					<option value="5-10">5-10 years old</option>
 		    					<option value="11-17">11-17 years old</option>
@@ -102,17 +109,36 @@
     			<div class="input-subsection" name="malaria-transmission-pattern">
 	    			<div class="subtitle">Malaria Transmission Pattern</div>
 	    			<div class="contents">
-		    			<div class="select-label">Timing</div>
-		    			<select class="form-control">
-		    				<option value="seasonal">Seasonal</option>
-		    				<option value="constant">Constant</option>
-		    			</select>
+	    				<div>
+			    			<div class="select-label">Timing:</div>
+			    			<select class="malaria-timing-select form-control">
+			    				<option value="seasonal">Seasonal</option>
+			    				<option value="constant">Constant</option>
+			    			</select>
+			    		</div>
+			    		<div class="malaria-month-container margin-top-10">
+			    			<div class="select-label">Peak Transmission Month(s):</div>
+			    			<select class="malaria-month-select form-control" multiple="multiple">
+			    				<option value="1">January</option>
+			    				<option value="2">February</option>
+			    				<option value="3">March</option>
+			    				<option value="4">April</option>
+			    				<option value="5">May</option>
+			    				<option value="6">June</option>
+			    				<option value="7">July</option>
+			    				<option value="8">August</option>
+			    				<option value="9">September</option>
+			    				<option value="10">October</option>
+			    				<option value="11">November</option>
+			    				<option value="12">December</option>
+			    			</select>
+			    		</div>
 		    		</div>
 		    	</div>
 	    		<div class="input-subsection" name="malaria-transmission-rate">
 	    			<div class="subtitle">Malaria Transmission Rate</div>
 	    			<div class="contents">
-		    			<div class="select-label">How often are there infectious bites per year?</div>
+		    			<div class="select-label">Baseline infectious bites per year:</div>
 		    			<select class="form-control">
 		    				<option value="20">< 20 (Low)</option>
 		    				<option value="100">20-200 (Medium)</option>
@@ -123,38 +149,51 @@
 	    		<div class="input-subsection" name="irs">
 	    			<div class="subtitle">Indoor Residual Insecticide Spraying (IRS)</div>
 	    			<div class="contents">
-	    				<div class="select-label">Target % Coverage</div>
-	    				<select class="form-control">
-	    					<option value="0.3">30%</option>
-	    					<option value="0.5">50%</option>
-	    					<option value="0.8" selected>80%</option>
-	    					<option value="1">100%</option>
-	    				</select>
+	    				<div>
+	    					<input type="checkbox" class="irs-checkbox" checked>
+	    					<span class="checkbox-label">check this box is IRS is an option</span>
+	    				</div>
+	    				<div class="irs-true-contents margin-top-10">
+		    				<div class="select-label">Target % Coverage:</div>
+		    				<select class="form-control">
+		    					<option value="0.3">30%</option>
+		    					<option value="0.5">50%</option>
+		    					<option value="0.8" selected>80%</option>
+		    					<option value="1">100%</option>
+		    				</select>
+		    			</div>
 	    			</div>
 	    		</div>
 	    		<div class="input-subsection" name="nets">
 	    			<div class="subtitle">Insecticide Treated Bed Nets (ITN)</div>
 	    			<div class="contents">
-	    				<div class="select-label">Target % Coverage</div>
-	    				<select class="form-control">
-	    					<option value="0.3">30%</option>
-	    					<option value="0.5">50%</option>
-	    					<option value="0.8" selected>80%</option>
-	    					<option value="1">100%</option>
-	    				</select>
+	    				<div>
+	    					<input type="checkbox" class="itn-checkbox" checked>
+	    					<span class="checkbox-label">check this box is IRS is an option</span>
+	    				</div>
+	    				<div class="itn-true-contents margin-top-10">
+		    				<div class="select-label">Target % Coverage:</div>
+		    				<select class="form-control">
+		    					<option value="0.3">30%</option>
+		    					<option value="0.5">50%</option>
+		    					<option value="0.8" selected>80%</option>
+		    					<option value="1">100%</option>
+		    				</select>
+		    			</div>
 	    			</div>
 	    		</div>
 	    		<div class="input-subsection" name="distribution-strategy">
-	    			<div class="subtitle">IRS/Nets Distribution Strategy</div>
+	    			<div class="subtitle">IRS/ITN Distribution Strategy</div>
 	    			<div class="contents">
 	    				<select class="form-control">
+	    					<option value="optimal">Optimal</option>
 	    					<option value="both">Offer both</option>
 	    					<option value="one">Offer either spray or nets</option>
 	    				</select>
 	    			</div>
 	    		</div>
     		</div>
-    		<div class="input-submit-container">
+    		<div class="submit-container">
     			<div class="input-submit-button btn btn-primary">Submit</div>
     		</div>
     	</div>
@@ -162,37 +201,80 @@
 
     <script id="output-template" type="text/x-handlebars-template">
 		<div class="output-container container">
-			<div class="title center">Prevalence</div>
-			<div class="description">
-				Below shows the <span class="text-success">reduced</span> or <span class="text-danger">increased</span> prevalence
-				of schisto and malaria treatment when using integrated treatment.
+			<div class="output-section">
+				<div class="title center">Prevalence</div>
+				<div class="description">
+					Below shows the <span class="text-success">reduced</span> or <span class="text-danger">increased</span> prevalence
+					of schistosomiasis and malaria treatment when using integrated treatment.
+				</div>
+				<div class="output-table-container">
+					<table class="output-table table table-condensed">
+						<thead>
+							<tr>
+								<td></td>
+								<td>Schistosomiasis</td>
+								<td>Malaria</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>without integration</td>
+								<td>36%</td>
+								<td>42%</td>
+							</tr>
+							<tr>
+								<td>with integration</td>
+								<td class="text-success">23%</td>
+								<td class="text-success">30%</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="output-chart-container">
+					<!-- patterns taken from http://iros.github.io/patternfills/ -->
+					<svg class="output-bar-chart">
+						<defs>
+							<pattern id="diagonal-stripe-1" patternUnits="userSpaceOnUse" width="10" height="10">
+								<image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+Cg==" x="0" y="0" width="10" height="10">
+								</image>
+							</pattern>
+						</defs>
+					</svg>
+				</div>
 			</div>
-			<div class="output-table-container">
-				<table class="output-table table table-condensed table-hover">
-					<thead>
-						<tr>
-							<td></td>
-							<td>Schistosomiasis</td>
-							<td>Malaria</td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>without integration</td>
-							<td>36%</td>
-							<td>42%</td>
-						</tr>
-						<tr>
-							<td>with integration</td>
-							<td class="text-success">23%</td>
-							<td class="text-success">30%</td>
-						</tr>
-					</tbody>
-				</table>
+			<div class="output-section">
+				<div class="title center">Strategy</div>
+				<div class="description">
+					Below shows the recommended control measures to take, as well as the proper timing for which to complete the measures. 
+				</div>
+				<div class="output-table-container center">
+					<table class="output-strategy-table table table-condensed">
+						<thead>
+							<tr>
+								<td>Control Measure</td>
+								<td>Recommended Time to Execute</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Praziquantel Mass Drug Distribution</td>
+								<td>April</td>
+							</tr>
+							<tr>
+								<td>Indoor Residual Insecticie Spraying (IRS)</td>
+								<td>April</td>
+							</tr>
+							<tr>
+								<td>Insecticide Treated Bed Nets (ITN)</td>
+								<td>May</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
-			<div class="output-chart-container">
-				<svg class="output-bar-chart"></svg>
-			</div>
+    		<div class="submit-container">
+    			<div class="input-back-button btn btn-primary">Back to Inputs</div>
+    		</div>
 		</div>
 	</script>
 		
@@ -200,6 +282,8 @@
 	<!-- General Libraries -->
 	<script src="lib/jquery-2.2.0.min.js"></script>
 	<script src="lib/d3.min.js"></script>
+	<script src="lib/bootstrap.min.js"></script>
+	<script src="lib/bootstrap-multiselect.js"></script>
 	
 	<!-- Routing Libraries -->
     <script src="lib/signals.min.js"></script>
