@@ -3,6 +3,10 @@ var Util = {};
 Util.comma = d3.format(',f');
 Util.decimalize = d3.format('.2f');
 Util.percentize = d3.format('%'); // divides by 100 and adds a percentage symbol
+Util.percentizeDiff = function(d) {
+	if (d === 0) return '0%';
+	else return d3.format('+%')(d);
+};
 
 // converts a number in string format into a float
 Util.strToFloat = function(str) {

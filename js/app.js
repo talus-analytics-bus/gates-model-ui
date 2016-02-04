@@ -223,38 +223,18 @@ var App = App || {};
 			
 			
 		/* ----------------- Matrix --------------- */
-		var matrixWithoutData = [
-			{type: '0.3', '30': 0.50, '50': 0.48, '80': 0.45, '100': 0.39},
-			{type: '0.5', '30': 0.48, '50': 0.45, '80': 0.43, '100': 0.37},
-			{type: '0.8', '30': 0.45, '50': 0.42, '80': 0.39, '100': 0.32},
-			{type: '1', '30': 0.41, '50': 0.38, '80': 0.33, '100': 0.26}
+		var matrixDiffData = [
+			{type: '0.3', '30': [0.04, 0.04], '50': [0.03, 0.01], '80': [-0.03, 0.01], '100': [-0.13, 0.01]},
+			{type: '0.5', '30': [0.02, -0.01], '50': [0.02, -0.01], '80': [-0.12, -0.03], '100': [-0.13, -0.01]},
+			{type: '0.8', '30': [-0.01, -0.01], '50': [0.00, -0.06], '80': [-0.10, -0.07], '100': [-0.14, -0.08]},
+			{type: '1', '30': [-0.01, -0.07], '50': [-0.05, -0.09], '80': [-0.09, -0.09], '100': [-0.14, -0.10]}
 		];
-		var matrixWithData = [
-			{type: '0.3', '30': 0.54, '50': 0.49, '80': 0.42, '100': 0.22},
-			{type: '0.5', '30': 0.49, '50': 0.47, '80': 0.31, '100': 0.20},
-			{type: '0.8', '30': 0.44, '50': 0.41, '80': 0.29, '100': 0.18},
-			{type: '1', '30': 0.41, '50': 0.33, '80': 0.24, '100': 0.15}
-		];
-		var matrixDiffData = [];
-		for (var i = 0; i < matrixWithoutData.length; i++) {
-			var dataRow = {type: matrixWithoutData[i].type};
-			for (var ind in matrixWithoutData[i]) {
-				if (ind !== 'type') {
-					dataRow[ind] = matrixWithoutData[i][ind] - matrixWithData[i][ind];
-				}
-			}
-			matrixDiffData.push(dataRow);
-		}
 		
-		var colors = ['rgba(252,141,89,0.5)','rgba(254,224,139,0.5)','rgba(255,255,191,0.5)','rgba(217,239,139,0.5)','rgba(145,207,96,0.5)'];
-		var colorScale = d3.scale.threshold()
-			.domain([0.24, 0.32, 0.40, 0.48])
-			.range(colors);
+		var colors = ['rgba(252,141,89,0.5)','rgba(254,224,139,0.5)','rgba(255,255,191,0.5)','rgba(217,239,139,0.65)','rgba(145,207,96,0.5)'];
 		var diffColorScale = d3.scale.threshold()
-			.domain([0, 0.025, 0.045, 0.095])
+			.domain([-0.095, -0.045, -0.025, 0.001])
 			.range(colors);
 		
-		var currAttr = 'diff';
 		var updateMatrix = function(data) {
 			var rows = d3.select('.output-matrix-table tbody').selectAll('tr')
 				.data(data);
@@ -265,16 +245,23 @@ var App = App || {};
 			cells.enter().append('td');
 			
 			rows.selectAll('td')
-				.classed('success', function(d, i) { if (i > 0) return currAttr === 'diff' && d > 0; })
-				.classed('danger', function(d, i) { if (i > 0) return currAttr === 'diff' && d < 0; })
-				.style('background-color', function(d, i) {
-					if (i > 0) {
-						return (currAttr === 'diff') ? diffColorScale(d) : colorScale(d);
-					}
-				})
-				.text(function(d, i) {
+				.classed('success', function(d, i) { if (i > 0) return (d[0] + d[1]) / 2 < 0; })
+				.classed('danger', function(d, i) { if (i > 0) return (d[0] + d[1]) / 2 > 0; })
+				.html(function(d, i) {
 					if (i === 0) return Util.percentize(d);
-					else return (currAttr === 'diff') ? d3.format('+%')(d) : Util.percentize(d);
+					else {
+						var yesOrNo = ((d[0] + d[1]) / 2 < 0) ? 'YES' : 'NO';
+						var numOneClass = (d[0] > 0) ? 'text-danger' : (d[0] < 0) ? 'text-success' : '';
+						var numTwoClass = (d[1] > 0) ? 'text-danger' : (d[1] < 0) ? 'text-success' : '';
+						
+						var htmlStr = '<div class="matrix-cell-yes">' + yesOrNo + '</div>';
+						htmlStr += '<div class="matrix-cell-perc">(';
+						htmlStr += '<span class="' + numOneClass + '">' + Util.percentizeDiff(d[0]) + '</span>';
+						htmlStr += ' / ';
+						htmlStr += '<span class="' + numTwoClass + '">' + Util.percentizeDiff(d[1]) + '</span>';
+						htmlStr += ')</div>';
+						return htmlStr;
+					}
 				});	
 
 			// add black border around relevant cell
@@ -283,15 +270,6 @@ var App = App || {};
 				.append('div').attr('class', 'selected-border-box');
 		};
 		updateMatrix(matrixDiffData);
-		$('.matrix-attr-btn-group .btn').on('click', function() {
-			$(this).addClass('active')
-				.siblings().removeClass('active');
-				
-			currAttr = $(this).attr('name');
-			if (currAttr === 'diff') updateMatrix(matrixDiffData);
-			else if (currAttr === 'separate') updateMatrix(matrixWithoutData);
-			else if (currAttr === 'integrated') updateMatrix(matrixWithData);
-		});
 		
 		
 		

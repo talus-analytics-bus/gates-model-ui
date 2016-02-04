@@ -5,6 +5,7 @@
 body { font-family: 'Open Sans', sans-serif; }
 
 /* --- General Elements --- */
+b { font-weight: 600; }
 .table,
 input.form-control,
 select.form-control {
@@ -23,12 +24,13 @@ table input.form-control {
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
 }
+.description { text-align: left; }
 .select-label {
   display: inline-block;
   margin-right: 10px;
 }
 .checkbox-label {
-  margin-left: 5px;
+  margin-left: 4px;
   position: relative;
   top: -2px;
 }
@@ -171,7 +173,6 @@ table input.form-control {
   margin-top: 10px;
 }
 .output-section {
-  margin-top: 10px;
   padding: 20px 30px;
   border-bottom: 1px solid #ccc;
   @include gradient(#fdfdfd, #e9e9e9);  
@@ -218,8 +219,8 @@ table input.form-control {
   text-align: center;
   .row-label {
     position: absolute;
-    top: 115px;
-    left: 35px;
+    top: 155px;
+    left: -25px;
     @include rotate(-90deg);
   }
 }
@@ -236,12 +237,12 @@ table input.form-control {
     border: 1px solid #ccc;
     &:first-child {
       position: relative;
-      top: 2px;
+      top: 12px;
+      right: 5px;
       width: 70px;
-      padding-right: 15px;
       text-align: right;
     }
-    &:nth-child(n+2) { width: 80px; }
+    &:nth-child(n+2) { width: 110px; }
   }
   tbody td:nth-child(n+2) {
     font-size: 1.2em;
@@ -257,6 +258,9 @@ table input.form-control {
     width: 100%;
     height: 100%;
     border: 2px solid rgba(0,0,0,0.6);
+  }
+  .matrix-cell-perc {
+    font-size: 0.8em;
   }
 }
 .output-strategy-table {
