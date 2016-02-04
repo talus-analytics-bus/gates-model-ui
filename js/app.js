@@ -6,11 +6,28 @@ var App = App || {};
 	};
 	
 	App.initHome = function() {
+		// opening and closing input sections
+		$('.input-section .title').click(function() {
+			var contents = $(this).next().find('.input-subsection, .next-button-container');
+			var isShowing = contents.is(':visible');
+			if (isShowing) {
+				contents.slideUp();
+			} else {
+				$(this).parent().siblings('.input-section').find('.input-subsection, .next-button-container').slideUp();
+				contents.slideDown();
+			}
+		});
+		$('.next-button-container .btn').click(function() {
+			var contents = $(this).parent().parent();
+			contents.slideUp();
+			contents.parent().next('.input-section').find('.input-subsection, .next-button-container').slideDown();
+		});
+		
+		
 		var popAgeData = [
-			{age: '0-4', value: 0.05},
-			{age: '5-10', value: 0.15},
-			{age: '11-17', value: 0.20},
-			{age: '18+', value: 0.60},
+			{age: '0-5', value: 0.20},
+			{age: '5-15', value: 0.34},
+			{age: '16+', value: 0.46},
 		];
 		
 		// population age section
@@ -34,9 +51,9 @@ var App = App || {};
 		};
 		
 		// build bar chart for the population age distribution
-		var margin = {top: 45, right: 20, bottom: 25, left: 100};
+		var margin = {top: 25, right: 20, bottom: 20, left: 100};
 		var width = 420 - margin.left - margin.right;
-		var height = 220 - margin.top - margin.bottom;
+		var height = 200 - margin.top - margin.bottom;
    		var chart = d3.select('.pop-age-chart')
    			.attr('width', width + margin.left + margin.right)
    			.attr('height', height + margin.top + margin.bottom)
@@ -111,12 +128,16 @@ var App = App || {};
 		
 		// submit button
 		$('.input-submit-button').click(function() { hasher.setHash('output'); });
+		
+		
+		// slide open first input section
+		$('.input-section[name="pop-age"]').find('.input-subsection, .next-button-container').slideDown();
 	};
 	
 	App.initOutput = function() {
 		var data = [
 			{type: 'without integration', schisto: 0.36, malaria: 0.42},
-			{type: 'with integration', schisto: 0.23, malaria: 0.30}
+			{type: 'with integration', schisto: 0.23, malaria: 0.35}
 		];
 		
 		// fill table
@@ -129,7 +150,7 @@ var App = App || {};
 			{type: 'without integration', disease: 'schisto', value: 0.36},
 			{type: 'without integration', disease: 'malaria', value: 0.42},
 			{type: 'with integration', disease: 'schisto', value: 0.23},
-			{type: 'with integration', disease: 'malaria', value: 0.30}
+			{type: 'with integration', disease: 'malaria', value: 0.35}
 		];
 		
 		// build bar chart for the population age distribution
@@ -199,6 +220,83 @@ var App = App || {};
 		legendGroups.append('text')
 			.attr('transform', 'translate(25,13)')
 			.text(function(d) { return d; });
+			
+			
+		/* ----------------- Matrix --------------- */
+		var matrixWithoutData = [
+			{type: '0.3', '30': 0.50, '50': 0.48, '80': 0.45, '100': 0.39},
+			{type: '0.5', '30': 0.48, '50': 0.45, '80': 0.43, '100': 0.37},
+			{type: '0.8', '30': 0.45, '50': 0.42, '80': 0.39, '100': 0.32},
+			{type: '1', '30': 0.41, '50': 0.38, '80': 0.33, '100': 0.26}
+		];
+		var matrixWithData = [
+			{type: '0.3', '30': 0.54, '50': 0.49, '80': 0.42, '100': 0.22},
+			{type: '0.5', '30': 0.49, '50': 0.47, '80': 0.31, '100': 0.20},
+			{type: '0.8', '30': 0.44, '50': 0.41, '80': 0.29, '100': 0.18},
+			{type: '1', '30': 0.41, '50': 0.33, '80': 0.24, '100': 0.15}
+		];
+		var matrixDiffData = [];
+		for (var i = 0; i < matrixWithoutData.length; i++) {
+			var dataRow = {type: matrixWithoutData[i].type};
+			for (var ind in matrixWithoutData[i]) {
+				if (ind !== 'type') {
+					dataRow[ind] = matrixWithoutData[i][ind] - matrixWithData[i][ind];
+				}
+			}
+			matrixDiffData.push(dataRow);
+		}
+		
+		var colors = ['rgba(252,141,89,0.5)','rgba(254,224,139,0.5)','rgba(255,255,191,0.5)','rgba(217,239,139,0.5)','rgba(145,207,96,0.5)'];
+		var colorScale = d3.scale.threshold()
+			.domain([0.24, 0.32, 0.40, 0.48])
+			.range(colors);
+		var diffColorScale = d3.scale.threshold()
+			.domain([0, 0.025, 0.045, 0.095])
+			.range(colors);
+		
+		var currAttr = 'diff';
+		var updateMatrix = function(data) {
+			var rows = d3.select('.output-matrix-table tbody').selectAll('tr')
+				.data(data);
+			var newRows = rows.enter().append('tr');
+			
+			var cells = rows.selectAll('td')
+				.data(function(d) { return ['type', '30', '50', '80', '100'].map(function(dd) { return d[dd]; }); });
+			cells.enter().append('td');
+			
+			rows.selectAll('td')
+				.classed('success', function(d, i) { if (i > 0) return currAttr === 'diff' && d > 0; })
+				.classed('danger', function(d, i) { if (i > 0) return currAttr === 'diff' && d < 0; })
+				.style('background-color', function(d, i) {
+					if (i > 0) {
+						return (currAttr === 'diff') ? diffColorScale(d) : colorScale(d);
+					}
+				})
+				.text(function(d, i) {
+					if (i === 0) return Util.percentize(d);
+					else return (currAttr === 'diff') ? d3.format('+%')(d) : Util.percentize(d);
+				});	
+
+			// add black border around relevant cell
+			d3.select('.output-matrix-table tbody tr:nth-child(3) td:nth-child(4)')
+				.style('font-weight', '600')
+				.append('div').attr('class', 'selected-border-box');
+		};
+		updateMatrix(matrixDiffData);
+		$('.matrix-attr-btn-group .btn').on('click', function() {
+			$(this).addClass('active')
+				.siblings().removeClass('active');
+				
+			currAttr = $(this).attr('name');
+			if (currAttr === 'diff') updateMatrix(matrixDiffData);
+			else if (currAttr === 'separate') updateMatrix(matrixWithoutData);
+			else if (currAttr === 'integrated') updateMatrix(matrixWithData);
+		});
+		
+		
+		
+		// back to inputs button
+		$('.input-back-button').click(function() { hasher.setHash(''); });
 	};
 	
 	App.initialize();
