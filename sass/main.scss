@@ -6,6 +6,7 @@ body { font-family: 'Open Sans', sans-serif; }
 
 /* --- General Elements --- */
 b { font-weight: 600; }
+ul { margin: 10px 0px; }
 .table,
 input.form-control,
 select.form-control {
@@ -72,7 +73,7 @@ table input.form-control {
 }
 .logo {
   position: absolute;
-  top: 14px;
+  top: 19px;
   left: 20px;
 }
 

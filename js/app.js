@@ -18,9 +18,14 @@ var App = App || {};
 			}
 		});
 		$('.next-button-container .btn').click(function() {
-			var contents = $(this).parent().parent();
-			contents.slideUp();
-			contents.parent().next('.input-section').find('.input-subsection, .next-button-container').slideDown();
+			var valid = true;
+			if ($(this).attr('name') === 'pop-age') valid = validatePopAgeSum();
+			
+			if (valid) {
+				var contents = $(this).parent().parent();
+				contents.slideUp();
+				contents.parent().next('.input-section').find('.input-subsection, .next-button-container').slideDown();
+			}
 		});
 		
 		
@@ -45,9 +50,18 @@ var App = App || {};
 			$('.pop-age-table tbody tr:last-child td:nth-child(2)').text(Util.percentize(sum));
 			if (Math.abs(sum - 1) < 0.001) {
 				$('.pop-age-warning').slideUp();
+				$('.pop-age-table input').css('background-color', 'white');
+				return true;
 			} else {
 				$('.pop-age-warning').slideDown();
+				$('.pop-age-table input').css('background-color', '#ffdbdb');
+				return false;
 			}
+		};
+		var validatePopAgeSum = function() {
+			var valid = checkPopAgeSum();
+			if (!valid) noty({layout: 'center', type: 'warning', text: '<b>Warning!</b><br>Age distributions must sum to 100%!'});
+			return valid;
 		};
 		
 		// build bar chart for the population age distribution
@@ -127,7 +141,10 @@ var App = App || {};
 		
 		
 		// submit button
-		$('.input-submit-button').click(function() { hasher.setHash('output'); });
+		$('.input-submit-button').click(function() {
+			var valid = validatePopAgeSum();
+			if (valid) hasher.setHash('output');
+		});
 		
 		
 		// slide open first input section

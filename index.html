@@ -19,7 +19,7 @@
     			<!--<div class="header-title">Malaria/Schisto Integration - Decision Support Tool</div>-->
     			<div class="header-title">Integrated Malaria/Schisto Control Strategies</div>
     		</div>
-			<img class="logo" src="img/gates-logo.png" alt="Bill & Melinda Gates Foundation" width="300" height="60">
+			<img class="logo" src="img/gates-logo.png" alt="Bill & Melinda Gates Foundation" width="250" height="50">
     	</div>
     </div>
     <div id="page-content"></div>
@@ -83,7 +83,7 @@
 			    		</div>
 			    	</div>
 			    	<div class="next-button-container">
-				    	<div class="btn btn-primary">Next</div>
+				    	<div class="btn btn-primary" name="pop-age">Next</div>
 			    	</div>
 			    </div>
     		</div>
@@ -204,6 +204,20 @@
 		    		</div>
 		    		<div class="input-subsection" name="distribution-strategy">
 		    			<div class="subtitle">IRS/ITN Distribution Strategy</div>
+		    			<div class="description">
+		    				There are various strategies for distribution when both IRS and ITN are available.
+		    				<ul>
+		    					<li>
+		    						The <b>optimal</b> strategy involves distributing the most effective option to each target group in order to maximize resource efficiency.
+		    					</li>
+		    					<li>
+		    						The <b>offer both</b> strategy involves distributing both IRS and ITN to the entire target population
+		    					</li>
+		    					<li>
+		    						The <b>offer either</b> strategy involves offering IRS and ITN to the entire target population and letting them pick one.
+		    					</li>
+		    				</ul>
+		    			</div>
 		    			<div class="contents">
 		    				<select class="form-control">
 		    					<option value="optimal">Optimal</option>
@@ -340,6 +354,7 @@
 	<script src="lib/d3.min.js"></script>
 	<script src="lib/bootstrap.min.js"></script>
 	<script src="lib/bootstrap-multiselect.js"></script>
+	<script src="lib/jquery.noty.packaged.min.js"></script>
 	
 	<!-- Routing Libraries -->
     <script src="lib/signals.min.js"></script>
