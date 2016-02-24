@@ -5,8 +5,6 @@ http.createServer(function(request, response) {
 	response.end();
 }).listen(process.env.PORT || 8888);
 
-var express = require('express');
-
 /*var app = require('express')();
 var server = require('http').Server(app);
 var path = require('path');
