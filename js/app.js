@@ -3,6 +3,12 @@ var App = App || {};
 (function() {
 	App.initialize = function() {
 		$('.header-title').click(function() { hasher.setHash(''); });
+		
+		// test python call
+		var args = {test: 1, test2: 2};
+		$.get('/runModel', args, function(data) {
+			console.log(data);
+		});
 	};
 	
 	App.initHome = function() {
@@ -293,8 +299,4 @@ var App = App || {};
 		// back to inputs button
 		$('.input-back-button').click(function() { hasher.setHash(''); });
 	};
-	
-	App.initialize();
-	Routing.precompileTemplates();	
-	Routing.initializeRoutes();	
 })();

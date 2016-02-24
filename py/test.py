@@ -1,4 +1,4 @@
-TEST_INPUT = 2
+import sys, json
 
-print('testoutput')
-print(TEST_INPUT)
+for v in sys.argv[1:]:
+    print(v)
