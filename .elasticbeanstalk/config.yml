@@ -1,0 +1,11 @@
+branch-defaults:
+  master:
+    environment: GatesModel-dev
+    group_suffix: null
+global:
+  application_name: Gates Model
+  default_ec2_keyname: null
+  default_platform: Node.js
+  default_region: us-east-1
+  profile: null
+  sc: git

@@ -4,15 +4,16 @@
   "description": "A web application framework used to begin projects",
   "main": "gulpfile.js",
   "scripts": {
+  	"start": "node ./server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jpecht/framework.git"
+    "url": "https://github.com/talus-analytics/gates-model-ui.git"
   },
   "author": "jpecht",
   "bugs": {
-    "url": "https://github.com/jpecht/framework/issues"
+    "url": "https://github.com/talus-analytics/gates-model-ui/issues"
   },
   "devDependencies": {
     "gulp": "~3.9.0",
