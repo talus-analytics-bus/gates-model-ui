@@ -1,11 +1,11 @@
-var http = require('http');
+/*var http = require('http');
 http.createServer(function(request, response) {
 	response.writeHead(200, {'Content-Type': 'text/plain'});
 	response.write('Testing... this should work.');
 	response.end();
-}).listen(process.env.PORT || 8888);
+}).listen(process.env.PORT || 8888);*/
 
-/*var app = require('express')();
+var app = require('express')();
 var server = require('http').Server(app);
 var path = require('path');
 var PythonShell = require('python-shell');
@@ -32,4 +32,4 @@ PythonShell.run('test.py', {
 }, function(err, results) {
 	if (err) throw err;
 	console.log(results);
-});*/
+});
