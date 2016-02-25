@@ -5,36 +5,20 @@ var path = require('path');
 var PythonShell = require('python-shell');
 
 
-// set up python shell
-var pyshell = new PythonShell('py/test.py', {mode: 'text'});
-pyshell.on('message', function(results) {
-	console.log(results);
-});
-
-
-// HTTP Server feedback behavior
+// Routing
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname, '/', 'index.html'));
 });
 app.get(/^(.+)$/, function(req, res) {
 	if (req.params[0] === '/runModel') {
-		//console.log(req.query);
-		
-		PythonShell.run('test.py', {
-			mode: 'text',
-			pythonOptions: ['-u'],
-			scriptPath: 'py',
-			args: ['test2']
-		}, function(err, results) {
-			if (err) throw err;
-			res.send(results);
+		// set up python shell and send inputs to script
+		var pyshell = new PythonShell('py/script.py', {mode: 'json'});
+		pyshell.on('message', function(results) {
+			res.send(results); // send outputs back
 		});
-		
-		//pyshell.send('hello');
-		/*pyshell.on('message', function(results) {
-			console.log(results);
-		});*/
-		
+		pyshell.send(req.query).end(function(err) {
+			if (err) throw err;
+		});
 	} else {
 		res.sendFile(path.join(__dirname, '/', req.params[0]));
 	}

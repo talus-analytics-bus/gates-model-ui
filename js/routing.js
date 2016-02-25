@@ -14,7 +14,7 @@ var Routing = {};
         // setup crossroads for routing
         crossroads.addRoute('/', function() {
             loadTemplate('home');
-            App.initHome();
+            App.initInput();
             window.scrollTo(0, 0);
         });
         crossroads.addRoute('/output', function() {
