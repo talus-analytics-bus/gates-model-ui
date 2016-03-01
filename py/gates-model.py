@@ -415,7 +415,7 @@ class App( object ):
         header_str = ["Time (d)","0-4 y/o","5-15 y/o","16+ y/o","All"]
         headers = header_str + spaces + header_str + spaces + header_str
         
-        with open('output.csv', 'wb') as csvfile:
+        with open('output/output.csv', 'wb') as csvfile:
             writer = csv.writer(csvfile, quoting = csv.QUOTE_NONNUMERIC)
             title = ["Prevalence of schistosomiasis by age group vs. time (d)"] + title_spaces + ["Prevalence of malaria by age group vs. time (d)"] + title_spaces + ["Prevalence of coinfection by age group vs. time (d)"]
             writer.writerow(title)
