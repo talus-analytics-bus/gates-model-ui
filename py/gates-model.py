@@ -15,7 +15,7 @@ import random
 import csv
 import datetime
 import dateutil.relativedelta as date
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import json
 import sys
 from datetime import timedelta
@@ -23,7 +23,7 @@ start = time.time()
 
 "Initialize variables and constants"
 #Load from JS GUI
-for line in sys.stdin
+for line in sys.stdin:
     inputObj = json.loads(line)
 
 #Initialize user-specified inputs (pulled from GUI)
@@ -31,9 +31,9 @@ for line in sys.stdin
 #F_AGE_5_TO_15 = 0.34       #% distribution of population between 5 and 15 years old
 #F_AGE_16_PLUS = 0.46    #% distribution of population 16 years old or older
 
-F_AGE_UNDER_5 = inputObj["pop1"]     #% distribution of population under 5 years old
-F_AGE_5_TO_15 = inputObj["pop2"]       #% distribution of population between 5 and 15 years old
-F_AGE_16_PLUS = inputObj["pop3"]   #% distribution of population 16 years old or older
+F_AGE_UNDER_5 = float(inputObj["pop1"])     #% distribution of population under 5 years old
+F_AGE_5_TO_15 = float(inputObj["pop2"])       #% distribution of population between 5 and 15 years old
+F_AGE_16_PLUS = float(inputObj["pop3"])   #% distribution of population 16 years old or older
 
 F_PZQ_TARGET_COV = 0.8    #Target % coverage of praziquantel (PZQ) mass drug 
                         #administration

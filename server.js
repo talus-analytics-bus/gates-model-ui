@@ -12,7 +12,7 @@ app.get('/', function(req, res) {
 app.get(/^(.+)$/, function(req, res) {
 	if (req.params[0] === '/runModel') {
 		// set up python shell and send inputs to script
-		var pyshell = new PythonShell('py/script.py', {mode: 'json'});
+		var pyshell = new PythonShell('py/gates-model.py', {mode: 'json'});
 		pyshell.on('message', function(results) {
 			res.send(results); // send outputs back
 		});
