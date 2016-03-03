@@ -17,60 +17,59 @@ import datetime
 import dateutil.relativedelta as date
 import json
 import sys
-from datetime import timedelta
 start = time.time()
 
 "Initialize variables and constants"
 #Load from JS GUI
 for line in sys.stdin:
-    inputObj = json.loads(line)
+    UI_INPUTS = json.loads(line)
     
 #Show plots or not
-SHOW_PLOTS = False
+SHOW_PLOTS = True
 if (SHOW_PLOTS):
     import matplotlib.pyplot as plt
 
-
 #Initialize user-specified inputs (pulled from GUI)
-F_AGE_UNDER_5 = 0.2     #% distribution of population under 5 years old
-F_AGE_5_TO_15 = 0.34       #% distribution of population between 5 and 15 years old
-F_AGE_16_PLUS = 0.46    #% distribution of population 16 years old or older
+F_AGE_UNDER_5 = UI_INPUTS["pop1"]     #% distribution of population under 5 years old
+F_AGE_5_TO_15 = UI_INPUTS["pop2"]       #% distribution of population between 5 and 15 years old
+F_AGE_16_PLUS = UI_INPUTS["pop3"]    #% distribution of population 16 years old or older
 
-#F_AGE_UNDER_5 = float(inputObj["pop1"])     #% distribution of population under 5 years old
-#F_AGE_5_TO_15 = float(inputObj["pop2"])       #% distribution of population between 5 and 15 years old
-#F_AGE_16_PLUS = float(inputObj["pop3"])   #% distribution of population 16 years old or older
-
-F_PZQ_TARGET_COV = 0.8    #Target % coverage of praziquantel (PZQ) mass drug 
+F_PZQ_TARGET_COV = UI_INPUTS["schisto_coverage"]    #Target % coverage of praziquantel (PZQ) mass drug 
                         #administration
-PZQ_AGE_RANGE = ("5-15") #Age groups that get PZQ (by default, only 5-15 y/o 
+PZQ_AGE_RANGE = tuple(UI_INPUTS["schisto_age_range"] )#Age groups that get PZQ (by default, only 5-15 y/o 
                     #children will get it because they are school-age and PZQ
                     #interventions may be targeting school-age children)
+
 T_PZQ = 30          #Number of days at which PZQ is distributed. Required
                     #user input if "constant" malaria transmission pattern selected
-
-MALARIA_TRANS_PATTERN = "seasonal"  #Malaria transmission pattern. Either
-                                    #"Seasonal" or "Constant"
-PEAK_TRANS_MONTHS = (4,5,6)     #Peak malaria transmission month(s). Indexed
+PZQ_MONTH_NUM = int(UI_INPUTS["schisto_month_num"]) #Month PZQ is distributed in the "constant" case (without integration). Indexed
                                 #from 1 (i.e., January = 1)
-N_BASELINE_INF_BITES = 100  #Baseline infectious mosquito bites per year for
+
+MALARIA_TRANS_PATTERN = UI_INPUTS["malaria_timing"]  #Malaria transmission pattern. Either
+                                    #"Seasonal" (automatically implements integration) or "Constant" (uses user-input intervention timing)
+PEAK_TRANS_MONTHS_TMP = tuple(UI_INPUTS["malaria_peak_month_num"])
+PEAK_TRANS_MONTHS = [ int(x) for x in PEAK_TRANS_MONTHS_TMP ]     #Peak malaria transmission month(s). Indexed
+                                #from 1 (i.e., January = 1)
+N_BASELINE_INF_BITES = UI_INPUTS["malaria_rate"]  #Baseline infectious mosquito bites per year for
                             #the transmission of malaria. Can be low (20),
                             #medium (100), or high (250).
-IRS_CHECKED = True  #Can indoor residual insecticide spraying be used?
+IRS_CHECKED = bool(UI_INPUTS["irs"])  #Can indoor residual insecticide spraying be used?
                     #True or false.
-F_IRS_TARGET_COV = 0.8 #Target % coverage of indoor spraying.
+F_IRS_TARGET_COV = UI_INPUTS["irs_coverage"] #Target % coverage of indoor spraying.
 T_SPRAY = 150       #Number of days at which sprays are distributed. Required
                     #user input if "constant" malaria transmission pattern selected
+T_SPRAY_MONTH_NUM = int(UI_INPUTS["irs_month_num"]) #Month IRS are distributed in the "constant" case (without integration). Indexed
+                                #from 1 (i.e., January = 1)
     
-ITN_CHECKED = True  #Can insecticide-treated bed nets be used? True or false.
-F_ITN_TARGET_COV = 0.8 #Target % coverage of indoor spraying.
+ITN_CHECKED = bool(UI_INPUTS["itn"])  #Can insecticide-treated bed nets be used? True or false.
+F_ITN_TARGET_COV = UI_INPUTS["itn_coverage"] #Target % coverage of indoor spraying.
 T_NET = 150         #Number of days at which nets are distributed. Required
                     #user input if "constant" malaria transmission pattern selected
+T_NET_MONTH_NUM = int(UI_INPUTS["itn_month_num"]) #Month nets are distributed in the "constant" case (without integration). Indexed
+                                #from 1 (i.e., January = 1)
 
-IRS_ITN_DIST_STRAT = "optimal"  #Not currently used. The IRS/ITN countermeasure
+IRS_ITN_DIST_STRAT = UI_INPUTS["irs_itn_distribution"]  #Not currently used. The IRS/ITN countermeasure
                                 #distribution strategy.
-F_TREATED = 0.8     #TO DO: Ask Justin how to set this value
-                    #The fraction of people with symptomatic malaria who get
-                    #treatment
 
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
@@ -104,7 +103,9 @@ START_MONTH = None  #Month of year to start simulation, indexed from 1 (i.e.,
 START_DAY = 0       #Day of month to start simulation, 0 by default
 F_ASYMP = 0.28      #The fraction of people infected with malaria who are
                     #asymptomatic (do not get treatment) (Mbah et al, 2014)
-                
+F_TREATED = 0.8     #TO DO: Ask Justin how to set this value
+                    #The fraction of people with symptomatic malaria who get
+                    #treatment
 F_SYMP_TREATED = (1 - F_ASYMP)*F_TREATED #The fraction of people who get 
                                         #malaria, are symptomatic, and get treatment
 F_SYMP_UNTREATED = (1 - F_ASYMP)*(1 - F_TREATED) #The fraction of people who get malaria,
@@ -114,9 +115,7 @@ BREAKPOINT_2 = F_SYMP_TREATED + F_SYMP_UNTREATED
 
 D_MALARIA = 5 #Malaria infection lasts about 5 days (Mbah et al, 2014)
 D_ASYMP_MALARIA = 360
-INIT_P_MALARIA_BASELINE = 0.027 #Baseline daily prob. of getting malaria.
-                                #Source: 10 infectious bites per year, based on
-                                #Figure 3 of Ndeffo Mbah 2014
+INIT_P_MALARIA_BASELINE = float(N_BASELINE_INF_BITES) / 365.0 #Baseline daily prob. of getting malaria.
 F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Mbah et al, 2014)
 P_MALARIA_SEASONAL_MOD = 5  #Factor by which the daily prob. of getting malaria
                             #increases during malaria season (Kelly-Hope and McKenzie 2009; based on difference between places with 7 or more months of rain vs. 6 or fewer)
@@ -186,7 +185,6 @@ class People( list ):
         t = app.cur_time_step
         cur_p_malaria_baseline = app.cur_p_malaria_baseline
         runif = random.random
-#        print vars(self[0])
         for n in range(0, Person.count):
             cur_person = self[n];
             
@@ -479,47 +477,47 @@ class App( object ):
             plt.savefig('output/output_graph_all_ages.png', format='png', dpi=dpi)
     #        plt.show()
            
-            #Plot prevalence for 0-4
-            age_group_to_plot = "0-4"
-            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
-            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
-            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
-            plt.legend();
-            plt.grid(True);
-            plt.xlabel("Time (d)");
-            plt.ylabel("Prevalence (fraction of population)")
-            plt.ylim([0,1.1]);
-            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-            plt.savefig('output/output_graph_0_4.png', format='png', dpi=dpi)
-    #        plt.show()
-            
-            #Plot prevalence for 5-15
-            age_group_to_plot = "5-15"
-            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
-            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
-            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
-            plt.legend();
-            plt.grid(True);
-            plt.xlabel("Time (d)");
-            plt.ylabel("Prevalence (fraction of population)")
-            plt.ylim([0,1.1]);
-            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-            plt.savefig('output/output_graph_5_15.png', format='png', dpi=dpi)
-    #        plt.show()
-            
-            #Plot prevalence for 16+
-            age_group_to_plot = "16+"
-            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
-            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
-            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
-            plt.legend();
-            plt.grid(True);
-            plt.xlabel("Time (d)");
-            plt.ylabel("Prevalence (fraction of population)")
-            plt.ylim([0,1.1]);
-            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-            plt.savefig('output/output_graph_16_plus.png', format='png', dpi=dpi)
-            plt.show()
+#            #Plot prevalence for 0-4
+#            age_group_to_plot = "0-4"
+#            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
+#            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
+#            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
+#            plt.legend();
+#            plt.grid(True);
+#            plt.xlabel("Time (d)");
+#            plt.ylabel("Prevalence (fraction of population)")
+#            plt.ylim([0,1.1]);
+#            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
+#            plt.savefig('output/output_graph_0_4.png', format='png', dpi=dpi)
+#    #        plt.show()
+#            
+#            #Plot prevalence for 5-15
+#            age_group_to_plot = "5-15"
+#            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
+#            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
+#            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
+#            plt.legend();
+#            plt.grid(True);
+#            plt.xlabel("Time (d)");
+#            plt.ylabel("Prevalence (fraction of population)")
+#            plt.ylim([0,1.1]);
+#            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
+#            plt.savefig('output/output_graph_5_15.png', format='png', dpi=dpi)
+#    #        plt.show()
+#            
+#            #Plot prevalence for 16+
+#            age_group_to_plot = "16+"
+#            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
+#            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
+#            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
+#            plt.legend();
+#            plt.grid(True);
+#            plt.xlabel("Time (d)");
+#            plt.ylabel("Prevalence (fraction of population)")
+#            plt.ylim([0,1.1]);
+#            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
+#            plt.savefig('output/output_graph_16_plus.png', format='png', dpi=dpi)
+#            plt.show()
         
     def export_prevalence ( self ):
         """Export average of last 10 prevalence values for malaria and schisto.
@@ -527,7 +525,7 @@ class App( object ):
         malaria_avg_prev = sum(self.prevalence_malaria["All"][(N_DAYS-10):(N_DAYS)])/10
         schisto_avg_prev = sum(self.prevalence_schisto["All"][(N_DAYS-10):(N_DAYS)])/10
 #        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}       
-        output = {"schisto":F_AGE_UNDER_5*2, "malaria":F_AGE_5_TO_15*2}       
+        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}       
         print json.dumps(output)
         return output
         
@@ -608,7 +606,7 @@ if __name__ == '__main__':
     
     #For each time step:
     for t in range(0, N_DAYS):
-       print "Running time step %i of %i" % (t + 1, N_DAYS)
+#       print "Running time step %i of %i" % (t + 1, N_DAYS)
        
        # Initialization #-----------------------------------------------------#
        app.cur_time_step = t
@@ -626,8 +624,8 @@ if __name__ == '__main__':
         
     #End model timer and print the time elapsed.
     end = time.time()
-    print "Time elapsed (sec): %f" % (end-start)
-    print "Getting outputs..."
+#    print "Time elapsed (sec): %f" % (end-start)
+#    print "Getting outputs..."
     
     #Write prevalence values to three CSV files and plot it for 5-15 y/o
     app.write_prevalence()
