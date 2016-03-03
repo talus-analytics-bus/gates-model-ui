@@ -4,7 +4,7 @@ var App = App || {};
 	App.initOutput = function() {
 		var data = [
 			{type: 'without integration', schisto: 0.36, malaria: 0.42},
-			{type: 'with integration', schisto: 0.23, malaria: 0.35}
+			{type: 'with integration', schisto: App.outputs.schisto, malaria: App.outputs.malaria}
 		];
 		
 		// fill table
