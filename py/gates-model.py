@@ -29,6 +29,10 @@ SHOW_PLOTS = True
 if (SHOW_PLOTS):
     import matplotlib.pyplot as plt
 
+#With or without integration (defined as "smartly" setting the timing of
+#interventions as per recommendations in the literature)
+USE_INTEGRATION = True
+
 #Initialize user-specified inputs (pulled from GUI)
 F_AGE_UNDER_5 = float(UI_INPUTS["pop1"])     #% distribution of population under 5 years old
 F_AGE_5_TO_15 = float(UI_INPUTS["pop2"])       #% distribution of population between 5 and 15 years old
@@ -58,14 +62,14 @@ IRS_CHECKED = bool(UI_INPUTS["irs"])  #Can indoor residual insecticide spraying 
 F_IRS_TARGET_COV = UI_INPUTS["irs_coverage"] #Target % coverage of indoor spraying.
 T_SPRAY = 150       #Number of days at which sprays are distributed. Required
                     #user input if "constant" malaria transmission pattern selected
-T_SPRAY_MONTH_NUM = int(UI_INPUTS["irs_month_num"]) #Month IRS are distributed in the "constant" case (without integration). Indexed
+IRS_MONTH_NUM = int(UI_INPUTS["irs_month_num"]) #Month IRS are distributed in the "constant" case (without integration). Indexed
                                 #from 1 (i.e., January = 1)
     
 ITN_CHECKED = bool(UI_INPUTS["itn"])  #Can insecticide-treated bed nets be used? True or false.
 F_ITN_TARGET_COV = UI_INPUTS["itn_coverage"] #Target % coverage of indoor spraying.
 T_NET = 150         #Number of days at which nets are distributed. Required
                     #user input if "constant" malaria transmission pattern selected
-T_NET_MONTH_NUM = int(UI_INPUTS["itn_month_num"]) #Month nets are distributed in the "constant" case (without integration). Indexed
+ITN_MONTH_NUM = int(UI_INPUTS["itn_month_num"]) #Month nets are distributed in the "constant" case (without integration). Indexed
                                 #from 1 (i.e., January = 1)
 
 IRS_ITN_DIST_STRAT = UI_INPUTS["irs_itn_distribution"]  #Not currently used. The IRS/ITN countermeasure
@@ -74,11 +78,12 @@ IRS_ITN_DIST_STRAT = UI_INPUTS["irs_itn_distribution"]  #Not currently used. The
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
 N_PEOPLE = 1000    #Number of people to simulate
-#N_PEOPLE = 10000    #Number of people to simulate
-N_DAYS = 425      #Simulation runtime in days
-                    #To do: force this value to be fixed
 N_DAYS_BURN = 60    #Number of days to burn in the model to steady-state values
                     #To do: let it burn until values don't fluctuate
+#N_PEOPLE = 10000    #Number of people to simulate
+N_DAYS = N_DAYS_BURN + 365*2 + 10      #Simulation runtime in days
+#N_DAYS = 425      #Simulation runtime in days
+                    #To do: force this value to be fixed
 if not ITN_CHECKED:
     T_NET = N_DAYS
 else:
@@ -526,7 +531,7 @@ class App( object ):
         malaria_avg_prev = sum(self.prevalence_malaria["All"][(N_DAYS-10):(N_DAYS)])/10
         schisto_avg_prev = sum(self.prevalence_schisto["All"][(N_DAYS-10):(N_DAYS)])/10
 #        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}       
-        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}       
+        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev, "t_pzq":self.t_pzq, "t_net":self.t_net, "t_spray":self.t_spray}       
         print json.dumps(output)
         return output
         
@@ -558,26 +563,39 @@ if __name__ == '__main__':
         season_start_date = datetime.date(CUR_YEAR, PEAK_TRANS_MONTHS[0], 1)
         season_end_date = season_start_date + (n_months)*ONE_MONTH - ONE_DAY
         
-        burn_start_date = season_start_date - ONE_MONTH*6
-        burn_end_date = season_start_date - ONE_MONTH*4
-        
-        pzq_date = season_start_date - ONE_MONTH*4
-        net_date = season_start_date - ONE_MONTH*1
-        spray_date = season_start_date - ONE_MONTH*1
         
         malaria_season_len_days = (season_end_date - season_start_date).days
         
-        #Set burn-in stop time
-        app.t_burn_stop = (burn_end_date - burn_start_date).days
         
         #Set intervention times
+        if USE_INTEGRATION:
+            burn_start_date = season_start_date - ONE_MONTH*6
+            burn_end_date = season_start_date - ONE_MONTH*4
+            
+            pzq_date = season_start_date - ONE_MONTH*4
+            net_date = season_start_date - ONE_MONTH*1
+            spray_date = season_start_date - ONE_MONTH*1
+
+        else: #Without integration: start burn-in two months before first intervention
+            pzq_date = datetime.date(CUR_YEAR, PZQ_MONTH_NUM, 1)
+            net_date = datetime.date(CUR_YEAR, ITN_MONTH_NUM, 1)
+            spray_date = datetime.date(CUR_YEAR, IRS_MONTH_NUM, 1)
+            sim_start_date = min(pzq_date, net_date, spray_date)
+
+            burn_start_date = sim_start_date - ONE_MONTH*2
+            burn_end_date = sim_start_date        
+                          
+        #Set intervention times
         #PZQ
-        app.t_pzq = (pzq_date - burn_start_date).days #4 months before season start
+        app.t_pzq = (pzq_date - burn_start_date).days
         #Nets
-        app.t_net = (net_date - burn_start_date).days #1 month before season start
+        app.t_net = (net_date - burn_start_date).days
         #Spray
-        app.t_spray = (spray_date - burn_start_date).days #1 month before season start
-        
+        app.t_spray = (spray_date - burn_start_date).days
+
+        #Set burn-in stop time
+        app.t_burn_stop = (burn_end_date - burn_start_date).days
+            
         #Set season start and end times
         t_season_start = (season_start_date - burn_start_date).days
         t_season_end = (season_end_date - burn_start_date).days
@@ -600,7 +618,25 @@ if __name__ == '__main__':
             t_season_end = (season_end_date_tmp - burn_start_date).days
             is_malaria_season_tmp[t_season_start:t_season_end] = [True]*malaria_season_len_days
         app.is_malaria_season = is_malaria_season_tmp[0:N_DAYS]    
-            
+    else: #not seasonal: start burn-in two months before first intervention
+        #Set burn-in stop time
+        app.t_burn_stop = N_DAYS_BURN
+        
+        #First intervention will be the first in the calendar year, starting
+        #from January; given on the first of the month input by the user
+        pzq_date = datetime.date(CUR_YEAR, PZQ_MONTH_NUM, 1)
+        net_date = datetime.date(CUR_YEAR, ITN_MONTH_NUM, 1)
+        spray_date = datetime.date(CUR_YEAR, IRS_MONTH_NUM, 1)
+        sim_start_date = min(pzq_date, net_date, spray_date)
+                      
+        #Set intervention times
+        #PZQ
+        app.t_pzq = (pzq_date - sim_start_date).days + N_DAYS_BURN
+        #Nets
+        app.t_net = (net_date - sim_start_date).days + N_DAYS_BURN
+        #Spray
+        app.t_spray = (spray_date - sim_start_date).days + N_DAYS_BURN
+    
     #Create list of people
     for n in range(0, N_PEOPLE):
         append(Person())
