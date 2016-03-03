@@ -18,9 +18,10 @@ var App = App || {};
 			if ($(this).attr('name') === 'pop-age') valid = validatePopAgeSum();
 			
 			if (valid) {
-				var contents = $(this).parent().parent();
+				var mainContents = $(this).parent().parent();
+				var contents = mainContents.find('.input-subsection, .next-button-container');
 				contents.slideUp();
-				contents.parent().next('.input-section').find('.input-subsection, .next-button-container').slideDown();
+				mainContents.parent().next('.input-section').find('.input-subsection, .next-button-container').slideDown();
 			}
 		});
 		
@@ -170,6 +171,10 @@ var App = App || {};
 					.defer(App.runModel, inputsWithIntegration)
 					.defer(App.runModel, inputsWithoutIntegration)
 					.await(function(error, outputWith, outputWithout) {
+						if (error) {
+							console.log('failed to complete all model runs');
+							return false;
+						}
 						App.outputs = {
 							'integrated': outputWith,
 							'separate': outputWithout
