@@ -30,9 +30,9 @@ if (SHOW_PLOTS):
     import matplotlib.pyplot as plt
 
 #Initialize user-specified inputs (pulled from GUI)
-F_AGE_UNDER_5 = UI_INPUTS["pop1"]     #% distribution of population under 5 years old
-F_AGE_5_TO_15 = UI_INPUTS["pop2"]       #% distribution of population between 5 and 15 years old
-F_AGE_16_PLUS = UI_INPUTS["pop3"]    #% distribution of population 16 years old or older
+F_AGE_UNDER_5 = float(UI_INPUTS["pop1"])     #% distribution of population under 5 years old
+F_AGE_5_TO_15 = float(UI_INPUTS["pop2"])       #% distribution of population between 5 and 15 years old
+F_AGE_16_PLUS = float(UI_INPUTS["pop3"])    #% distribution of population 16 years old or older
 
 F_PZQ_TARGET_COV = UI_INPUTS["schisto_coverage"]    #Target % coverage of praziquantel (PZQ) mass drug 
                         #administration
@@ -73,7 +73,8 @@ IRS_ITN_DIST_STRAT = UI_INPUTS["irs_itn_distribution"]  #Not currently used. The
 
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
-N_PEOPLE = 10000    #Number of people to simulate
+N_PEOPLE = 1000    #Number of people to simulate
+#N_PEOPLE = 10000    #Number of people to simulate
 N_DAYS = 425      #Simulation runtime in days
                     #To do: force this value to be fixed
 N_DAYS_BURN = 60    #Number of days to burn in the model to steady-state values
@@ -197,17 +198,17 @@ class People( list ):
             cur_person.days_to_asymp_malaria -= 1;            
             
             # Interventions #-------------------------------------------------#
-            if t == T_NET:
+            if t == app.t_net:
                 #Randomly choose people to get nets and adjust malaria probability
                 get_net_runif = runif()
                 if get_net_runif < F_ITN_TARGET_COV:
                     cur_person.has_net = True
-            if t == T_SPRAY:
+            if t == app.t_spray:
                 #Randomly choose people to get spray and adjust malaria probability
                 get_spray_runif = runif()
                 if get_spray_runif < F_IRS_TARGET_COV:
                     cur_person.has_spray = True
-            if t == T_PZQ:
+            if t == app.t_pzq:
                 #Randomly choose people to get PZQ and adjust schisto probability
                 #Note: It is assumed anyone who gets PZQ continues to take it
                 #every six months (not explicitly modeled)
