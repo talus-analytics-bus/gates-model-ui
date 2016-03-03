@@ -138,8 +138,32 @@ var App = App || {};
 		
 		// submit button
 		$('.input-submit-button').click(function() {
-			var valid = validatePopAgeSum();
-			if (valid) hasher.setHash('output');
+			var valid = validatePopAgeSum(); // first validate that the population age distribution sums to 100%
+			if (valid) {				
+				var inputs = {
+					pop1: Util.strToFloat($('.pop-age-table tbody tr:first-child input').val()) / 100, // age distribution for under 5
+					pop2: Util.strToFloat($('.pop-age-table tbody tr:nth-child(2) input').val()) / 100, // age distribution for 5-15
+					pop3: Util.strToFloat($('.pop-age-table tbody tr:nth-child(3) input').val()) / 100, // age distribution for 16+
+					schisto_coverage: Util.strToFloat($('.schisto-coverage-select').val()), // target % coverage for schisto
+					schisto_age_range: $('.schisto-age-select').val(),
+					schisto_month_num: $('.schisto-month-select').val(),
+					malaria_timing: $('.malaria-timing-select').val(),
+					malaria_peak_month_num: $('.malaria-month-select').val(),
+					malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()),
+					irs: $('.irs-checkbox').is(':checked'),
+					irs_coverage: Util.strToFloat($('.irs-coverage-select').val()),
+					irs_month_num: $('.irs-month-select').val(),
+					itn: $('.itn-checkbox').is(':checked'),
+					itn_coverage: Util.strToFloat($('.itn-coverage-select').val()),
+					itn_month_num: $('.itn-month-select').val(),
+					irs_itn_distribution: $('.irs-itn-distribution-select').val()
+				};
+				
+				App.runModel(inputs, function(error, data) {
+					App.outputs = data;
+					hasher.setHash('output');
+				});
+			}
 		});
 		
 		

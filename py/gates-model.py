@@ -15,7 +15,6 @@ import random
 import csv
 import datetime
 import dateutil.relativedelta as date
-import matplotlib.pyplot as plt
 import json
 import sys
 from datetime import timedelta
@@ -25,6 +24,11 @@ start = time.time()
 #Load from JS GUI
 for line in sys.stdin:
     inputObj = json.loads(line)
+    
+#Show plots or not
+SHOW_PLOTS = False
+if (SHOW_PLOTS):
+    import matplotlib.pyplot as plt
 
 #Initialize user-specified inputs (pulled from GUI)
 #F_AGE_UNDER_5 = 0.2     #% distribution of population under 5 years old
@@ -463,63 +467,64 @@ class App( object ):
             self.prevalence_coinfection["All"] = y["coinfection"]["All"]
             
         # Plotting #----------------------------------------------------------#
-        #Plot options
-        dpi = 100
-        #Plot prevalence for all
-        age_group_to_plot = "All"
-        plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
-        plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
-        plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
-        plt.legend();
-        plt.grid(True);
-        plt.xlabel("Time (d)");
-        plt.ylabel("Prevalence (fraction of population)")
-        plt.ylim([0,1.1]);
-        plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-        plt.savefig('output/output_graph_all_ages.png', format='png', dpi=dpi)
-#        plt.show()
-       
-#        #Plot prevalence for 0-4
-#        age_group_to_plot = "0-4"
-#        plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
-#        plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
-#        plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
-#        plt.legend();
-#        plt.grid(True);
-#        plt.xlabel("Time (d)");
-#        plt.ylabel("Prevalence (fraction of population)")
-#        plt.ylim([0,1.1]);
-#        plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-#        plt.savefig('output/output_graph_0_4.png', format='png', dpi=dpi)
-##        plt.show()
-#        
-#        #Plot prevalence for 5-15
-#        age_group_to_plot = "5-15"
-#        plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
-#        plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
-#        plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
-#        plt.legend();
-#        plt.grid(True);
-#        plt.xlabel("Time (d)");
-#        plt.ylabel("Prevalence (fraction of population)")
-#        plt.ylim([0,1.1]);
-#        plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-#        plt.savefig('output/output_graph_5_15.png', format='png', dpi=dpi)
-##        plt.show()
-#        
-#        #Plot prevalence for 16+
-#        age_group_to_plot = "16+"
-#        plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
-#        plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
-#        plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
-#        plt.legend();
-#        plt.grid(True);
-#        plt.xlabel("Time (d)");
-#        plt.ylabel("Prevalence (fraction of population)")
-#        plt.ylim([0,1.1]);
-#        plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-#        plt.savefig('output/output_graph_16_plus.png', format='png', dpi=dpi)
-##        plt.show()
+        if (SHOW_PLOTS):
+            #Plot options
+            dpi = 100
+            #Plot prevalence for all
+            age_group_to_plot = "All"
+            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
+            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
+            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
+            plt.legend();
+            plt.grid(True);
+            plt.xlabel("Time (d)");
+            plt.ylabel("Prevalence (fraction of population)")
+            plt.ylim([0,1.1]);
+            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
+            plt.savefig('output/output_graph_all_ages.png', format='png', dpi=dpi)
+    #        plt.show()
+           
+            #Plot prevalence for 0-4
+            age_group_to_plot = "0-4"
+            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
+            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
+            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
+            plt.legend();
+            plt.grid(True);
+            plt.xlabel("Time (d)");
+            plt.ylabel("Prevalence (fraction of population)")
+            plt.ylim([0,1.1]);
+            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
+            plt.savefig('output/output_graph_0_4.png', format='png', dpi=dpi)
+    #        plt.show()
+            
+            #Plot prevalence for 5-15
+            age_group_to_plot = "5-15"
+            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
+            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
+            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
+            plt.legend();
+            plt.grid(True);
+            plt.xlabel("Time (d)");
+            plt.ylabel("Prevalence (fraction of population)")
+            plt.ylim([0,1.1]);
+            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
+            plt.savefig('output/output_graph_5_15.png', format='png', dpi=dpi)
+    #        plt.show()
+            
+            #Plot prevalence for 16+
+            age_group_to_plot = "16+"
+            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
+            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
+            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
+            plt.legend();
+            plt.grid(True);
+            plt.xlabel("Time (d)");
+            plt.ylabel("Prevalence (fraction of population)")
+            plt.ylim([0,1.1]);
+            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
+            plt.savefig('output/output_graph_16_plus.png', format='png', dpi=dpi)
+            plt.show()
         
     def export_prevalence ( self ):
         """Export average of last 10 prevalence values for malaria and schisto.
