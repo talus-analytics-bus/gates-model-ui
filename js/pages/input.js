@@ -145,18 +145,18 @@ var App = App || {};
 					pop2: Util.strToFloat($('.pop-age-table tbody tr:nth-child(2) input').val()) / 100, // age distribution for 5-15
 					pop3: Util.strToFloat($('.pop-age-table tbody tr:nth-child(3) input').val()) / 100, // age distribution for 16+
 					schisto_coverage: Util.strToFloat($('.schisto-coverage-select').val()), // target % coverage for schisto
-					schisto_age_range: $('.schisto-age-select').val(),
-					schisto_month_num: $('.schisto-month-select').val(),
-					malaria_timing: $('.malaria-timing-select').val(),
-					malaria_peak_month_num: $('.malaria-month-select').val(),
-					malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()),
-					irs: $('.irs-checkbox').is(':checked'),
-					irs_coverage: Util.strToFloat($('.irs-coverage-select').val()),
-					irs_month_num: $('.irs-month-select').val(),
-					itn: $('.itn-checkbox').is(':checked'),
-					itn_coverage: Util.strToFloat($('.itn-coverage-select').val()),
-					itn_month_num: $('.itn-month-select').val(),
-					irs_itn_distribution: $('.irs-itn-distribution-select').val()
+					schisto_age_range: $('.schisto-age-select').val(), // schisto age range
+					schisto_month_num: $('.schisto-month-select').val(), // schisto distribution time
+					malaria_timing: $('.malaria-timing-select').val(), // malaria timing
+					malaria_peak_month_num: $('.malaria-month-select').val(), // malaria peak transmission month number (1-Jan, 2-Feb, etc.)
+					malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()), // malaria transmission rate
+					irs: $('.irs-checkbox').is(':checked'), // whether IRS is an option
+					irs_coverage: Util.strToFloat($('.irs-coverage-select').val()), // IRS target % coverage
+					irs_month_num: $('.irs-month-select').val(), // IRS distribution month number (1-Jan, 2-Feb, etc.)
+					itn: $('.itn-checkbox').is(':checked'), // whether ITN is an option
+					itn_coverage: Util.strToFloat($('.itn-coverage-select').val()), // ITN target % coverage
+					itn_month_num: $('.itn-month-select').val(), // ITN distribution month number (1-Jan, 2-Feb, etc.)
+					irs_itn_distribution: $('.irs-itn-distribution-select').val() // IRS/ITN distribution strategy
 				};
 				
 				App.runModel(inputs, function(error, data) {
