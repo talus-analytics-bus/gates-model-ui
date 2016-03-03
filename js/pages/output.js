@@ -2,9 +2,12 @@ var App = App || {};
 
 (function() {
 	App.initOutput = function() {
+		var schisto_prev = App.outputs.schisto;
+		var malaria_prev = App.outputs.malaria;
+		
 		var data = [
 			{type: 'without integration', schisto: 0.36, malaria: 0.42},
-			{type: 'with integration', schisto: App.outputs.schisto, malaria: App.outputs.malaria}
+			{type: 'with integration', schisto: schisto_prev, malaria: malaria_prev}
 		];
 		
 		// fill table
@@ -16,8 +19,8 @@ var App = App || {};
 		var barData = [
 			{type: 'without integration', disease: 'schisto', value: 0.36},
 			{type: 'without integration', disease: 'malaria', value: 0.42},
-			{type: 'with integration', disease: 'schisto', value: 0.23},
-			{type: 'with integration', disease: 'malaria', value: 0.35}
+			{type: 'with integration', disease: 'schisto', value: schisto_prev},
+			{type: 'with integration', disease: 'malaria', value: malaria_prev}
 		];
 		
 		// build bar chart for the population age distribution
