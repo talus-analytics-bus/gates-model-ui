@@ -12,16 +12,21 @@ var App = App || {};
 			{type: 'with integration', schisto: schisto_prev_int, malaria: malaria_prev_int}
 		];
 		
+		if (malaria_prev_int > malaria_prev_no_int) {
+			$(".output-description > div").text("NON-INTEGRATED TREATMENT");
+			$(".output-description > div").attr("class","output-recommendation")
+		}
+		
 		// fill table
 		d3.selectAll('.output-table tbody tr').each(function(d, i) {
 			d3.select(this).select('td:nth-child(2)')
 				.text(Util.percentize(data[i].schisto))
-				.classed('text-success', function(d, i) { if (i === 1) return (schisto_prev_int < schisto_prev_no_int); })
-				.classed('text-danger', function(d, i) { if (i === 1) return (schisto_prev_int > schisto_prev_no_int); });
+				.classed('text-success', function() { if (i === 1) return (schisto_prev_int < schisto_prev_no_int); })
+				.classed('text-danger', function() { if (i === 1) return (schisto_prev_int > schisto_prev_no_int); });
 			d3.select(this).select('td:nth-child(3)')
 				.text(Util.percentize(data[i].malaria))
-				.classed('text-success', function(d, i) { if (i === 1) return (malaria_prev_int < malaria_prev_no_int); })
-				.classed('text-danger', function(d, i) { if (i === 1) return (malaria_prev_int > malaria_prev_no_int); });
+				.classed('text-success', function() { if (i === 1) return (malaria_prev_int < malaria_prev_no_int); })
+				.classed('text-danger', function() { if (i === 1) return (malaria_prev_int > malaria_prev_no_int); });
 		});
 		
 		var barData = [
