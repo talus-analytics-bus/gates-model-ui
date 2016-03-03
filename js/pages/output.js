@@ -2,11 +2,11 @@ var App = App || {};
 
 (function() {
 	App.initOutput = function() {
-		var schisto_prev = App.outputs.schisto;
-		var malaria_prev = App.outputs.malaria;
+		var schisto_prev = App.outputs.integrated.schisto;
+		var malaria_prev = App.outputs.integrated.malaria;
 		
 		var data = [
-			{type: 'without integration', schisto: 0.36, malaria: 0.42},
+			{type: 'without integration', schisto: App.outputs.separate.schisto, malaria: App.outputs.separate.malaria},
 			{type: 'with integration', schisto: schisto_prev, malaria: malaria_prev}
 		];
 		

@@ -37,3 +37,6 @@ Util.getUnique = function(array) {
 	}
 	return result;
 };
+
+// copies an object
+Util.copyObject = function(obj) { return $.extend(true, {}, obj); };

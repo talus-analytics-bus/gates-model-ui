@@ -159,10 +159,23 @@ var App = App || {};
 					irs_itn_distribution: $('.irs-itn-distribution-select').val() // IRS/ITN distribution strategy
 				};
 				
-				App.runModel(inputs, function(error, data) {
-					App.outputs = data;
-					hasher.setHash('output');
-				});
+				var inputsWithIntegration = Util.copyObject(inputs);
+				inputsWithIntegration.use_integration = true;
+				
+				var inputsWithoutIntegration = Util.copyObject(inputs);
+				inputsWithoutIntegration.use_integration = false;
+				
+				// run model twice: once with integration, once without
+				queue()
+					.defer(App.runModel, inputsWithIntegration)
+					.defer(App.runModel, inputsWithoutIntegration)
+					.await(function(error, outputWith, outputWithout) {
+						App.outputs = {
+							'integrated': outputWith,
+							'separate': outputWithout
+						};
+						hasher.setHash('output');
+					});
 			}
 		});
 		
