@@ -12,7 +12,8 @@ var App = App || {};
 		
 		// fill table
 		d3.selectAll('.output-table tbody tr').each(function(d, i) {
-			d3.select(this).select('td:nth-child(2)').text(Util.percentize(data[i].schisto));
+			d3.select(this).select('td:nth-child(2)')
+				.text(Util.percentize(data[i].schisto));
 			d3.select(this).select('td:nth-child(3)').text(Util.percentize(data[i].malaria));
 		});
 		
