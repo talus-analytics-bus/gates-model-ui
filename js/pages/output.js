@@ -2,12 +2,14 @@ var App = App || {};
 
 (function() {
 	App.initOutput = function() {
-		var schisto_prev = App.outputs.integrated.schisto;
-		var malaria_prev = App.outputs.integrated.malaria;
+		var schisto_prev_int = App.outputs.integrated.schisto;
+		var malaria_prev_int = App.outputs.integrated.malaria;
+		var schisto_prev_no_int = App.outputs.separate.schisto;
+		var malaria_prev_no_int = App.outputs.separate.malaria;
 		
 		var data = [
-			{type: 'without integration', schisto: App.outputs.separate.schisto, malaria: App.outputs.separate.malaria},
-			{type: 'with integration', schisto: schisto_prev, malaria: malaria_prev}
+			{type: 'without integration', schisto: schisto_prev_no_int, malaria: malaria_prev_no_int},
+			{type: 'with integration', schisto: schisto_prev_int, malaria: malaria_prev_int}
 		];
 		
 		// fill table
@@ -18,10 +20,10 @@ var App = App || {};
 		});
 		
 		var barData = [
-			{type: 'without integration', disease: 'schisto', value: 0.36},
-			{type: 'without integration', disease: 'malaria', value: 0.42},
-			{type: 'with integration', disease: 'schisto', value: schisto_prev},
-			{type: 'with integration', disease: 'malaria', value: malaria_prev}
+			{type: 'without integration', disease: 'schisto', value: schisto_prev_no_int},
+			{type: 'without integration', disease: 'malaria', value: malaria_prev_no_int},
+			{type: 'with integration', disease: 'schisto', value: schisto_prev_int},
+			{type: 'with integration', disease: 'malaria', value: malaria_prev_int}
 		];
 		
 		// build bar chart for the population age distribution

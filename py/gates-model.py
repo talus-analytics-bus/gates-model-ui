@@ -31,14 +31,14 @@ if (SHOW_PLOTS):
 
 #With or without integration (defined as "smartly" setting the timing of
 #interventions as per recommendations in the literature)
-USE_INTEGRATION = True
+USE_INTEGRATION = bool(int(UI_INPUTS["use_integration"]))
 
 #Initialize user-specified inputs (pulled from GUI)
 F_AGE_UNDER_5 = float(UI_INPUTS["pop1"])     #% distribution of population under 5 years old
 F_AGE_5_TO_15 = float(UI_INPUTS["pop2"])       #% distribution of population between 5 and 15 years old
 F_AGE_16_PLUS = float(UI_INPUTS["pop3"])    #% distribution of population 16 years old or older
 
-F_PZQ_TARGET_COV = UI_INPUTS["schisto_coverage"]    #Target % coverage of praziquantel (PZQ) mass drug 
+F_PZQ_TARGET_COV = float(UI_INPUTS["schisto_coverage"])    #Target % coverage of praziquantel (PZQ) mass drug 
                         #administration
 PZQ_AGE_RANGE = tuple(UI_INPUTS["schisto_age_range"] )#Age groups that get PZQ (by default, only 5-15 y/o 
                     #children will get it because they are school-age and PZQ
@@ -59,14 +59,14 @@ N_BASELINE_INF_BITES = UI_INPUTS["malaria_rate"]  #Baseline infectious mosquito 
                             #medium (100), or high (250).
 IRS_CHECKED = bool(UI_INPUTS["irs"])  #Can indoor residual insecticide spraying be used?
                     #True or false.
-F_IRS_TARGET_COV = UI_INPUTS["irs_coverage"] #Target % coverage of indoor spraying.
+F_IRS_TARGET_COV = float(UI_INPUTS["irs_coverage"]) #Target % coverage of indoor spraying.
 T_SPRAY = 150       #Number of days at which sprays are distributed. Required
                     #user input if "constant" malaria transmission pattern selected
 IRS_MONTH_NUM = int(UI_INPUTS["irs_month_num"]) #Month IRS are distributed in the "constant" case (without integration). Indexed
                                 #from 1 (i.e., January = 1)
     
 ITN_CHECKED = bool(UI_INPUTS["itn"])  #Can insecticide-treated bed nets be used? True or false.
-F_ITN_TARGET_COV = UI_INPUTS["itn_coverage"] #Target % coverage of indoor spraying.
+F_ITN_TARGET_COV = float(UI_INPUTS["itn_coverage"]) #Target % coverage of indoor spraying.
 T_NET = 150         #Number of days at which nets are distributed. Required
                     #user input if "constant" malaria transmission pattern selected
 ITN_MONTH_NUM = int(UI_INPUTS["itn_month_num"]) #Month nets are distributed in the "constant" case (without integration). Indexed
@@ -77,11 +77,11 @@ IRS_ITN_DIST_STRAT = UI_INPUTS["irs_itn_distribution"]  #Not currently used. The
 
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
-N_PEOPLE = 1000    #Number of people to simulate
+N_PEOPLE = 10000    #Number of people to simulate
 N_DAYS_BURN = 60    #Number of days to burn in the model to steady-state values
                     #To do: let it burn until values don't fluctuate
 #N_PEOPLE = 10000    #Number of people to simulate
-N_DAYS = N_DAYS_BURN + 365*2 + 10      #Simulation runtime in days
+N_DAYS = N_DAYS_BURN + 365 + 10      #Simulation runtime in days
 #N_DAYS = 425      #Simulation runtime in days
                     #To do: force this value to be fixed
 if not ITN_CHECKED:
@@ -400,7 +400,15 @@ class App( object ):
             
     def write_prevalence( self ):
         #Writes prevalence values and graphs them for school-age children (5-15)
-        
+    
+        #With or without integration?
+        if USE_INTEGRATION:
+            integration = ", with Integration"
+            fn_int = "_with_integration"
+        else:
+            integration = ", without Integration"
+            fn_int = "_without_integration"
+                
         #Load number of people in each age bin
         n_people_0_4 = Person.age_bin_counts["0-4"]        
         n_people_5_15 = Person.age_bin_counts["5-15"]        
@@ -418,7 +426,7 @@ class App( object ):
         header_str = ["Time (d)","0-4 y/o","5-15 y/o","16+ y/o","All"]
         headers = header_str + spaces + header_str + spaces + header_str
         
-        with open('output/output.csv', 'wb') as csvfile:
+        with open('output/output' + fn_int + '.csv', 'wb') as csvfile:
             writer = csv.writer(csvfile, quoting = csv.QUOTE_NONNUMERIC)
             title = ["Prevalence of schistosomiasis by age group vs. time (d)"] + title_spaces + ["Prevalence of malaria by age group vs. time (d)"] + title_spaces + ["Prevalence of coinfection by age group vs. time (d)"]
             writer.writerow(title)
@@ -464,11 +472,13 @@ class App( object ):
             self.prevalence_schisto["All"] = y["schisto"]["All"]
             self.prevalence_malaria["All"] = y["malaria"]["All"]
             self.prevalence_coinfection["All"] = y["coinfection"]["All"]
+        csvfile.close()
             
         # Plotting #----------------------------------------------------------#
         if (SHOW_PLOTS):
             #Plot options
             dpi = 100
+            
             #Plot prevalence for all
             age_group_to_plot = "All"
             plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
@@ -479,8 +489,9 @@ class App( object ):
             plt.xlabel("Time (d)");
             plt.ylabel("Prevalence (fraction of population)")
             plt.ylim([0,1.1]);
-            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-            plt.savefig('output/output_graph_all_ages.png', format='png', dpi=dpi)
+            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot + integration);
+            plt.savefig('output/output_graph_all_ages' + fn_int + '.png', format='png', dpi=dpi)
+            plt.close()
     #        plt.show()
            
 #            #Plot prevalence for 0-4
@@ -528,10 +539,10 @@ class App( object ):
     def export_prevalence ( self ):
         """Export average of last 10 prevalence values for malaria and schisto.
         Current exports the inputs that were passed times two."""
-        malaria_avg_prev = sum(self.prevalence_malaria["All"][(N_DAYS-10):(N_DAYS)])/10
-        schisto_avg_prev = sum(self.prevalence_schisto["All"][(N_DAYS-10):(N_DAYS)])/10
+        malaria_avg_prev = sum(self.prevalence_malaria["All"][(N_DAYS_BURN):(N_DAYS)])/(N_DAYS - N_DAYS_BURN)
+        schisto_avg_prev = sum(self.prevalence_schisto["All"][(N_DAYS_BURN):(N_DAYS)])/(N_DAYS - N_DAYS_BURN)
 #        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}       
-        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev, "t_pzq":self.t_pzq, "t_net":self.t_net, "t_spray":self.t_spray}       
+        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev, "t_pzq":self.t_pzq, "t_net":self.t_net, "t_spray":self.t_spray, "use_integration":USE_INTEGRATION, "t_season_start":debug_tmp, "F_PZQ_TARGET_COV":F_PZQ_TARGET_COV}       
         print json.dumps(output)
         return output
         
@@ -599,6 +610,10 @@ if __name__ == '__main__':
         #Set season start and end times
         t_season_start = (season_start_date - burn_start_date).days
         t_season_end = (season_end_date - burn_start_date).days
+        
+        debug_tmp = 0
+        debug_tmp += t_season_start
+        app.debug_tmp = debug_tmp
         
         #Setup variable that states whether each time step is in malaria season
         #or not in malaria season for the number of days the simulation should
