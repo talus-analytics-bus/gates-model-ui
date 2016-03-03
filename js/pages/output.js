@@ -44,7 +44,7 @@ var App = App || {};
 			.call(xAxis);
 			
 		var y = d3.scale.linear()
-			.domain([0, 0.5])
+			.domain([0, 1.1*d3.max([data[0].schisto, data[0].malaria, data[1].schisto, data[1].malaria])])
 			.range([height, 0]);
 		var yAxis = d3.svg.axis()
 			.orient('left')
