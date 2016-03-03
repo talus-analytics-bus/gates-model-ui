@@ -23,17 +23,17 @@ start = time.time()
 
 "Initialize variables and constants"
 #Load from JS GUI
-for line in sys.stdin:
-    inputObj = json.loads(line)
+#for line in sys.stdin:
+#    inputObj = json.loads(line)
 
 #Initialize user-specified inputs (pulled from GUI)
-#F_AGE_UNDER_5 = 0.2     #% distribution of population under 5 years old
-#F_AGE_5_TO_15 = 0.34       #% distribution of population between 5 and 15 years old
-#F_AGE_16_PLUS = 0.46    #% distribution of population 16 years old or older
+F_AGE_UNDER_5 = 0.2     #% distribution of population under 5 years old
+F_AGE_5_TO_15 = 0.34       #% distribution of population between 5 and 15 years old
+F_AGE_16_PLUS = 0.46    #% distribution of population 16 years old or older
 
-F_AGE_UNDER_5 = float(inputObj["pop1"])     #% distribution of population under 5 years old
-F_AGE_5_TO_15 = float(inputObj["pop2"])       #% distribution of population between 5 and 15 years old
-F_AGE_16_PLUS = float(inputObj["pop3"])   #% distribution of population 16 years old or older
+#F_AGE_UNDER_5 = float(inputObj["pop1"])     #% distribution of population under 5 years old
+#F_AGE_5_TO_15 = float(inputObj["pop2"])       #% distribution of population between 5 and 15 years old
+#F_AGE_16_PLUS = float(inputObj["pop3"])   #% distribution of population 16 years old or older
 
 F_PZQ_TARGET_COV = 0.8    #Target % coverage of praziquantel (PZQ) mass drug 
                         #administration
@@ -70,7 +70,7 @@ F_TREATED = 0.8     #TO DO: Ask Justin how to set this value
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
 N_PEOPLE = 10000    #Number of people to simulate
-N_DAYS = 200      #Simulation runtime in days
+N_DAYS = 425      #Simulation runtime in days
                     #To do: force this value to be fixed
 N_DAYS_BURN = 60    #Number of days to burn in the model to steady-state values
                     #To do: let it burn until values don't fluctuate
@@ -112,7 +112,6 @@ D_ASYMP_MALARIA = 360
 INIT_P_MALARIA_BASELINE = 0.027 #Baseline daily prob. of getting malaria.
                                 #Source: 10 infectious bites per year, based on
                                 #Figure 3 of Ndeffo Mbah 2014
-
 F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Mbah et al, 2014)
 P_MALARIA_SEASONAL_MOD = 5  #Factor by which the daily prob. of getting malaria
                             #increases during malaria season (Kelly-Hope and McKenzie 2009; based on difference between places with 7 or more months of rain vs. 6 or fewer)
@@ -182,6 +181,7 @@ class People( list ):
         t = app.cur_time_step
         cur_p_malaria_baseline = app.cur_p_malaria_baseline
         runif = random.random
+#        print vars(self[0])
         for n in range(0, Person.count):
             cur_person = self[n];
             
@@ -276,7 +276,7 @@ class People( list ):
                 get_malaria_runif = runif()
                 if get_malaria_runif < cur_p_malaria:
                     #If the current person already has asymptomatic malaria,
-                    #or if they don't have it yet:
+                    #or if they don't have malaria yet:
                     has_asymp_malaria = cur_person.has_malaria and not cur_person.is_symptomatic
                     if has_asymp_malaria or not cur_person.has_malaria:                    
                         #Set the person's malaria flag to true
@@ -287,6 +287,7 @@ class People( list ):
                         #untreated
                         symp_treat_runif = runif()
                         
+                        #Bin into one of three categories below:
                         #SYMPTOMATIC, TREATED
                         if symp_treat_runif < BREAKPOINT_1:
                             #Set symp malaria values:                            
@@ -367,13 +368,6 @@ class App( object ):
     {'0-4': [0.0]*N_DAYS, '5-15': [0.0]*N_DAYS, '16+': [0.0]*N_DAYS}    
     
     #Functions
-    def get_T_PZQ(self, FIRST_SEASON_MONTH):
-        start_month_tmp = FIRST_SEASON_MONTH - 4
-        if (start_month_tmp < 0):
-            return (start_month_tmp + 12)
-        else:
-            return start_month_tmp
-            
     def update_p_malaria_baseline(self):
         """Modifies the baseline daily probability of being infected with
         malaria based on (1) seasonality and (2) vector pressure (to-do)."""
@@ -608,7 +602,7 @@ if __name__ == '__main__':
     
     #For each time step:
     for t in range(0, N_DAYS):
-#       print "Running time step %i of %i" % (t + 1, N_DAYS)
+       print "Running time step %i of %i" % (t + 1, N_DAYS)
        
        # Initialization #-----------------------------------------------------#
        app.cur_time_step = t
@@ -626,8 +620,8 @@ if __name__ == '__main__':
         
     #End model timer and print the time elapsed.
     end = time.time()
-#    print "Time elapsed (sec): %f" % (end-start)
-#    print "Getting outputs..."
+    print "Time elapsed (sec): %f" % (end-start)
+    print "Getting outputs..."
     
     #Write prevalence values to three CSV files and plot it for 5-15 y/o
     app.write_prevalence()
