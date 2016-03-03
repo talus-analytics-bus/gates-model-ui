@@ -151,20 +151,20 @@ var App = App || {};
 					malaria_timing: $('.malaria-timing-select').val(), // malaria timing
 					malaria_peak_month_num: $('.malaria-month-select').val(), // malaria peak transmission month number (1-Jan, 2-Feb, etc.)
 					malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()), // malaria transmission rate
-					irs: $('.irs-checkbox').is(':checked'), // whether IRS is an option
+					irs: $('.irs-checkbox').is(':checked') ? 1 : 0, // whether IRS is an option
 					irs_coverage: Util.strToFloat($('.irs-coverage-select').val()), // IRS target % coverage
 					irs_month_num: $('.irs-month-select').val(), // IRS distribution month number (1-Jan, 2-Feb, etc.)
-					itn: $('.itn-checkbox').is(':checked'), // whether ITN is an option
+					itn: $('.itn-checkbox').is(':checked') ? 1 : 0, // whether ITN is an option
 					itn_coverage: Util.strToFloat($('.itn-coverage-select').val()), // ITN target % coverage
 					itn_month_num: $('.itn-month-select').val(), // ITN distribution month number (1-Jan, 2-Feb, etc.)
 					irs_itn_distribution: $('.irs-itn-distribution-select').val() // IRS/ITN distribution strategy
 				};
 				
 				var inputsWithIntegration = Util.copyObject(inputs);
-				inputsWithIntegration.use_integration = true;
+				inputsWithIntegration.use_integration = 1;
 				
 				var inputsWithoutIntegration = Util.copyObject(inputs);
-				inputsWithoutIntegration.use_integration = false;
+				inputsWithoutIntegration.use_integration = 0;
 				
 				// run model twice: once with integration, once without
 				queue()
