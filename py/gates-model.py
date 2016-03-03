@@ -15,7 +15,7 @@ import random
 import csv
 import datetime
 import dateutil.relativedelta as date
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import json
 import sys
 from datetime import timedelta
@@ -70,7 +70,7 @@ F_TREATED = 0.8     #TO DO: Ask Justin how to set this value
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
 N_PEOPLE = 10000    #Number of people to simulate
-N_DAYS = 800      #Simulation runtime in days
+N_DAYS = 200      #Simulation runtime in days
                     #To do: force this value to be fixed
 N_DAYS_BURN = 60    #Number of days to burn in the model to steady-state values
                     #To do: let it burn until values don't fluctuate
@@ -463,20 +463,22 @@ class App( object ):
             self.prevalence_coinfection["All"] = y["coinfection"]["All"]
             
         # Plotting #----------------------------------------------------------#
+        #Plot options
+        dpi = 100
         #Plot prevalence for all
-#        age_group_to_plot = "All"
-#        plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
-#        plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
-#        plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
-#        plt.legend();
-#        plt.grid(True);
-#        plt.xlabel("Time (d)");
-#        plt.ylabel("Prevalence (fraction of population)")
-#        plt.ylim([0,1.1]);
-#        plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-#        plt.savefig('output_graph_all_ages.png', format='png', dpi=1000);
+        age_group_to_plot = "All"
+        plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
+        plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
+        plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
+        plt.legend();
+        plt.grid(True);
+        plt.xlabel("Time (d)");
+        plt.ylabel("Prevalence (fraction of population)")
+        plt.ylim([0,1.1]);
+        plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
+        plt.savefig('output/output_graph_all_ages.png', format='png', dpi=dpi)
 #        plt.show()
-#       
+       
 #        #Plot prevalence for 0-4
 #        age_group_to_plot = "0-4"
 #        plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
@@ -488,8 +490,8 @@ class App( object ):
 #        plt.ylabel("Prevalence (fraction of population)")
 #        plt.ylim([0,1.1]);
 #        plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-#        plt.savefig('output_graph_0_4.png', format='png', dpi=1000);
-#        plt.show()
+#        plt.savefig('output/output_graph_0_4.png', format='png', dpi=dpi)
+##        plt.show()
 #        
 #        #Plot prevalence for 5-15
 #        age_group_to_plot = "5-15"
@@ -502,8 +504,8 @@ class App( object ):
 #        plt.ylabel("Prevalence (fraction of population)")
 #        plt.ylim([0,1.1]);
 #        plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-#        plt.savefig('output_graph_5_15.png', format='png', dpi=1000);
-#        plt.show()
+#        plt.savefig('output/output_graph_5_15.png', format='png', dpi=dpi)
+##        plt.show()
 #        
 #        #Plot prevalence for 16+
 #        age_group_to_plot = "16+"
@@ -516,8 +518,8 @@ class App( object ):
 #        plt.ylabel("Prevalence (fraction of population)")
 #        plt.ylim([0,1.1]);
 #        plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot);
-#        plt.savefig('output_graph_16_plus.png', format='png', dpi=1000);
-#        plt.show()
+#        plt.savefig('output/output_graph_16_plus.png', format='png', dpi=dpi)
+##        plt.show()
         
     def export_prevalence ( self ):
         """Export average of last 10 prevalence values for malaria and schisto.
