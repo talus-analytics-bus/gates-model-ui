@@ -15,8 +15,13 @@ var App = App || {};
 		// fill table
 		d3.selectAll('.output-table tbody tr').each(function(d, i) {
 			d3.select(this).select('td:nth-child(2)')
-				.text(Util.percentize(data[i].schisto));
-			d3.select(this).select('td:nth-child(3)').text(Util.percentize(data[i].malaria));
+				.text(Util.percentize(data[i].schisto))
+				.classed('text-success', function(d, i) { if (i === 1) return (schisto_prev_int < schisto_prev_no_int); })
+				.classed('text-danger', function(d, i) { if (i === 1) return (schisto_prev_int > schisto_prev_no_int); });
+			d3.select(this).select('td:nth-child(3)')
+				.text(Util.percentize(data[i].malaria))
+				.classed('text-success', function(d, i) { if (i === 1) return (malaria_prev_int < malaria_prev_no_int); })
+				.classed('text-danger', function(d, i) { if (i === 1) return (malaria_prev_int > malaria_prev_no_int); });
 		});
 		
 		var barData = [
