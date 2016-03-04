@@ -10,9 +10,9 @@ ul { margin: 10px 0px; }
 .table,
 input.form-control,
 select.form-control {
+  display: inline-block;
   width: auto;
 }
-select.form-control { display: inline-block; }
 table input.form-control {
   height: auto;
   padding: 4px 8px;
@@ -145,9 +145,6 @@ table input.form-control {
   }
 }
 .pop-age-chart { margin-left: -65px; }
-.input-section[name="schisto"] .select-label {
-  width: 140px;
-}
 .malaria-trans-rate-select {
   option:first-child { color: #3c763d; }
   option:nth-child(2) { color: #8a6d3b; }

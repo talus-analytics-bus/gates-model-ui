@@ -25,7 +25,7 @@ for line in sys.stdin:
     UI_INPUTS = json.loads(line)
     
 #Show plots or not
-SHOW_PLOTS = True
+SHOW_PLOTS = False
 if (SHOW_PLOTS):
     import matplotlib.pyplot as plt
 
@@ -72,7 +72,7 @@ T_NET = 150         #Number of days at which nets are distributed. Required
 ITN_MONTH_NUM = int(UI_INPUTS["itn_month_num"]) #Month nets are distributed in the "constant" case (without integration). Indexed
                                 #from 1 (i.e., January = 1)
 
-IRS_ITN_DIST_STRAT = UI_INPUTS["irs_itn_distribution"]  #Not currently used. The IRS/ITN countermeasure
+#IRS_ITN_DIST_STRAT = UI_INPUTS["irs_itn_distribution"]  #Not currently used. The IRS/ITN countermeasure
                                 #distribution strategy.
 
 #Initialize non-user-specified, constant inputs

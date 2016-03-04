@@ -2,38 +2,38 @@ var App = App || {};
 
 (function() {
 	App.initOutput = function() {
-		var schisto_prev_int = App.outputs.integrated.schisto;
-		var malaria_prev_int = App.outputs.integrated.malaria;
-		var schisto_prev_no_int = App.outputs.separate.schisto;
-		var malaria_prev_no_int = App.outputs.separate.malaria;
+		var schistoPrevInt = App.outputs.integrated.schisto;
+		var malariaPrevInt = App.outputs.integrated.malaria;
+		var schistoPrevNoInt = App.outputs.separate.schisto;
+		var malariaPrevNoInt = App.outputs.separate.malaria;
 		
 		var data = [
-			{type: 'without integration', schisto: schisto_prev_no_int, malaria: malaria_prev_no_int},
-			{type: 'with integration', schisto: schisto_prev_int, malaria: malaria_prev_int}
+			{type: 'without integration', schisto: schistoPrevNoInt, malaria: malariaPrevNoInt},
+			{type: 'with integration', schisto: schistoPrevInt, malaria: malariaPrevInt}
 		];
 		
-		if (malaria_prev_int > malaria_prev_no_int) {
-			$(".output-description > div").text("NON-INTEGRATED TREATMENT");
-			$(".output-description > div").attr("class","output-recommendation")
-		}
+		var isRecommended = malariaPrevInt > malariaPrevNoInt;
+		$('.output-recommendation')
+			.text(isRecommended ? 'INTEGRATED TREATMENT' : 'NON-INTEGRATED TREATMENT')
+			.classed('text-success', isRecommended);
 		
 		// fill table
 		d3.selectAll('.output-table tbody tr').each(function(d, i) {
 			d3.select(this).select('td:nth-child(2)')
 				.text(Util.percentize(data[i].schisto))
-				.classed('text-success', function() { if (i === 1) return (schisto_prev_int < schisto_prev_no_int); })
-				.classed('text-danger', function() { if (i === 1) return (schisto_prev_int > schisto_prev_no_int); });
+				.classed('text-success', function() { if (i === 1) return (schistoPrevInt < schistoPrevNoInt); })
+				.classed('text-danger', function() { if (i === 1) return (schistoPrevInt > schistoPrevNoInt); });
 			d3.select(this).select('td:nth-child(3)')
 				.text(Util.percentize(data[i].malaria))
-				.classed('text-success', function() { if (i === 1) return (malaria_prev_int < malaria_prev_no_int); })
-				.classed('text-danger', function() { if (i === 1) return (malaria_prev_int > malaria_prev_no_int); });
+				.classed('text-success', function() { if (i === 1) return (malariaPrevInt < malariaPrevNoInt); })
+				.classed('text-danger', function() { if (i === 1) return (malariaPrevInt > malariaPrevNoInt); });
 		});
 		
 		var barData = [
-			{type: 'without integration', disease: 'schisto', value: schisto_prev_no_int},
-			{type: 'without integration', disease: 'malaria', value: malaria_prev_no_int},
-			{type: 'with integration', disease: 'schisto', value: schisto_prev_int},
-			{type: 'with integration', disease: 'malaria', value: malaria_prev_int}
+			{type: 'without integration', disease: 'schisto', value: schistoPrevNoInt},
+			{type: 'without integration', disease: 'malaria', value: malariaPrevNoInt},
+			{type: 'with integration', disease: 'schisto', value: schistoPrevInt},
+			{type: 'with integration', disease: 'malaria', value: malariaPrevInt}
 		];
 		
 		// build bar chart for the population age distribution

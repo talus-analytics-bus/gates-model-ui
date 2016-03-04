@@ -139,49 +139,73 @@ var App = App || {};
 		
 		// submit button
 		$('.input-submit-button').click(function() {
-			var valid = validatePopAgeSum(); // first validate that the population age distribution sums to 100%
-			if (valid) {				
-				var inputs = {
-					pop1: Util.strToFloat($('.pop-age-table tbody tr:first-child input').val()) / 100, // age distribution for under 5
-					pop2: Util.strToFloat($('.pop-age-table tbody tr:nth-child(2) input').val()) / 100, // age distribution for 5-15
-					pop3: Util.strToFloat($('.pop-age-table tbody tr:nth-child(3) input').val()) / 100, // age distribution for 16+
-					schisto_coverage: Util.strToFloat($('.schisto-coverage-select').val()), // target % coverage for schisto
-					schisto_age_range: $('.schisto-age-select').val(), // schisto age range
-					schisto_month_num: $('.schisto-month-select').val(), // schisto distribution time
-					malaria_timing: $('.malaria-timing-select').val(), // malaria timing
-					malaria_peak_month_num: $('.malaria-month-select').val(), // malaria peak transmission month number (1-Jan, 2-Feb, etc.)
-					malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()), // malaria transmission rate
-					irs: $('.irs-checkbox').is(':checked') ? 1 : 0, // whether IRS is an option
-					irs_coverage: Util.strToFloat($('.irs-coverage-select').val()), // IRS target % coverage
-					irs_month_num: $('.irs-month-select').val(), // IRS distribution month number (1-Jan, 2-Feb, etc.)
-					itn: $('.itn-checkbox').is(':checked') ? 1 : 0, // whether ITN is an option
-					itn_coverage: Util.strToFloat($('.itn-coverage-select').val()), // ITN target % coverage
-					itn_month_num: $('.itn-month-select').val(), // ITN distribution month number (1-Jan, 2-Feb, etc.)
-					irs_itn_distribution: $('.irs-itn-distribution-select').val() // IRS/ITN distribution strategy
-				};
-				
-				var inputsWithIntegration = Util.copyObject(inputs);
-				inputsWithIntegration.use_integration = 1;
-				
-				var inputsWithoutIntegration = Util.copyObject(inputs);
-				inputsWithoutIntegration.use_integration = 0;
-				
-				// run model twice: once with integration, once without
-				queue()
-					.defer(App.runModel, inputsWithIntegration)
-					.defer(App.runModel, inputsWithoutIntegration)
-					.await(function(error, outputWith, outputWithout) {
-						if (error) {
-							console.log('failed to complete all model runs');
-							return false;
-						}
-						App.outputs = {
-							'integrated': outputWith,
-							'separate': outputWithout
-						};
-						hasher.setHash('output');
-					});
+			// validate that the population age distribution sums to 100%
+			if (validatePopAgeSum() === false) {
+				noty({
+					layout: 'center',
+					type: 'warning',
+					text: '<b>Error!</b><br>Please make sure the age distribution in the population section adds up to 100%!'
+				});
+				return false;
 			}
+
+			// validate that a malaria peak transmission month was selected
+			if ($('.malaria-month-select').val() === null) {
+				noty({
+					layout: 'center',
+					type: 'warning',
+					text: '<b>Error!</b><br>Please make sure a peak transmission month for malaria is selected!'
+				});
+				return false;
+			}
+			
+			
+			// run the model and redirect to outputs page
+			var inputs = {
+				pop1: Util.strToFloat($('.pop-age-table tbody tr:first-child input').val()) / 100, // age distribution for under 5
+				pop2: Util.strToFloat($('.pop-age-table tbody tr:nth-child(2) input').val()) / 100, // age distribution for 5-15
+				pop3: Util.strToFloat($('.pop-age-table tbody tr:nth-child(3) input').val()) / 100, // age distribution for 16+
+				schisto_coverage: Util.strToFloat($('.schisto-coverage-select').val()), // target % coverage for schisto
+				schisto_age_range: $('.schisto-age-select').val(), // schisto age range
+				schisto_month_num: $('.schisto-month-select').val(), // schisto distribution time
+				malaria_timing: $('.malaria-timing-select').val(), // malaria timing
+				malaria_peak_month_num: malariaMonthNum, // malaria peak transmission month number (1-Jan, 2-Feb, etc.)
+				malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()), // malaria transmission rate
+				irs: $('.irs-checkbox').is(':checked') ? 1 : 0, // whether IRS is an option
+				irs_coverage: Util.strToFloat($('.irs-coverage-select').val()), // IRS target % coverage
+				irs_month_num: $('.irs-month-select').val(), // IRS distribution month number (1-Jan, 2-Feb, etc.)
+				itn: $('.itn-checkbox').is(':checked') ? 1 : 0, // whether ITN is an option
+				itn_coverage: Util.strToFloat($('.itn-coverage-select').val()), // ITN target % coverage
+				itn_month_num: $('.itn-month-select').val(), // ITN distribution month number (1-Jan, 2-Feb, etc.)
+				//irs_itn_distribution: $('.irs-itn-distribution-select').val() // IRS/ITN distribution strategy
+			};
+			
+			var inputsWithIntegration = Util.copyObject(inputs);
+			inputsWithIntegration.use_integration = 1;
+			
+			var inputsWithoutIntegration = Util.copyObject(inputs);
+			inputsWithoutIntegration.use_integration = 0;
+			
+			// run model twice: once with integration, once without
+			queue()
+				.defer(App.runModel, inputsWithIntegration)
+				.defer(App.runModel, inputsWithoutIntegration)
+				.await(function(error, outputWith, outputWithout) {
+					if (error) {
+						console.log('failed to complete all model runs');
+						noty({
+							layout: 'center',
+							type: 'danger',
+							text: '<b>Error!</b><br>There was an error running the model.'
+						});
+						return false;
+					}
+					App.outputs = {
+						'integrated': outputWith,
+						'separate': outputWithout
+					};
+					hasher.setHash('output');
+				});
 		});
 		
 		

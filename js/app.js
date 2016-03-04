@@ -25,7 +25,8 @@ var App = App || {};
 			.done(function(data) {
 				console.log('success!');
 				console.log(data);
-				callback(null, data);
+				if (data.hasOwnProperty('error')) callback(data.error, null);
+				else callback(null, data);
 			});
 	};
 })();

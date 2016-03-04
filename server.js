@@ -17,7 +17,7 @@ app.get(/^(.+)$/, function(req, res) {
 			res.send(results); // send outputs back
 		});
 		pyshell.send(req.query).end(function(err) {
-			if (err) throw err;
+			if (err) res.send({error: err});
 		});
 	} else {
 		res.sendFile(path.join(__dirname, '/', req.params[0]));
