@@ -19,11 +19,9 @@ var App = App || {};
 				NProgress.done();
 			})
 			.fail(function() {
-				console.log('error!');
 				callback('error', null);
 			})
 			.done(function(data) {
-				console.log('success!');
 				console.log(data);
 				if (data.hasOwnProperty('error')) callback(data.error, null);
 				else callback(null, data);

@@ -2,6 +2,8 @@ var App = App || {};
 
 (function() {
 	App.initOutput = function() {
+		if ($.isEmptyObject(App.outputs)) hasher.setHash('');
+		
 		var schistoPrevInt = App.outputs.integrated.schisto;
 		var malariaPrevInt = App.outputs.integrated.malaria;
 		var schistoPrevNoInt = App.outputs.separate.schisto;
@@ -12,8 +14,8 @@ var App = App || {};
 			{type: 'with integration', schisto: schistoPrevInt, malaria: malariaPrevInt}
 		];
 		
-		var isRecommended = malariaPrevInt > malariaPrevNoInt;
-		$('.output-recommendation')
+		var isRecommended = malariaPrevInt < malariaPrevNoInt;
+		d3.select('.output-recommendation')
 			.text(isRecommended ? 'INTEGRATED TREATMENT' : 'NON-INTEGRATED TREATMENT')
 			.classed('text-success', isRecommended);
 		
