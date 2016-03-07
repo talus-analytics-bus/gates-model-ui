@@ -17,6 +17,7 @@ import datetime
 import dateutil.relativedelta as date
 import json
 import sys
+import math
 start = time.time()
 
 "Initialize variables and constants"
@@ -125,7 +126,7 @@ BREAKPOINT_2 = F_SYMP_TREATED + F_SYMP_UNTREATED
 
 D_MALARIA = 5 #Malaria infection lasts about 5 days (Mbah et al, 2014)
 D_ASYMP_MALARIA = 360
-INIT_P_MALARIA_BASELINE = float(N_BASELINE_INF_BITES) / 365.0 #Baseline daily prob. of getting malaria.
+INIT_P_MALARIA_BASELINE =  1 - exp(-1.0 * float(N_BASELINE_INF_BITES) * (1 / 365.0)) #Baseline daily prob. of getting malaria.
 F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Mbah et al, 2014)
 P_MALARIA_SEASONAL_MOD = 5  #Factor by which the daily prob. of getting malaria
                             #increases during malaria season (Kelly-Hope and McKenzie 2009; based on difference between places with 7 or more months of rain vs. 6 or fewer)
