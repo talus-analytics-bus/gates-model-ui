@@ -1,6 +1,3 @@
-# Output Files
-output/
-
 # Node Modules
 node_modules/
 .gitignore
@@ -9,8 +6,4 @@ node_modules/
 .project
 .pydevproject
 .DS_Store
-
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
+# Elastic Beanstalk Files.elasticbeanstalk/*!.elasticbeanstalk/*.cfg.yml!.elasticbeanstalk/*.global.yml

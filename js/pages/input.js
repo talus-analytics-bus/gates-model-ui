@@ -197,7 +197,7 @@ var App = App || {};
 						console.log('failed to complete all model runs');
 						noty({
 							layout: 'center',
-							type: 'error',
+							type: 'warning',
 							text: '<b>Error!</b><br>There was an error running the model.'
 						});
 						return false;
