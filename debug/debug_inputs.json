@@ -1,0 +1,22 @@
+{
+  "pop1": 0.2,
+  "pop2": 0.34,
+  "pop3": 0.46,
+  "schisto_coverage": 0.8,
+  "schisto_age_range": [
+    "5-15"
+  ],
+  "schisto_month_num": "1",
+  "malaria_timing": "seasonal",
+  "malaria_peak_month_num": [
+    "6",
+    "7"
+  ],
+  "malaria_rate": 20,
+  "irs": 1,
+  "irs_coverage": 0.8,
+  "irs_month_num": "1",
+  "itn": 1,
+  "itn_coverage": 0.8,
+  "itn_month_num": "1"
+}
