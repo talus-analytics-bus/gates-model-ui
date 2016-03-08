@@ -22,12 +22,14 @@ start = time.time()
 
 "Initialize variables and constants"
 #Load from JS GUI
-USE_GUI = True
+USE_GUI = False
 if USE_GUI:
     for line in sys.stdin:
         UI_INPUTS = json.loads(line)
 else:
-    pass
+    JSON_FILE = open("debug/debug_inputs.json")    
+    UI_INPUTS = json.load(JSON_FILE)
+    UI_INPUTS['use_integration'] = True
 
 #Show plots or not
 SHOW_PLOTS = False
@@ -676,7 +678,8 @@ if __name__ == '__main__':
     
     #For each time step:
     for t in range(0, N_DAYS):
-#       print "Running time step %i of %i" % (t + 1, N_DAYS)
+       if not USE_GUI:
+           print "Running time step %i of %i" % (t + 1, N_DAYS)
        
        # Initialization #-----------------------------------------------------#
        app.cur_time_step = t
