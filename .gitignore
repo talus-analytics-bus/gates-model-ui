@@ -1,3 +1,5 @@
+.bat
+
 # Node Modules
 node_modules/
 .gitignore

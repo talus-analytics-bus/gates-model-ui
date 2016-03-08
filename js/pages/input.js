@@ -149,17 +149,15 @@ var App = App || {};
 				return false;
 			}
 
-			// validate that a malaria peak transmission month was selected
-			var malariaTiming = $('.malaria-timing-select').val();
-			var malariaMonthNum = $('.malaria-month-select').val();
-			if (malariaTiming === 'seasonal' && malariaMonthNum === null) {
-				noty({
-					layout: 'center',
-					type: 'warning',
-					text: '<b>Error!</b><br>Please make sure a peak transmission month for malaria is selected!'
-				});
-				return false;
-			}
+			// create all malaria peak months
+			var malariaPeakMonths = [];
+			var mpsm = +$('.malaria-month-start-select').val();
+			var mpem = +$('.malaria-month-end-select').val();
+			do {
+				malariaPeakMonths.push(String(mpsm));
+				mpsm++;
+				if (mpsm === 13) mpsm = 1;
+			} while (mpsm !== mpem + 1);
 			
 			
 			// run the model and redirect to outputs page
@@ -170,8 +168,8 @@ var App = App || {};
 				schisto_coverage: Util.strToFloat($('.schisto-coverage-select').val()), // target % coverage for schisto
 				schisto_age_range: $('.schisto-age-select').val(), // schisto age range
 				schisto_month_num: $('.schisto-month-select').val(), // schisto distribution time
-				malaria_timing: malariaTiming, // malaria timing
-				malaria_peak_month_num: malariaMonthNum, // malaria peak transmission month number (1-Jan, 2-Feb, etc.)
+				malaria_timing: $('.malaria-timing-select').val(), // malaria timing
+				malaria_peak_month_num: malariaPeakMonths, // malaria peak transmission month number (1-Jan, 2-Feb, etc.)
 				malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()), // malaria transmission rate
 				irs: $('.irs-checkbox').is(':checked') ? 1 : 0, // whether IRS is an option
 				irs_coverage: Util.strToFloat($('.irs-coverage-select').val()), // IRS target % coverage

@@ -2,7 +2,10 @@ var App = App || {};
 
 (function() {
 	App.initOutput = function() {
-		if ($.isEmptyObject(App.outputs)) hasher.setHash('');
+		if ($.isEmptyObject(App.outputs)) {
+			hasher.setHash('');
+			return false;
+		}
 		
 		var schistoPrevInt = App.outputs.integrated.schisto;
 		var malariaPrevInt = App.outputs.integrated.malaria;

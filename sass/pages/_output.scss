@@ -1,0 +1,117 @@
+/* --- Output Sections --- */
+.output-container {
+  max-width: 720px;
+  padding-bottom: 50px;
+  .title { font-size: 1.4em; }
+  .description {
+    margin-top: 20px;
+    max-width: 700px;
+  }
+}
+.output-description {
+  padding: 20px 30px;
+  border-bottom: 1px solid #ccc;
+}
+.output-recommendation {
+  font-size: 1.7em;
+  margin-top: 10px;
+}
+.output-section {
+  padding: 20px 30px;
+  border-bottom: 1px solid #ccc;
+  text-align: center;
+  @include gradient(#fdfdfd, #e9e9e9);  
+}
+.output-table-container {
+  margin-top: 30px;
+  margin-left: -20px;
+  text-align: center;
+}
+.output-table {
+  display: inline-block;
+  text-align: center;
+  thead { font-size: 1.2em; }
+  tbody td:first-child {
+    position: relative;
+    top: 7px;
+    padding-right: 30px;
+    text-align: right;
+    font-size: 1.1em;
+  }
+  td:nth-child(2) {
+    padding-right: 35px;
+  }
+  tbody td:nth-child(n+2) {
+    font-size: 1.8em;
+    width: 100px;
+  }
+  tbody tr:nth-child(2) td:nth-child(n+2) {
+    font-weight: 700;
+  }
+}
+.output-chart-container {
+  text-align: center;
+  margin-top: 20px;
+}
+.output-bar-chart {
+  rect {
+    stroke: rgba(0,0,0,0.7);
+  }
+}
+.output-matrix-table-container {
+  position: relative;
+  margin-top: 20px;
+  text-align: center;
+  .row-label {
+    position: absolute;
+    top: 155px;
+    left: -25px;
+    @include rotate(-90deg);
+  }
+}
+.output-matrix-table {
+  display: inline-block;
+  text-align: center;
+  border-collapse: collapse;
+  margin-top: 5px;
+  thead tr { border-top: 1px solid #ccc; }
+  td {
+    position: relative;
+    padding: 5px 10px;
+    height: 25px;
+    border: 1px solid #ccc;
+    &:first-child {
+      position: relative;
+      top: 12px;
+      right: 5px;
+      width: 70px;
+      text-align: right;
+    }
+    &:nth-child(n+2) { width: 110px; }
+  }
+  tbody td:nth-child(n+2) {
+    font-size: 1.2em;
+  }
+  thead td:nth-child(4),
+  tr:nth-child(3) td:first-child {
+    font-weight: 600;
+  }
+  .selected-border-box {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(0,0,0,0.6);
+  }
+  .matrix-cell-perc {
+    font-size: 0.8em;
+  }
+}
+.output-strategy-table {
+  display: inline-block;
+  text-align: left;
+  td:first-child { width: 300px; }
+  td:nth-child(2) { text-align: right; }
+  thead { font-weight: 600; }
+}
