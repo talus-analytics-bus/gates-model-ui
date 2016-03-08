@@ -57,7 +57,7 @@ var App = App || {};
 		};
 		var validatePopAgeSum = function() {
 			var valid = checkPopAgeSum();
-			if (!valid) noty({layout: 'center', type: 'warning', text: '<b>Warning!</b><br>Age distributions must sum to 100%!'});
+			if (!valid) noty({text: '<b>Warning!</b><br>Age distributions must sum to 100%!'});
 			return valid;
 		};
 		
@@ -141,11 +141,7 @@ var App = App || {};
 		$('.input-submit-button').click(function() {
 			// validate that the population age distribution sums to 100%
 			if (validatePopAgeSum() === false) {
-				noty({
-					layout: 'center',
-					type: 'warning',
-					text: '<b>Error!</b><br>Please make sure the age distribution in the population section adds up to 100%!'
-				});
+				noty({text: '<b>Error!</b><br>Please make sure the age distribution in the population section adds up to 100%!'});
 				return false;
 			}
 
@@ -158,6 +154,12 @@ var App = App || {};
 				mpsm++;
 				if (mpsm === 13) mpsm = 1;
 			} while (mpsm !== mpem + 1);
+			
+			// check that more than 8 months havent been chosen
+			if (malariaPeakMonths.length > 8) {
+				noty({text: '<b>Error!</b><br>There may only be up to <b>8</b> peak transmission months for malaria.<br>There are currently <b>' + malariaPeakMonths.length + '</b> months chosen.'});
+				return false;
+			}
 			
 			
 			// run the model and redirect to outputs page
@@ -193,11 +195,7 @@ var App = App || {};
 				.await(function(error, outputWith, outputWithout) {
 					if (error) {
 						console.log('failed to complete all model runs');
-						noty({
-							layout: 'center',
-							type: 'warning',
-							text: '<b>Error!</b><br>There was an error running the model.'
-						});
+						noty({type: 'alert', text: '<b>Error!</b><br>There was an error running the model. Please contact the developers.'});
 						return false;
 					}
 					App.outputs = {
