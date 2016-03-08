@@ -4,7 +4,12 @@ var App = App || {};
 	App.outputs = {}; // stores all the outputs for a run
 	
 	App.initialize = function() {
-		$('.header-title').click(function() { hasher.setHash(''); });	
+		// clicking header in navbar navigates user to home screen
+		$('.header-title').click(function() { hasher.setHash(''); });
+		
+		// setting noty defaults
+		$.noty.defaults.layout = 'center';
+		$.noty.defaults.type = 'warning';
 	};
 	
 	App.runModel = function(inputs, callback) {
