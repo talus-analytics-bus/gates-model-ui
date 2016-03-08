@@ -22,8 +22,12 @@ start = time.time()
 
 "Initialize variables and constants"
 #Load from JS GUI
-for line in sys.stdin:
-    UI_INPUTS = json.loads(line)
+USE_GUI = True
+if USE_GUI:
+    for line in sys.stdin:
+        UI_INPUTS = json.loads(line)
+else:
+    pass
 
 #Show plots or not
 SHOW_PLOTS = False
