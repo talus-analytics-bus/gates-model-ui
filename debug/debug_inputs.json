@@ -4,21 +4,24 @@
   "pop3": 0.46,
   "schisto_coverage": 0.8,
   "schisto_age_range": [
-    "5-15"
+    
   ],
-  "schisto_month_num": "1",
+  "schisto_month_num": "5",
   "malaria_timing": "seasonal",
   "malaria_peak_month_num": [
-    "6",
-    "7",
-	"8",
-	"9"
+    "2",
+    "3",
+	"4",
+	"5",
+	"6",
+	"7",
+	"8"
   ],
   "malaria_rate": 20,
-  "irs": 1,
+  "irs": 0,
   "irs_coverage": 0.8,
-  "irs_month_num": "1",
-  "itn": 1,
+  "irs_month_num": "5",
+  "itn": 0,
   "itn_coverage": 0.8,
-  "itn_month_num": "1"
+  "itn_month_num": "5"
 }

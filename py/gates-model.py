@@ -90,33 +90,10 @@ N_PEOPLE = 1000    #Number of people to simulate
 N_DAYS_BURN_INIT = 60*3    #Baselineumber of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
 N_DAYS_BURN = N_DAYS_BURN_INIT #Duration of the burn in period (may vary)
 #N_PEOPLE = 10000    #Number of people to simulate
-N_DAYS = N_DAYS_BURN_INIT + 365*1      #Simulation runtime in days, not including the burn in period (which can vary in length)
 N_DAYS_SIM = 365*1 #Duration of the simulation
-#N_DAYS = 425      #Simulation runtime in days
-                    #To do: force this value to be fixed
-#if not ITN_CHECKED:
-#    T_NET = N_DAYS
-#else:
-#    T_NET = N_DAYS    #Number of days after simulation start to distribute nets
-#                    #Determine based on season start (30 days prior)
-#    
-#if not IRS_CHECKED:    
-#    T_SPRAY = N_DAYS
-#else:
-#    T_SPRAY = N_DAYS  #Number of days after simulation start to distribute spray
-#                    #Determine based on season start (30 days prior)
-#    
-#if len(PZQ_AGE_RANGE) == 0:
-#    T_PZQ = N_DAYS
-#else:
-#    T_PZQ = N_DAYS     #Number of days after simulation start to distribute PZQ
-#                    #Determine based on season start (4 months prior)   
     
 D_PROTECT = 20      #Number of days malaria treatment protects against re-
                     #infection (default is 20)
-START_MONTH = None  #Month of year to start simulation, indexed from 1 (i.e.,
-                    #January = 1). By default, 4 months before season start
-START_DAY = 0       #Day of month to start simulation, 0 by default
 F_ASYMP = 0.28      #The fraction of people infected with malaria who are
                     #asymptomatic (do not get treatment) (Mbah et al, 2014)
 F_TREATED = 0.8     #TO DO: Figure out a good way to initialize this value
@@ -519,14 +496,17 @@ class App( object ):
     """Class defining application parameters and output writing functions."""
     #Values
     cur_time_step = 0
+    is_malaria_season = [False]*N_DAYS_TOT
+    
 #    cur_p_malaria_baseline = INIT_P_MALARIA_BASELINE
-    is_malaria_season = [False]*N_DAYS
-    prevalence_schisto = \
-    {'0-4': [0.0]*N_DAYS, '5-15': [0.0]*N_DAYS, '16+': [0.0]*N_DAYS}
-    prevalence_malaria = \
-    {'0-4': [0.0]*N_DAYS, '5-15': [0.0]*N_DAYS, '16+': [0.0]*N_DAYS}   
-    prevalence_coinfection = \
-    {'0-4': [0.0]*N_DAYS, '5-15': [0.0]*N_DAYS, '16+': [0.0]*N_DAYS}    
+    def initialize_prevalence_counts( self ):
+        N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
+        self.prevalence_schisto = \
+        {'0-4': [0.0]*N_DAYS_TOT, '5-15': [0.0]*N_DAYS_TOT, '16+': [0.0]*N_DAYS_TOT}
+        self.prevalence_malaria = \
+        {'0-4': [0.0]*N_DAYS_TOT, '5-15': [0.0]*N_DAYS_TOT, '16+': [0.0]*N_DAYS_TOT}   
+        self.prevalence_coinfection = \
+        {'0-4': [0.0]*N_DAYS_TOT, '5-15': [0.0]*N_DAYS_TOT, '16+': [0.0]*N_DAYS_TOT}    
     
     #Functions
 #    def update_p_malaria_baseline(self):
@@ -570,12 +550,14 @@ class App( object ):
         n_people_5_15 = Person.age_bin_counts["5-15"]        
         n_people_16_plus = Person.age_bin_counts["16+"]        
         
+        N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
+		
         #Store the prevalence for each disease (y) vs. time (x)
-        x = range(0, N_DAYS)
+        x = range(0, N_DAYS_TOT)
         y = {}
-        y["schisto"] = {"0-4":[0]*N_DAYS,"5-15":[0]*N_DAYS,"16+":[0]*N_DAYS,"All":[0]*N_DAYS}
-        y["malaria"] = {"0-4":[0]*N_DAYS,"5-15":[0]*N_DAYS,"16+":[0]*N_DAYS,"All":[0]*N_DAYS}
-        y["coinfection"] = {"0-4":[0]*N_DAYS,"5-15":[0]*N_DAYS,"16+":[0]*N_DAYS,"All":[0]*N_DAYS}
+        y["schisto"] = {"0-4":[0]*N_DAYS_TOT,"5-15":[0]*N_DAYS_TOT,"16+":[0]*N_DAYS_TOT,"All":[0]*N_DAYS_TOT}
+        y["malaria"] = {"0-4":[0]*N_DAYS_TOT,"5-15":[0]*N_DAYS_TOT,"16+":[0]*N_DAYS_TOT,"All":[0]*N_DAYS_TOT}
+        y["coinfection"] = {"0-4":[0]*N_DAYS_TOT,"5-15":[0]*N_DAYS_TOT,"16+":[0]*N_DAYS_TOT,"All":[0]*N_DAYS_TOT}
 
         title_spaces = [""]*6
         spaces = [""]*2
@@ -587,7 +569,7 @@ class App( object ):
             title = ["Prevalence of schistosomiasis by age group vs. time (d)"] + title_spaces + ["Prevalence of malaria by age group vs. time (d)"] + title_spaces + ["Prevalence of coinfection by age group vs. time (d)"]
             writer.writerow(title)
             writer.writerow(headers)
-            for t in range(0, N_DAYS):
+            for t in range(0, N_DAYS_TOT):
                 # Schisto output #----------------------------------------------------#
                 y["schisto"]["0-4"][t] = self.prevalence_schisto["0-4"][t]
                 y["schisto"]["5-15"][t] = self.prevalence_schisto["5-15"][t]
@@ -674,8 +656,8 @@ class App( object ):
                 plt.legend();
             plt.grid(True);
             plt.xlabel("Time (d)");
-            plt.xticks(range(0,N_DAYS + N_DAYS_BURN,X_TICKS));
-            plt.xlim(0,N_DAYS)
+            plt.xticks(range(0,N_DAYS_TOT,X_TICKS));
+            plt.xlim(0,N_DAYS_TOT)
             plt.ylabel("Prevalence (fraction of population)")
             plt.ylim([0,1.1]);
             plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot + integration);
@@ -736,8 +718,9 @@ class App( object ):
     def export_prevalence ( self ):
         """Export average of last 10 prevalence values for malaria and schisto.
         Current exports the inputs that were passed times two."""
-        malaria_avg_prev = sum(self.prevalence_malaria["All"][(N_DAYS_BURN):(N_DAYS)])/(N_DAYS - N_DAYS_BURN)
-        schisto_avg_prev = sum(self.prevalence_schisto["All"][(N_DAYS_BURN):(N_DAYS)])/(N_DAYS - N_DAYS_BURN)
+        N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
+        malaria_avg_prev = sum(self.prevalence_malaria["All"][(N_DAYS_BURN):(N_DAYS_TOT)])/(N_DAYS_TOT - N_DAYS_BURN)
+        schisto_avg_prev = sum(self.prevalence_schisto["All"][(N_DAYS_BURN):(N_DAYS_TOT)])/(N_DAYS_TOT - N_DAYS_BURN)
 #        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}       
         output = {\
 #        "sim_start_date":self.sim_start_date.isoformat(),\
@@ -783,16 +766,15 @@ if __name__ == '__main__':
         if discontinuous_months or more_than_8_months:
             print "Error: Peak transmission months must be a continuous block of 8 or fewer months."
         
-        #The following section sets the start and end dates for different
-        #periods in the simulation.
-        
         #Get length of malaria season based on months input (for one year)
         season_start_date = datetime.date(CUR_YEAR, PEAK_TRANS_MONTHS[0], 1)
         season_end_date = season_start_date + (n_months)*ONE_MONTH
-        
         malaria_season_len_days = (season_end_date - season_start_date).days
         is_malaria_season_tmp = [False]*(10000)
         
+		#Set total days of run
+        N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN #note that N_DAYS_BURN may be changed below
+		
         #Set intervention times
         if USE_INTEGRATION:
             burn_end_date = season_start_date - ONE_MONTH*4
@@ -803,14 +785,15 @@ if __name__ == '__main__':
             spray_date = season_start_date - ONE_MONTH*1
 
             sim_start_date = burn_end_date
-            sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY            
+            sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY            
                             
         else: #Without integration: start burn-in two months before first intervention
             pzq_date = datetime.date(CUR_YEAR, PZQ_MONTH_NUM, 1)
             net_date = datetime.date(CUR_YEAR, ITN_MONTH_NUM, 1)
             spray_date = datetime.date(CUR_YEAR, IRS_MONTH_NUM, 1)
+            
             sim_start_date = min(pzq_date, net_date, spray_date)
-            sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY  
+            sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY  
 
             burn_end_date = sim_start_date        
             burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
@@ -833,10 +816,10 @@ if __name__ == '__main__':
         else:
             season_start_dates.append(season_start_date)
             season_end_dates.append(season_end_date)
-            
+        
+        #Build least of season start/end dates
         cur_season_start_date = datetime.date(CUR_YEAR, PEAK_TRANS_MONTHS[0], 1)
         cur_season_end_date = season_end_dates[0]
-        #Build least of season start/end dates
         while(True):
             next_season_start_date = cur_season_start_date + ONE_YEAR
             next_start_lesst_sim_end = next_season_start_date < sim_end_date
@@ -855,16 +838,15 @@ if __name__ == '__main__':
                 break
         
         #Update N_DAYS_BURN AND N_DAYS
-        N_DAYS = N_DAYS - N_DAYS_BURN
         N_DAYS_BURN = (burn_end_date - burn_start_date).days 
-        N_DAYS = N_DAYS + N_DAYS_BURN
+        N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
         
         #Set burn-in stop time
         app.t_burn_stop = N_DAYS_BURN
         app.burn_start_date = burn_start_date
         
         #Update sim end date
-        sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY        
+        sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY        
         
         #Error check: start and end date lists must be same length
         if len(season_start_dates) is not len (season_end_dates):
@@ -890,34 +872,14 @@ if __name__ == '__main__':
         #Spray
         app.t_spray = (spray_date - burn_start_date).days
             
-#        #Set season start and end times
-#        t_season_start = (season_start_date - burn_start_date).days
-#        t_season_end = (season_end_date - burn_start_date).days
-        
-#        #Setup variable that states whether each time step is in malaria season
-#        #or not in malaria season for the number of days the simulation should
-#        #be run
-#        season_start_date_tmp = season_start_date
-#        season_end_date_tmp = season_end_date
-#        is_malaria_season_tmp[t_season_start:t_season_end] = [True]*malaria_season_len_days
-#        while(True):        
-#            if t_season_end >= N_DAYS:
-#                break #STOP
-#            season_start_date_tmp += ONE_YEAR
-#            t_season_start = (season_start_date_tmp - burn_start_date).days
-#            if t_season_start >= N_DAYS:
-#                break #STOP
-#            season_end_date_tmp += ONE_YEAR
-#            t_season_end = (season_end_date_tmp - burn_start_date).days
-#            is_malaria_season_tmp[t_season_start:t_season_end] = [True]*malaria_season_len_days
-        app.is_malaria_season = is_malaria_season_tmp[0:N_DAYS]
+        app.is_malaria_season = is_malaria_season_tmp[0:N_DAYS_TOT]
         app.t_season_start = t_season_start;
         app.t_season_end = t_season_end;
     else: #constant (not seasonal): start burn-in two months before first intervention
         if USE_INTEGRATION:
             pzq_date = datetime.date(CUR_YEAR, PZQ_MONTH_NUM, 1)
             sim_start_date = pzq_date
-            sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY 
+            sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY 
             
             #Set burn-in stop time
             burn_end_date = sim_start_date
@@ -934,7 +896,7 @@ if __name__ == '__main__':
             net_date = datetime.date(CUR_YEAR, ITN_MONTH_NUM, 1)
             spray_date = datetime.date(CUR_YEAR, IRS_MONTH_NUM, 1)
             sim_start_date = min(pzq_date, net_date, spray_date)
-            sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY 
+            sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY 
             
             #Set burn-in stop time
             burn_end_date = sim_start_date
@@ -951,6 +913,9 @@ if __name__ == '__main__':
 
         app.t_season_start = -1
         app.t_season_end = -1
+
+    #Initialize prevalence counters
+    app.initialize_prevalence_counts()   
     
     #Create list of people
     for n in range(0, N_PEOPLE):
@@ -960,9 +925,9 @@ if __name__ == '__main__':
     vectors = Vectors(NUM_VEC)
     
     #For each time step:
-    for t in range(0, N_DAYS):
+    for t in range(0, N_DAYS_TOT):
        if not USE_GUI:
-           print "Running time step %i of %i" % (t + 1, N_DAYS)
+           print "Running time step %i of %i" % (t + 1, N_DAYS_TOT)
        
        # Initialization #-----------------------------------------------------#
        app.cur_time_step = t
