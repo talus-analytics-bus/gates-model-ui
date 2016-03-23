@@ -152,9 +152,8 @@ var App = App || {};
 			do {
 				malariaPeakMonths.push(String(mpsm));
 				mpsm++;
-				if (mpsm === 13) mpsm = 1;
+				if (mpsm === 13 && mpem !== 12) mpsm = 1;
 			} while (mpsm !== mpem + 1);
-			
 			// check that more than 8 months havent been chosen
 			if (malariaPeakMonths.length > 8) {
 				noty({text: '<b>Error!</b><br>There may only be up to <b>8</b> peak transmission months for malaria.<br>There are currently <b>' + malariaPeakMonths.length + '</b> months chosen.'});

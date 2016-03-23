@@ -12,6 +12,9 @@ var App = App || {};
 		var schistoPrevNoInt = App.outputs.separate.schisto;
 		var malariaPrevNoInt = App.outputs.separate.malaria;
 		
+		//DEBUG: Print output object
+		console.log(App.outputs);
+		
 		var data = [
 			{type: 'without integration', schisto: schistoPrevNoInt, malaria: malariaPrevNoInt},
 			{type: 'with integration', schisto: schistoPrevInt, malaria: malariaPrevInt}

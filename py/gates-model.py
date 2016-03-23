@@ -22,14 +22,16 @@ start = time.time()
 
 "Initialize variables and constants"
 #Load from JS GUI
-USE_GUI = True
+USE_GUI = False
+X_TICKS = 60 #number of days along x-axis ticks
+DEBUG_MODE = True
 if USE_GUI:
     for line in sys.stdin:
         UI_INPUTS = json.loads(line)
 else:
     JSON_FILE = open("debug/debug_inputs.json")    
     UI_INPUTS = json.load(JSON_FILE)
-    UI_INPUTS['use_integration'] = True
+    UI_INPUTS['use_integration'] = False
 
 #Show plots or not
 SHOW_PLOTS = True
@@ -85,29 +87,30 @@ ITN_MONTH_NUM = int(UI_INPUTS["itn_month_num"]) #Month nets are distributed in t
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
 N_PEOPLE = 1000    #Number of people to simulate
-N_DAYS_BURN = 60    #Number of days to burn in the model to steady-state values
-                    #To do: let it burn until values don't fluctuate
+N_DAYS_BURN_INIT = 60*3    #Baselineumber of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
+N_DAYS_BURN = N_DAYS_BURN_INIT #Duration of the burn in period (may vary)
 #N_PEOPLE = 10000    #Number of people to simulate
-N_DAYS = N_DAYS_BURN + 365 + 10      #Simulation runtime in days
+N_DAYS = N_DAYS_BURN_INIT + 365*1      #Simulation runtime in days, not including the burn in period (which can vary in length)
+N_DAYS_SIM = 365*1 #Duration of the simulation
 #N_DAYS = 425      #Simulation runtime in days
                     #To do: force this value to be fixed
-if not ITN_CHECKED:
-    T_NET = N_DAYS
-else:
-    T_NET = N_DAYS    #Number of days after simulation start to distribute nets
-                    #Determine based on season start (30 days prior)
-    
-if not IRS_CHECKED:    
-    T_SPRAY = N_DAYS
-else:
-    T_SPRAY = N_DAYS  #Number of days after simulation start to distribute spray
-                    #Determine based on season start (30 days prior)
-    
-if len(PZQ_AGE_RANGE) == 0:
-    T_PZQ = N_DAYS
-else:
-    T_PZQ = N_DAYS     #Number of days after simulation start to distribute PZQ
-                    #Determine based on season start (4 months prior)   
+#if not ITN_CHECKED:
+#    T_NET = N_DAYS
+#else:
+#    T_NET = N_DAYS    #Number of days after simulation start to distribute nets
+#                    #Determine based on season start (30 days prior)
+#    
+#if not IRS_CHECKED:    
+#    T_SPRAY = N_DAYS
+#else:
+#    T_SPRAY = N_DAYS  #Number of days after simulation start to distribute spray
+#                    #Determine based on season start (30 days prior)
+#    
+#if len(PZQ_AGE_RANGE) == 0:
+#    T_PZQ = N_DAYS
+#else:
+#    T_PZQ = N_DAYS     #Number of days after simulation start to distribute PZQ
+#                    #Determine based on season start (4 months prior)   
     
 D_PROTECT = 20      #Number of days malaria treatment protects against re-
                     #infection (default is 20)
@@ -127,17 +130,36 @@ BREAKPOINT_1 = F_SYMP_TREATED #Used when randomly binning malaria infectives
 BREAKPOINT_2 = F_SYMP_TREATED + F_SYMP_UNTREATED
 
 D_MALARIA = 5 #Malaria infection lasts about 5 days (Mbah et al, 2014)
-D_ASYMP_MALARIA = 360
-INIT_P_MALARIA_BASELINE =  1 - math.exp(-1.0 * float(N_BASELINE_INF_BITES) * (1 / 365.0)) #Baseline daily prob. of getting malaria.
+D_PAT_ASYMP_MALARIA = 180 #Patent malaria infection lasts 180 days (Mbah et al 2014)
+D_SUBPAT_ASYMP_MALARIA = 180 #Subpatent malaria infection lasts 180 days (Mbah et al 2014)
+INIT_P_MALARIA_BASELINE =  1.0 - math.exp(-1.0 * float(N_BASELINE_INF_BITES) * (1 / 365.0)) #Baseline daily prob. of getting malaria.
 F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Mbah et al, 2014)
-P_MALARIA_SEASONAL_MOD = 5  #Factor by which the daily prob. of getting malaria
+P_MALARIA_SEASONAL_MOD = 5.0  #Factor by which the daily prob. of getting malaria
                             #increases during malaria season (Kelly-Hope and McKenzie 2009; based on difference between places with 7 or more months of rain vs. 6 or fewer)
 
 #TO DO: Justin figuring out these values
-P_SCHISTO = 0.1 #Daily prob. of getting schistosomiasis, Justin working on it
+P_SCHISTO = 0.9 #Fraction of people that get schisto infections (applied at model run initialization)
 NET_EFFICACY = 0.9 #(p. 9 of Shaukat et al 2010)
 SPRAY_EFFICACY = 0.9 #(p. 9 of Shaukat et al 2010)
 
+#Vector-related constants
+#Number of susceptible vectors (assume 4% are infected at the start
+#of the simulation)
+F_INF = 0.04 #ASK JUSTIN FOR CITATION
+F_SUS = 1 - F_INF
+TIME_DELTA = 1.0 #days, 1 by default (model time step is 1 day)
+a = 0.67 #bites per day on humans by a female vector (Mbah et al 2014)
+b = 0.25 #probability of successful human inoculation upon an infectious bite (Mbah et al 2014)
+MU_M = 0.125 #mosquito natural mortality rate (Mbah et al, 2014)
+T_INCUB = 10.0 #mosquito incubation period, days (Mbah et al, 2014)
+PSI = math.exp(-1.0 * MU_M * T_INCUB) #fraction of mosquitos that survive the incubation period and become infectious (Mbah et al, 2014)
+I_M_0 = 0.04 #percent of vector population infected with malaria at time zero
+#Total number of vectors (assumed constant)
+NUM_VEC = N_PEOPLE * float(N_BASELINE_INF_BITES) / (I_M_0 * a * b)
+C_D = 0.3 #probability of vector infection upon biting a human in a state of untreated symptomatic malaria (Mbah et al 2014)
+C_A = 0.1 #probability of vector infection upon biting a human in a state of asymp patent malaria (Mbah et al 2014)
+C_U = 0.05 ##probability of vector infection upon biting a human in a state of asymp subpatent malaria (Mbah et al 2014)
+        
 #Miscellaneous global constants
 ONE_YEAR =  date.relativedelta(years=1)
 ONE_MONTH = date.relativedelta(months=1)
@@ -156,17 +178,23 @@ class Person( object ):
     def __init__( self ):
         Person.count += 1        
         self.id = Person.count - 1
-        
+        runif = random.random
+		
         # Malaria parameters #------------------------------------------------#
         self.has_malaria = False #do they have malaria?
         self.is_symptomatic = False #if they have malaria, is it symptomatic?
-        self.days_to_asymp_malaria = -1 #days until asymptomatic malaria start
-        self.asymp_malaria_days_left = -1 #days left of asymptomatic malaria
+        self.days_to_asymp_malaria = -1 #days until patent asymptomatic malaria start
+        self.pat_malaria_days_left = -1 #days left of patent asymptomatic malaria
+        self.subpat_malaria_days_left = -1 #days left of subpatent asymptomatic malaria
         self.symp_malaria_days_left = -1 #days left of symptomatic malaria
         self.protection_days_left = -1 #days left of malaria protection
         
         # Schisto parameters #------------------------------------------------#
-        self.has_schisto = False #do they have schistosomiasis?
+        get_schisto_runif = runif()
+        if get_schisto_runif < P_SCHISTO:
+            self.has_schisto = True #do they have schistosomiasis?
+        else:
+            self.has_schisto = False
         self.has_PZQ = False #were they given PZQ at T_PZQ?
 
         # Intervention parameters #-------------------------------------------#
@@ -175,7 +203,7 @@ class Person( object ):
 
         # Age parameters #----------------------------------------------------#
         #Determine age bin for this person:
-        age_bin_runif = random.random()
+        age_bin_runif = runif()
         breakpoint_under_5 = F_AGE_UNDER_5
         breakpoint_5_to_15 = F_AGE_UNDER_5 + F_AGE_5_TO_15
         if age_bin_runif < breakpoint_under_5:
@@ -190,26 +218,34 @@ class Person( object ):
             
 class People( list ):
     """Class defining the list that holds people in the simulation."""
+    def __init__( self ):
+        self.D = 0.0
+        self.A = 0.0
+        self.U = 0.0
         
-    def update_interventions_and_infections( self, app):
+    def update_interventions_and_infections( self, app, vectors):
         """Once per time step, check whether each person gets malaria and/or
         schisto. Also, check whether a person's malaria timer has ended; if so,
         flag them as no longer having malaria."""
         t = app.cur_time_step
-        cur_p_malaria_baseline = app.cur_p_malaria_baseline
         runif = random.random
+        #Update counts
+        self.D = 0.0
+        self.A = 0.0
+        self.U = 0.0
         for n in range(0, Person.count):
-            cur_person = self[n];
-            
+            cur_person = self[n]
             # Timers #--------------------------------------------------------#
             #Reduce the number of days of protection left from ACT by 1. Do the 
             #same thing for the number of days of malaria sickness
-            cur_person.protection_days_left -= 1;
-            cur_person.symp_malaria_days_left -= 1;            
-            cur_person.asymp_malaria_days_left -= 1;            
             cur_person.days_to_asymp_malaria -= 1;            
+            cur_person.pat_malaria_days_left -= 1;            
+            cur_person.subpat_malaria_days_left -= 1;            
+            cur_person.symp_malaria_days_left -= 1;            
+            cur_person.protection_days_left -= 1;
             
             # Interventions #-------------------------------------------------#
+            #Apply interventions at appropriate times
             if t == app.t_net and ITN_CHECKED:
                 #Randomly choose people to get nets and adjust malaria probability
                 get_net_runif = runif()
@@ -238,20 +274,25 @@ class People( list ):
                 #"has_malaria" flag also.
             #Note: Symptomatic malaria always lasts 5 days, and asymptomatic
                 #malaria always lasts 360 days
-            asymp_malaria_starts_today = cur_person.days_to_asymp_malaria == 0
-            asymp_malaria_ends_today = cur_person.asymp_malaria_days_left == 0
             symp_malaria_ends_today = cur_person.symp_malaria_days_left == 0    
+            pat_malaria_starts_today = cur_person.days_to_asymp_malaria == 0
+            pat_malaria_ends_today = cur_person.pat_malaria_days_left == 0
+            subpat_malaria_ends_today = cur_person.subpat_malaria_days_left == 0
             
-            #UNTREATED SYMPTOMATIC: Transitioning from symp to asymp malaria
+            #UNTREATED SYMPTOMATIC: Transitioning from symp to asymp patent malaria
             #If person is switching from symptomatic to asymptomatic malaria
             #today, update flags accordingly
-            if asymp_malaria_starts_today:
+            if pat_malaria_starts_today:
                 #Set their symptomatic flag to false
                 cur_person.is_symptomatic = False
                 #Ensure their has malaria flag is still true
                 cur_person.has_malaria = True
-                #Set days of asymptomatic malaria remaining
-                cur_person.asymp_malaria_days_left = D_ASYMP_MALARIA                
+                #Set days of patent malaria remaining
+                cur_person.pat_malaria_days_left = D_PAT_ASYMP_MALARIA  
+                
+                #Update counts
+                self.D -= 1 #goes from untreat symp to patent
+                self.A += 1
             
             #TREATED SYMPTOMATIC: Transition from symp malaria to no malaria
             #Else, if person's symptomatic malaria ends today and they had protection
@@ -263,14 +304,27 @@ class People( list ):
                 cur_person.is_symptomatic = False
             
             #UNTREATED SYMPTOMATIC and UNTREATED ASYMPTOMATIC: Transition from
-            #asymp malaria to no malaria
-            #Else, if person's asymptomatic malaria ends today, update flags
-            #accordingly
-            elif asymp_malaria_ends_today:
+            #patent to subpatent
+            elif pat_malaria_ends_today:
+                #Set has malaria flag to false
+                cur_person.has_malaria = True
+                #Set their symptomatic flag to false
+                cur_person.is_symptomatic = False
+                #Start their subpatent malaria infection timer
+                cur_person.subpat_malaria_days_left = D_SUBPAT_ASYMP_MALARIA
+                #Update counts
+                self.A -= 1 #goes from patent to subpatent
+                self.U += 1
+                
+            #Transition from subpatent to no infection:
+            elif subpat_malaria_ends_today:
                 #Set has malaria flag to false
                 cur_person.has_malaria = False
                 #Set their symptomatic flag to false
                 cur_person.is_symptomatic = False
+                
+                #Decrease count
+                self.U -= 1 #Goes from subpatent to clear
             
             #If the person is currently protected from malaria by having
             #received ACT, skip them. Otherwise, continue.            
@@ -278,13 +332,20 @@ class People( list ):
             if not is_protected:
                 #Check the person's intervention and schisto flags and modify
                 #their P_MALARIA value accordingly
-                cur_p_malaria = cur_p_malaria_baseline
+#                cur_p_malaria = cur_p_malaria_baseline
+                cur_AEIR = app.AEIR
+                if app.is_malaria_season[t]:
+                    cur_AEIR *= P_MALARIA_SEASONAL_MOD
                 if cur_person.has_schisto:
-                    cur_p_malaria *= F_SCHISTO_COINFECTION_MOD
+                    # cur_p_malaria *= F_SCHISTO_COINFECTION_MOD
+                    cur_AEIR *= F_SCHISTO_COINFECTION_MOD
                 if cur_person.has_net:
-                    cur_p_malaria *= (1 - NET_EFFICACY)
+                    # cur_p_malaria *= (1 - NET_EFFICACY)
+                    cur_AEIR *= (1 - NET_EFFICACY)
                 if cur_person.has_spray:
-                    cur_p_malaria *= (1 - SPRAY_EFFICACY)
+                    # cur_p_malaria *= (1 - SPRAY_EFFICACY)
+                    cur_AEIR *= (1 - SPRAY_EFFICACY)
+                cur_p_malaria = 1.0 - math.exp(-1.0 * cur_AEIR * (1.0 / 365.0))
                 if cur_p_malaria > 1:
                     cur_p_malaria = 1
                     
@@ -293,6 +354,9 @@ class People( list ):
                 if get_malaria_runif < cur_p_malaria:
                     #If the current person already has asymptomatic malaria,
                     #or if they don't have malaria yet:
+                    has_pat_malaria = cur_person.pat_malaria_days_left > 0
+                    has_subpat_malaria = cur_person.subpat_malaria_days_left > 0
+                    
                     has_asymp_malaria = cur_person.has_malaria and not cur_person.is_symptomatic
                     if has_asymp_malaria or not cur_person.has_malaria:                    
                         #Set the person's malaria flag to true
@@ -313,7 +377,14 @@ class People( list ):
                             
                             #Don't get asymp malaria:
                             cur_person.days_to_asymp_malaria = -1
-                            cur_person.asymp_malaria_days_left = -1
+                            cur_person.pat_malaria_days_left = -1
+                            cur_person.subpat_malaria_days_left = -1
+                            
+                            #Update counters
+                            if has_pat_malaria: #went from pat to treated
+                                self.A -= 1
+                            elif has_subpat_malaria: #went from subpat to treated
+                                self.U -= 1
                             
                         #SYMPTOMATIC, UNTREATED
                         elif symp_treat_runif >= BREAKPOINT_1 and symp_treat_runif < BREAKPOINT_2:
@@ -324,7 +395,17 @@ class People( list ):
                             
                             #Later, get asymp malaria:
                             cur_person.days_to_asymp_malaria = D_MALARIA
-                            cur_person.asymp_malaria_days_left = -1
+                            cur_person.pat_malaria_days_left = -1
+                            cur_person.subpat_malaria_days_left = -1
+                            
+                            #Update counters
+                            self.D += 1 #went from ??? to untreat symp
+                            #Update counters
+                            if has_pat_malaria: #left patent
+                                self.A -= 1
+                            elif has_subpat_malaria: #left subpatent
+                                self.U -= 1
+                            
                         #ASYMPTOMATIC, UNTREATED
                         else: 
                             #Don't get symp malaria:                            
@@ -334,7 +415,16 @@ class People( list ):
                             
                             #Instantly get asymp malaria:
                             cur_person.days_to_asymp_malaria = -1
-                            cur_person.asymp_malaria_days_left = D_ASYMP_MALARIA
+                            cur_person.pat_malaria_days_left = D_PAT_ASYMP_MALARIA
+                            cur_person.subpat_malaria_days_left = -1
+                            
+                            #Increment count
+                            if has_pat_malaria: #from pat to pat
+                                pass
+                            elif has_subpat_malaria: #from subpat to pat
+                                self.A += 1
+                                self.U -= 1
+                            
                     #If the person already has untreated symptomatic malaria:
                     else:
                         #Keep them in the symptomatic, untreated bin and
@@ -346,14 +436,8 @@ class People( list ):
                         
                         #Later, get asymp malaria:
                         cur_person.days_to_asymp_malaria = D_MALARIA
-                        cur_person.asymp_malaria_days_left = -1
-                        
-                        
-            # Schisto infection #---------------------------------------------#
-            if not cur_person.has_schisto and not cur_person.has_PZQ:
-                get_schisto_runif = runif()
-                if get_schisto_runif < P_SCHISTO:
-                    cur_person.has_schisto = True
+                        cur_person.pat_malaria_days_left = -1
+                        cur_person.subpat_malaria_days_left = -1
             
             # Prevalence values #---------------------------------------------#
             #Update the prevalence vs. time series
@@ -369,6 +453,20 @@ class People( list ):
                 cur_age_bin = cur_person.age_bin
                 cur_n_people = Person.age_bin_counts[cur_age_bin]
                 app.prevalence_coinfection[cur_age_bin][t] += 1.0/cur_n_people
+            
+            #D: Untreat symp
+            if cur_person.is_symptomatic and cur_person.protection_days_left < 0:
+                self.D += 1
+            #A: Patent
+            elif cur_person.pat_malaria_days_left > 0:
+                self.A += 1
+            #U: Subpatent
+            elif cur_person.subpat_malaria_days_left > 0:
+                self.U += 1
+        #Update vectors
+        vectors.update_vectors(people)
+        updated_I_m = vectors.inf / (vectors.inf + vectors.sus)
+        app.AEIR = updated_I_m * a * b * NUM_VEC / N_PEOPLE
 
 class Vectors( object ):
     """Class that defines the vector pool. In this model, the malaria vector
@@ -376,11 +474,8 @@ class Vectors( object ):
     malaria or infected (I) with malaria."""
     
     def __init__( self , NUM_VEC ):
-               
-        #Number of susceptible vectors (assume 4% are infected at the start
-        #of the simulation)
-        F_INF = 0.04 #ASK JUSTIN
-        F_SUS = 1 - F_INF
+        
+        #Number of susceptible vectors        
         self.sus = NUM_VEC * F_SUS    
     
         #Number of infected vectors
@@ -395,32 +490,36 @@ class Vectors( object ):
         #Initialize variables
         sus = self.sus
         inf = self.inf
-        
-        #Constants
-        time_delta = 1.0 #days, 1 by default (model time step is 1 day)
-        Lambda_M_vec = 1 #constant, will be replaced with equation from (Mbah et al, 2014)
-        mu_M = 0.125 #mosquito natural mortality rate (Mbah et al, 2014)
-        t_incub = 10.0 #mosquito incubation period (Mbah et al, 2014)
-        psi = math.exp(-1.0 * mu_M * t_incub) #fraction of mosquitos that survive the incubation period and become infectious (Mbah et al, 2014)
-        
+                
+        #constant, will be replaced with equation from (Mbah et al, 2014)
+        D = people.D #symp untreat
+        A = people.A #patent
+        U = people.U #subpatent
+        total_inf_people = D + A + U
+        D_frac = D / total_inf_people
+        A_frac = A / total_inf_people
+        U_frac = U / total_inf_people
+        Lambda_M_vec = a * (C_D * D_frac + C_A * A_frac + C_U * U_frac)
+                
         #Update differential equations (Mbah et al, 2014)
-        dS_M = time_delta * ((mu_M * (sus + inf)) - (Lambda_M_vec * sus * psi) - (mu_M * sus))
-        dI_M = time_delta * ((Lambda_M_vec * sus * psi) - (mu_M * inf))
+        dS_M = TIME_DELTA * ((MU_M * (sus + inf)) - (Lambda_M_vec * sus * PSI) - (MU_M * sus))
+        dI_M = TIME_DELTA * ((Lambda_M_vec * sus * PSI) - (MU_M * inf))
         
         #Update variables
         self.sus += dS_M
         self.inf += dI_M
         
-    def debug_vectors( self ):
-        for n in range(0,1000):
-            self.update_vectors()
+    def debug_vectors( self, people ):
+        for n in range(0,60):
+            self.update_vectors(people)
+        
 #        print (self.inf/(self.inf + self.sus))
 
 class App( object ):
     """Class defining application parameters and output writing functions."""
     #Values
     cur_time_step = 0
-    cur_p_malaria_baseline = INIT_P_MALARIA_BASELINE
+#    cur_p_malaria_baseline = INIT_P_MALARIA_BASELINE
     is_malaria_season = [False]*N_DAYS
     prevalence_schisto = \
     {'0-4': [0.0]*N_DAYS, '5-15': [0.0]*N_DAYS, '16+': [0.0]*N_DAYS}
@@ -430,28 +529,31 @@ class App( object ):
     {'0-4': [0.0]*N_DAYS, '5-15': [0.0]*N_DAYS, '16+': [0.0]*N_DAYS}    
     
     #Functions
-    def update_p_malaria_baseline(self):
-        """Modifies the baseline daily probability of being infected with
-        malaria based on (1) seasonality and (2) vector pressure (to-do)."""
-        #If the current time step is malaria season and the previous one
-        #was not, multiply the daily probability of getting malaria by the
-        #seasonal modifier.
-        cur_time_step = self.cur_time_step
-        prev_time_step = cur_time_step - 1
-        is_malaria_season = self.is_malaria_season
+#    def update_p_malaria_baseline(self):
+#        """Modifies the baseline daily probability of being infected with
+#        malaria based on (1) seasonality and (2) vector pressure (to-do)."""
+#        #If the current time step is malaria season and the previous one
+#        #was not, multiply the daily probability of getting malaria by the
+#        #seasonal modifier.
+#        cur_time_step = self.cur_time_step
+#        prev_time_step = cur_time_step - 1
+#        is_malaria_season = self.is_malaria_season
+#        
+#        #Note: the model assumes the time step before the FIRST time step
+#        #(i.e., time step -1) is NOT malaria season
+#        if prev_time_step == -1:
+#            self.cur_p_malaria_baseline = INIT_P_MALARIA_BASELINE
+#        elif is_malaria_season[cur_time_step] and not is_malaria_season[prev_time_step]:
+#            self.cur_p_malaria_baseline *= P_MALARIA_SEASONAL_MOD
+#        elif not is_malaria_season[cur_time_step] and is_malaria_season[prev_time_step]:
+#            self.cur_p_malaria_baseline /= P_MALARIA_SEASONAL_MOD
+#            
+#        #TO DO: Update p_malaria based on vector pressure. Justin and/or the
+#        #GWU team will figure out the best way to approach this.
+    def __init__( self ):
+        #Initialize baseline AEIR (for time zero)
+        self.AEIR = float(N_BASELINE_INF_BITES)
         
-        #Note: the model assumes the time step before the FIRST time step
-        #(i.e., time step -1) is NOT malaria season
-        if prev_time_step == -1:
-            self.cur_p_malaria_baseline = INIT_P_MALARIA_BASELINE
-        elif is_malaria_season[cur_time_step] and not is_malaria_season[prev_time_step]:
-            self.cur_p_malaria_baseline *= P_MALARIA_SEASONAL_MOD
-        elif not is_malaria_season[cur_time_step] and is_malaria_season[prev_time_step]:
-            self.cur_p_malaria_baseline /= P_MALARIA_SEASONAL_MOD
-            
-        #TO DO: Update p_malaria based on vector pressure. Justin and/or the
-        #GWU team will figure out the best way to approach this.
-            
     def write_prevalence( self ):
         #Writes prevalence values and graphs them for school-age children (5-15)
     
@@ -538,48 +640,52 @@ class App( object ):
             plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
             plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
             plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
-            plt.legend();
-
-            #PZQ
-            plt.plot(self.t_pzq,0.5,'.');
-            plt.text(self.t_pzq,0.5,"t_pzq",rotation=45)
             
-            #Nets
-            plt.plot(self.t_net,0.6,'.');
-            plt.text(self.t_net,0.6,"t_net",rotation=45);
-            
-            #Sprays
-            plt.plot(self.t_spray,0.7,'.');
-            plt.text(self.t_spray,0.7,"t_spray",rotation=45);       
-            
-            #Season start
-            plt.plot(self.t_season_start,0.8,'.');
-            plt.text(self.t_season_start,0.8,"t_seas_start",rotation=45);       
-            
-            #Season start
-            plt.plot(self.t_season_end,0.8,'.');
-            plt.text(self.t_season_end,0.8,"t_seas_end",rotation=45);
-
-            
+            if DEBUG_MODE:
+                y_shift = 0.0
+                #PZQ
+                plt.plot(self.t_pzq,0.5,'.');
+                plt.text(self.t_pzq,0.5 + y_shift,"t_pzq: " + pzq_date.isoformat(),rotation=45)
+                
+                #Nets
+                plt.plot(self.t_net,0.6,'.');
+                plt.text(self.t_net,0.6 + y_shift,"t_net: " + net_date.isoformat(),rotation=45);
+                
+                #Sprays
+                plt.plot(self.t_spray,0.7,'.');
+                plt.text(self.t_spray,0.7 + y_shift,"t_spray: " + spray_date.isoformat(),rotation=45);       
+                
+                if not self.t_season_start == -1:
+                    for cur_season in range(0,len(self.t_season_start)):
+                        cur_t_start = self.t_season_start[cur_season]
+                        cur_t_end = self.t_season_end[cur_season]
+                        
+                        cur_season_start_date = self.burn_start_date + ONE_DAY*cur_t_start
+                        cur_season_end_date = self.burn_start_date + ONE_DAY*cur_t_end
+                        
+                        #Season start
+                        plt.plot(cur_t_start,0.8,'.');
+                        plt.text(cur_t_start,0.8 + y_shift,"t_seas_start: " + cur_season_start_date.isoformat(),rotation=45);       
+                        
+                        #Season start
+                        plt.plot(cur_t_end,0.8,'.');
+                        plt.text(cur_t_end - .5,0.8 + y_shift,"t_seas_end: " + cur_season_end_date.isoformat(),rotation=45);
+            else:
+                plt.legend();
             plt.grid(True);
             plt.xlabel("Time (d)");
+            plt.xticks(range(0,N_DAYS + N_DAYS_BURN,X_TICKS));
+            plt.xlim(0,N_DAYS)
             plt.ylabel("Prevalence (fraction of population)")
             plt.ylim([0,1.1]);
             plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot + integration);
-            
-            #To do: label key times
-            y=[0.5, 3.77284,3.52623,3.51468,3.02199]
-            x=[0.15, 0.3, 0.45, 0.6, 0.75]
-            y = [0.5]
-            x = (self.t_pzq)
-            n=["t_PZQ"] #value
 #            
-##            fig, ax = plt.subplots()
-##            plt.scatter(x, y)
-#            plt.scatter(x[0],y[0])
-#            plt.annotate(n[0], (x[0],y[0]))
-##            for i, txt in enumerate(n):
-##                plt.annotate(txt, (x[i],y[i]))
+    ##            fig, ax = plt.subplots()
+    ##            plt.scatter(x, y)
+    #            plt.scatter(x[0],y[0])
+    #            plt.annotate(n[0], (x[0],y[0]))
+    ##            for i, txt in enumerate(n):
+    ##                plt.annotate(txt, (x[i],y[i]))
             
             plt.savefig('output/output_graph_all_ages' + fn_int + '.png', format='png', dpi=dpi)
             plt.close()
@@ -633,7 +739,19 @@ class App( object ):
         malaria_avg_prev = sum(self.prevalence_malaria["All"][(N_DAYS_BURN):(N_DAYS)])/(N_DAYS - N_DAYS_BURN)
         schisto_avg_prev = sum(self.prevalence_schisto["All"][(N_DAYS_BURN):(N_DAYS)])/(N_DAYS - N_DAYS_BURN)
 #        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}       
-        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev, "t_pzq":self.t_pzq, "t_net":self.t_net, "t_spray":self.t_spray, "use_integration":USE_INTEGRATION, "F_PZQ_TARGET_COV":F_PZQ_TARGET_COV}       
+        output = {\
+#        "sim_start_date":self.sim_start_date.isoformat(),\
+#        "sim_end_date":self.sim_end_date.isoformat(),\
+        "vector":self.vec_inf,\
+#        "is_seasonal":self.is_malaria_season,\
+        "schisto":schisto_avg_prev,\
+        "malaria":malaria_avg_prev,\
+        "t_pzq":self.t_pzq,\
+        "t_net":self.t_net,\
+        "t_spray":self.t_spray,\
+        "use_integration":USE_INTEGRATION,\
+        "F_PZQ_TARGET_COV":F_PZQ_TARGET_COV\
+        }       
         print json.dumps(output)
         return output
         
@@ -643,10 +761,14 @@ if __name__ == '__main__':
     #Currently assumes that no one is infected at time zero
     app = App()
     people = People()
-    update_p_malaria_baseline = app.update_p_malaria_baseline
+#    update_p_malaria_baseline = app.update_p_malaria_baseline
     update_interventions_and_infections = people.update_interventions_and_infections
     append = people.append    
 
+    #Initialize lists of season start and end dates
+    season_start_dates = list()
+    season_end_dates = list()
+    
     #Intervention timing calculations
     if MALARIA_TRANS_PATTERN == "seasonal":
         #Error checking
@@ -666,17 +788,15 @@ if __name__ == '__main__':
         
         #Get length of malaria season based on months input (for one year)
         season_start_date = datetime.date(CUR_YEAR, PEAK_TRANS_MONTHS[0], 1)
-        season_end_date = season_start_date + (n_months)*ONE_MONTH - ONE_DAY
+        season_end_date = season_start_date + (n_months)*ONE_MONTH
         
         malaria_season_len_days = (season_end_date - season_start_date).days
         is_malaria_season_tmp = [False]*(10000)
         
         #Set intervention times
         if USE_INTEGRATION:
-            burn_start_date = season_start_date - ONE_MONTH*6
             burn_end_date = season_start_date - ONE_MONTH*4
-            #Set burn-in stop time
-            app.t_burn_stop = (burn_end_date - burn_start_date).days
+            burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
             
             pzq_date = season_start_date - ONE_MONTH*4
             net_date = season_start_date - ONE_MONTH*1
@@ -684,24 +804,84 @@ if __name__ == '__main__':
 
             sim_start_date = burn_end_date
             sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY            
-            
+                            
         else: #Without integration: start burn-in two months before first intervention
             pzq_date = datetime.date(CUR_YEAR, PZQ_MONTH_NUM, 1)
             net_date = datetime.date(CUR_YEAR, ITN_MONTH_NUM, 1)
             spray_date = datetime.date(CUR_YEAR, IRS_MONTH_NUM, 1)
             sim_start_date = min(pzq_date, net_date, spray_date)
-            sim_end_date = + N_DAYS*ONE_DAY
+            sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY  
 
-            burn_start_date = sim_start_date - ONE_MONTH*2
             burn_end_date = sim_start_date        
-            #Set burn-in stop time
-            app.t_burn_stop = (burn_end_date - burn_start_date).days
+            burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
             
             #If they started the first intervention in the middle of the
             #malaria season, burn the model in during malaria season
-            if (sim_start_date >= season_start_date) and (sim_start_date < season_end_date):
-                is_malaria_season_tmp[0:app.t_burn_stop] = [True]*app.t_burn_stop
+#            if (sim_start_date >= season_start_date) and (sim_start_date < season_end_date):
+#                is_malaria_season_tmp[0:app.t_burn_stop] = [True]*app.t_burn_stop
                           
+        #Season dates#--------------------------------------------------------#
+        #If sim start date is in the season, set the first season start date
+        #to the beginning of the burn-in period, and finish the rest of the
+        #season when the simulation starts
+        sim_starts_in_season = sim_start_date.month in PEAK_TRANS_MONTHS
+        if sim_starts_in_season:
+            months_to_add =  PEAK_TRANS_MONTHS.index(sim_start_date.month)
+            season_start_dates.append(sim_start_date - ONE_MONTH*months_to_add)
+            burn_start_date = season_start_dates[0] - ONE_DAY*N_DAYS_BURN
+            season_end_dates.append(season_end_date)
+        else:
+            season_start_dates.append(season_start_date)
+            season_end_dates.append(season_end_date)
+            
+        cur_season_start_date = datetime.date(CUR_YEAR, PEAK_TRANS_MONTHS[0], 1)
+        cur_season_end_date = season_end_dates[0]
+        #Build least of season start/end dates
+        while(True):
+            next_season_start_date = cur_season_start_date + ONE_YEAR
+            next_start_lesst_sim_end = next_season_start_date < sim_end_date
+            if next_start_lesst_sim_end:
+                season_start_dates.append(next_season_start_date)
+                cur_season_start_date += ONE_YEAR
+            else:
+                break
+            next_season_end_date = cur_season_end_date + ONE_YEAR
+            next_end_lesst_sim_end = next_season_end_date < sim_end_date
+            if next_end_lesst_sim_end:
+                season_end_dates.append(next_season_end_date)
+                cur_season_end_date += ONE_YEAR
+            else:
+                season_end_dates.append(sim_end_date)
+                break
+        
+        #Update N_DAYS_BURN AND N_DAYS
+        N_DAYS = N_DAYS - N_DAYS_BURN
+        N_DAYS_BURN = (burn_end_date - burn_start_date).days 
+        N_DAYS = N_DAYS + N_DAYS_BURN
+        
+        #Set burn-in stop time
+        app.t_burn_stop = N_DAYS_BURN
+        app.burn_start_date = burn_start_date
+        
+        #Update sim end date
+        sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY        
+        
+        #Error check: start and end date lists must be same length
+        if len(season_start_dates) is not len (season_end_dates):
+            print "Error: season start and end date lists must be same length"
+        
+        #Build is_malaria_season: bool vec that says whether a day of the sim is malaria season or not
+        t_season_start = list()
+        t_season_end = list()
+        for cur_season in range(0,len(season_start_dates)):
+            cur_start = season_start_dates[cur_season]
+            cur_end = season_end_dates[cur_season]
+            idx_start = (cur_start - burn_start_date).days
+            idx_end = (cur_end - burn_start_date).days
+            is_malaria_season_tmp[idx_start:idx_end] = [True]*(idx_end-idx_start)
+            t_season_start.append(idx_start)
+            t_season_end.append(idx_end)
+    
         #Set intervention times
         #PZQ
         app.t_pzq = (pzq_date - burn_start_date).days
@@ -710,51 +890,57 @@ if __name__ == '__main__':
         #Spray
         app.t_spray = (spray_date - burn_start_date).days
             
-        #Set season start and end times
-        t_season_start = (season_start_date - burn_start_date).days
-        t_season_end = (season_end_date - burn_start_date).days
+#        #Set season start and end times
+#        t_season_start = (season_start_date - burn_start_date).days
+#        t_season_end = (season_end_date - burn_start_date).days
         
-        #Setup variable that states whether each time step is in malaria season
-        #or not in malaria season for the number of days the simulation should
-        #be run
-        season_start_date_tmp = season_start_date
-        season_end_date_tmp = season_end_date
-        is_malaria_season_tmp[t_season_start:t_season_end] = [True]*malaria_season_len_days
-        while(True):        
-            if t_season_end >= N_DAYS:
-                break #STOP
-            season_start_date_tmp += ONE_YEAR
-            t_season_start = (season_start_date_tmp - burn_start_date).days
-            if t_season_start >= N_DAYS:
-                break #STOP
-            season_end_date_tmp += ONE_YEAR
-            t_season_end = (season_end_date_tmp - burn_start_date).days
-            is_malaria_season_tmp[t_season_start:t_season_end] = [True]*malaria_season_len_days
-        app.is_malaria_season = is_malaria_season_tmp[0:N_DAYS]    
+#        #Setup variable that states whether each time step is in malaria season
+#        #or not in malaria season for the number of days the simulation should
+#        #be run
+#        season_start_date_tmp = season_start_date
+#        season_end_date_tmp = season_end_date
+#        is_malaria_season_tmp[t_season_start:t_season_end] = [True]*malaria_season_len_days
+#        while(True):        
+#            if t_season_end >= N_DAYS:
+#                break #STOP
+#            season_start_date_tmp += ONE_YEAR
+#            t_season_start = (season_start_date_tmp - burn_start_date).days
+#            if t_season_start >= N_DAYS:
+#                break #STOP
+#            season_end_date_tmp += ONE_YEAR
+#            t_season_end = (season_end_date_tmp - burn_start_date).days
+#            is_malaria_season_tmp[t_season_start:t_season_end] = [True]*malaria_season_len_days
+        app.is_malaria_season = is_malaria_season_tmp[0:N_DAYS]
+        app.t_season_start = t_season_start;
+        app.t_season_end = t_season_end;
     else: #constant (not seasonal): start burn-in two months before first intervention
         if USE_INTEGRATION:
-            #Set burn-in stop time
-            app.t_burn_stop = N_DAYS_BURN
-            
             pzq_date = datetime.date(CUR_YEAR, PZQ_MONTH_NUM, 1)
             sim_start_date = pzq_date
+            sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY 
             
-            burn_start_date = pzq_date - ONE_MONTH*2
+            #Set burn-in stop time
             burn_end_date = sim_start_date
+            burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
+            app.t_burn_stop = (burn_end_date - burn_start_date).days;
 
             net_date = pzq_date + ONE_MONTH*3
             spray_date = net_date
-        else: #Without integration: start burn-in two months before first intervention
-            #Set burn-in stop time
-            app.t_burn_stop = N_DAYS_BURN
             
+        else: #Without integration: start burn-in two months before first intervention
             #First intervention will be the first in the calendar year, starting
             #from January; given on the first of the month input by the user
             pzq_date = datetime.date(CUR_YEAR, PZQ_MONTH_NUM, 1)
             net_date = datetime.date(CUR_YEAR, ITN_MONTH_NUM, 1)
             spray_date = datetime.date(CUR_YEAR, IRS_MONTH_NUM, 1)
             sim_start_date = min(pzq_date, net_date, spray_date)
-                          
+            sim_end_date = sim_start_date + (N_DAYS - N_DAYS_BURN)*ONE_DAY 
+            
+            #Set burn-in stop time
+            burn_end_date = sim_start_date
+            burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
+            app.t_burn_stop = (burn_end_date - burn_start_date).days;
+            
         #Set intervention times
         #PZQ
         app.t_pzq = (pzq_date - sim_start_date).days + N_DAYS_BURN
@@ -763,31 +949,34 @@ if __name__ == '__main__':
         #Spray
         app.t_spray = (spray_date - sim_start_date).days + N_DAYS_BURN
 
-    app.t_season_start = (season_start_date - burn_start_date).days;
-    app.t_season_end = (season_end_date - burn_start_date).days;
+        app.t_season_start = -1
+        app.t_season_end = -1
     
     #Create list of people
     for n in range(0, N_PEOPLE):
         append(Person())
     
+    #Initialize vectors and AEIR(0)
+    vectors = Vectors(NUM_VEC)
+    
     #For each time step:
     for t in range(0, N_DAYS):
        if not USE_GUI:
-#           print "Running time step %i of %i" % (t + 1, N_DAYS)
+           print "Running time step %i of %i" % (t + 1, N_DAYS)
        
        # Initialization #-----------------------------------------------------#
        app.cur_time_step = t
 
-       #Update the daily probability of being infected with malaria based on
-       #(1) seasonality (if enabled) and (2) vector pressure. Note: The effect
-       #of vector pressure has not yet been implemented.
-       update_p_malaria_baseline()
+#       #Update the daily probability of being infected with malaria based on
+#       #(1) seasonality (if enabled) and (2) vector pressure. Note: The effect
+#       #of vector pressure has not yet been implemented.
+#       update_p_malaria_baseline()
 
        # Interventions / Infections / Prevalence #----------------------------#
        #Apply interventions at the proper times and update everyone's malaria
        #and schisto infection status. Also update the prevalence vs. time
        #series for this time step.
-       update_interventions_and_infections(app)
+       update_interventions_and_infections(app, vectors)
         
     #End model timer and print the time elapsed.
     end = time.time()
@@ -797,7 +986,23 @@ if __name__ == '__main__':
     #Write prevalence values to three CSV files and plot it for 5-15 y/o
     app.write_prevalence()
     
+    #DEBUG: Write key dates to app
+    app.sim_start_date = sim_start_date
+    app.sim_end_date = sim_end_date
+    if not app.t_season_start == -1:
+        app.season_start_date = season_start_date
+        app.season_end_date = season_end_date
+    app.burn_start_date = burn_start_date
+    app.burn_end_date = burn_end_date
+    app.pzq_date = pzq_date
+    app.net_date = net_date
+    app.spray_date = spray_date
+    
     #Write JSON output (print)
+    tmp_vec = Vectors(NUM_VEC)
+    tmp_vec.debug_vectors(people)
+    tmp_inf = tmp_vec.inf / (tmp_vec.sus + tmp_vec.inf)
+    app.vec_inf = tmp_inf
     app.export_prevalence()
     
     #DEBUG OUTPUTS#-----------------------------------------------------------#

@@ -10,7 +10,9 @@
   "malaria_timing": "seasonal",
   "malaria_peak_month_num": [
     "6",
-    "7"
+    "7",
+	"8",
+	"9"
   ],
   "malaria_rate": 20,
   "irs": 1,

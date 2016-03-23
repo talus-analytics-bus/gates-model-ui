@@ -1,0 +1,43 @@
+PSEUDOCODE for seasonality
+Assume at least one complete season will be simulated
+Need list of season start dates and end dates
+is_malaria_season --> list of length N_DAYS (this includes burn)
+compute season-start-date and season-end-date as usual for intial values
+		
+if sim_start_date is during the season:
+	Set first season start date to be equal to [x] months before the sim start date where [x] is the number of months to the first month of the season
+	Set the burn in start date to be equal to N_DAYS_BURN days before that date
+	Find next season end date, add to end date list (as usual)
+else:
+	Set first season start date to be whatever user input
+	Set first season end date to be appropriate end date
+	
+list_create while loop start:
+	If next season start date is less than sim end date: (calculate as right number of months after cur end date)
+		add it to the list
+		update cur start date
+	else:
+		break while loop
+	If next season end date is less than sim end date:
+		add it to the list
+		update cur end date
+	else:
+		set "fake" season end date to be equal to sim end date
+		break while loop
+				
+Make sure start and end date lists are the same length
+boolean_flags for loop start:
+	for each start date:
+		set cur start date
+		set cur end date
+		take diff between these dates and burn in start to get indices of season vector that should be set to true
+		
+		
+Burn in period:
+	4 months of non-seasonal
+	If sim starts during season:
+		Burn for more time, equal to however long the model would've been in season (ex: if starting 2 months into a 5-month season, burn for additional 3 months with seasonality turned on)
+		End burn there
+	Else:
+		End burn there
+	
