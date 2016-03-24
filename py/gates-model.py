@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jan 27 08:53:24 2016
+Updated on Thu Mar 24
 
 @author: Mike Van Maele, Justin Kerr
 
@@ -22,7 +23,7 @@ start = time.time()
 
 "Initialize variables and constants"
 #Load from JS GUI
-USE_GUI = False
+USE_GUI = True
 X_TICKS = 60 #number of days along x-axis ticks
 DEBUG_MODE = True
 if USE_GUI:
@@ -496,6 +497,7 @@ class App( object ):
     """Class defining application parameters and output writing functions."""
     #Values
     cur_time_step = 0
+    N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
     is_malaria_season = [False]*N_DAYS_TOT
     
 #    cur_p_malaria_baseline = INIT_P_MALARIA_BASELINE
@@ -723,17 +725,16 @@ class App( object ):
         schisto_avg_prev = sum(self.prevalence_schisto["All"][(N_DAYS_BURN):(N_DAYS_TOT)])/(N_DAYS_TOT - N_DAYS_BURN)
 #        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}       
         output = {\
-#        "sim_start_date":self.sim_start_date.isoformat(),\
-#        "sim_end_date":self.sim_end_date.isoformat(),\
-        "vector":self.vec_inf,\
-#        "is_seasonal":self.is_malaria_season,\
+        "user_inputs": UI_INPUTS,\
         "schisto":schisto_avg_prev,\
         "malaria":malaria_avg_prev,\
+        "pzq_month":self.pzq_date.strftime("%B"),\
+        "net_month":self.net_date.strftime("%B"),\
+        "spray_month":self.spray_date.strftime("%B"),\
         "t_pzq":self.t_pzq,\
         "t_net":self.t_net,\
         "t_spray":self.t_spray,\
         "use_integration":USE_INTEGRATION,\
-        "F_PZQ_TARGET_COV":F_PZQ_TARGET_COV\
         }       
         print json.dumps(output)
         return output
