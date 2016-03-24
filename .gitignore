@@ -1,9 +1,5 @@
 # Output files
 
-output/
-
-.bat
-
 # Node Modules
 node_modules/
 .gitignore
