@@ -11,20 +11,38 @@ var App = App || {};
 		var malariaPrevInt = App.outputs.integrated.malaria;
 		var schistoPrevNoInt = App.outputs.separate.schisto;
 		var malariaPrevNoInt = App.outputs.separate.malaria;
-		
-		//DEBUG: Print output object
-		console.log(App.outputs);
+		var net_month_Int = App.outputs.integrated.net_month;
+		var net_month_NoInt = App.outputs.separate.net_month;
+		var spray_month_Int = App.outputs.integrated.spray_month;
+		var spray_month_NoInt = App.outputs.separate.spray_month;
+		var pzq_month_Int = App.outputs.integrated.pzq_month;
+		var pzq_month_NoInt = App.outputs.separate.pzq_month;
 		
 		var data = [
-			{type: 'without integration', schisto: schistoPrevNoInt, malaria: malariaPrevNoInt},
-			{type: 'with integration', schisto: schistoPrevInt, malaria: malariaPrevInt}
+			{type: 'without integration', schisto: schistoPrevNoInt, malaria: malariaPrevNoInt, pzq_month: pzq_month_NoInt, net_month: net_month_NoInt, spray_month: spray_month_NoInt},
+			{type: 'with integration', schisto: schistoPrevInt, malaria: malariaPrevInt, pzq_month: pzq_month_Int, net_month: net_month_Int, spray_month: spray_month_Int}
 		];
 		
+		// update recommendation text
 		var isRecommended = malariaPrevInt < malariaPrevNoInt;
 		d3.select('.output-recommendation')
 			.text(isRecommended ? 'INTEGRATED TREATMENT' : 'NON-INTEGRATED TREATMENT')
 			.classed('text-success', isRecommended);
 		
+		// update control measure recommended execution times
+		if (isRecommended) {
+			var rec_data = data[1]
+		} else {
+			var rec_data = data[0]
+		}
+		
+		d3.select('#rec_pzq_month')
+			.text(rec_data.pzq_month);
+		d3.select('#rec_net_month')
+			.text(rec_data.net_month);
+		d3.select('#rec_spray_month')
+			.text(rec_data.spray_month);
+			
 		// fill table
 		d3.selectAll('.output-table tbody tr').each(function(d, i) {
 			d3.select(this).select('td:nth-child(2)')
