@@ -27,7 +27,7 @@ var App = App || {};
 		
 		
 		var popAgeData = [
-			{age: '0-5', value: 0.20},
+			{age: '0-4', value: 0.20},
 			{age: '5-15', value: 0.34},
 			{age: '16+', value: 0.46},
 		];
@@ -201,6 +201,10 @@ var App = App || {};
 						'integrated': outputWith,
 						'separate': outputWithout
 					};
+					
+					// set cookie
+					App.setCookie('outputs', App.outputs);
+					
 					hasher.setHash('output');
 				});
 		});

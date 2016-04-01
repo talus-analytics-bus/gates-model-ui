@@ -2,26 +2,18 @@ var App = App || {};
 
 (function() {
 	App.initOutput = function() {
+		console.log(App.outputs);
 		if ($.isEmptyObject(App.outputs)) {
 			hasher.setHash('');
 			return false;
 		}
 		
+		// prevalence percentages for each disease for integrated and non-integrated
 		var schistoPrevInt = App.outputs.integrated.schisto;
 		var malariaPrevInt = App.outputs.integrated.malaria;
 		var schistoPrevNoInt = App.outputs.separate.schisto;
 		var malariaPrevNoInt = App.outputs.separate.malaria;
-		var net_month_Int = App.outputs.integrated.net_month;
-		var net_month_NoInt = App.outputs.separate.net_month;
-		var spray_month_Int = App.outputs.integrated.spray_month;
-		var spray_month_NoInt = App.outputs.separate.spray_month;
-		var pzq_month_Int = App.outputs.integrated.pzq_month;
-		var pzq_month_NoInt = App.outputs.separate.pzq_month;
 		
-		var data = [
-			{type: 'without integration', schisto: schistoPrevNoInt, malaria: malariaPrevNoInt, pzq_month: pzq_month_NoInt, net_month: net_month_NoInt, spray_month: spray_month_NoInt},
-			{type: 'with integration', schisto: schistoPrevInt, malaria: malariaPrevInt, pzq_month: pzq_month_Int, net_month: net_month_Int, spray_month: spray_month_Int}
-		];
 		
 		// update recommendation text
 		var isRecommended = malariaPrevInt < malariaPrevNoInt;
@@ -29,21 +21,11 @@ var App = App || {};
 			.text(isRecommended ? 'INTEGRATED TREATMENT' : 'NON-INTEGRATED TREATMENT')
 			.classed('text-success', isRecommended);
 		
-		// update control measure recommended execution times
-		if (isRecommended) {
-			var rec_data = data[1]
-		} else {
-			var rec_data = data[0]
-		}
-		
-		d3.select('#rec_pzq_month')
-			.text(rec_data.pzq_month);
-		d3.select('#rec_net_month')
-			.text(rec_data.net_month);
-		d3.select('#rec_spray_month')
-			.text(rec_data.spray_month);
-			
-		// fill table
+		// fill table showing prevalence
+		var data = [
+			{type: 'without integration', schisto: schistoPrevNoInt, malaria: malariaPrevNoInt},
+			{type: 'with integration', schisto: schistoPrevInt, malaria: malariaPrevInt}
+		];
 		d3.selectAll('.output-table tbody tr').each(function(d, i) {
 			d3.select(this).select('td:nth-child(2)')
 				.text(Util.percentize(data[i].schisto))
@@ -65,7 +47,7 @@ var App = App || {};
 		// build bar chart for the population age distribution
 		var margin = {top: 30, right: 20, bottom: 80, left: 80};
 		var width = 650 - margin.left - margin.right;
-		var height = 250 - margin.top - margin.bottom;
+		var height = 300 - margin.top - margin.bottom;
    		var chart = d3.select('.output-bar-chart')
    			.attr('width', width + margin.left + margin.right)
    			.attr('height', height + margin.top + margin.bottom)
@@ -83,7 +65,7 @@ var App = App || {};
 			.call(xAxis);
 			
 		var y = d3.scale.linear()
-			.domain([0, 1.1*d3.max([data[0].schisto, data[0].malaria, data[1].schisto, data[1].malaria])])
+			.domain([0, 1])
 			.range([height, 0]);
 		var yAxis = d3.svg.axis()
 			.orient('left')
@@ -179,7 +161,13 @@ var App = App || {};
 				.append('div').attr('class', 'selected-border-box');
 		};
 		updateMatrix(matrixDiffData);
+
 		
+		// update control measure recommended execution times
+		var recOutput = isRecommended ? App.outputs.integrated : App.outputs.separate;		
+		d3.select('#rec_pzq_month').text(recOutput.pzq_month);
+		d3.select('#rec_net_month').text(recOutput.net_month);
+		d3.select('#rec_spray_month').text(recOutput.spray_month);
 		
 		
 		// back to inputs button

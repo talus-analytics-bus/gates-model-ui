@@ -1,4 +1,5 @@
-# Output files
+# Debug files
+debug/
 
 # Node Modules
 node_modules/

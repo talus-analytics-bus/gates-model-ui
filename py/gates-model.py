@@ -35,7 +35,7 @@ else:
     UI_INPUTS['use_integration'] = False
 
 #Show plots or not
-SHOW_PLOTS = True
+SHOW_PLOTS = False
 if (SHOW_PLOTS):
     import matplotlib.pyplot as plt
 
