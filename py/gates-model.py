@@ -117,8 +117,8 @@ P_MALARIA_SEASONAL_MOD = 5.0  #Factor by which the daily prob. of getting malari
 
 #TO DO: Justin figuring out these values
 P_SCHISTO = 0.9 #Fraction of people that get schisto infections (applied at model run initialization)
-NET_EFFICACY = 0.9 #(p. 9 of Shaukat et al 2010)
-SPRAY_EFFICACY = 0.9 #(p. 9 of Shaukat et al 2010)
+NET_EFFICACY = 0.53 #(average of results from Eisele et al., 2010 and Guyatt et al., 2002)
+SPRAY_EFFICACY = 0.65 #(Guyatt 2002)
 
 #Vector-related constants
 #Number of susceptible vectors (assume 4% are infected at the start
