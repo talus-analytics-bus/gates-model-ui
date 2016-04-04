@@ -7,9 +7,9 @@ gulp.task('default', ['minify-js', 'minify-css']);
 
 gulp.task('minify-js', function() {
 	gulp.src([
-		'./js/!(app)*.js',
+		'./js/!(init)*.js',
 		'./js/pages/*.js',
-		'./js/app.js'
+		'./js/init.js'
 	])
 		.pipe(concat('bundle.js'))
 		.pipe(uglify())

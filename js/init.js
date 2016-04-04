@@ -5,7 +5,6 @@ var App = App || {};
 		App.initialize();
 		Routing.precompileTemplates();	
 		Routing.initializeRoutes();
-	};
-	
+	};	
 	init();
 })();
