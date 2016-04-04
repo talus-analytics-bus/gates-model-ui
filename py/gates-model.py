@@ -926,6 +926,7 @@ if __name__ == '__main__':
     vectors = Vectors(NUM_VEC)
     
     #For each time step:
+    N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
     for t in range(0, N_DAYS_TOT):
        if not USE_GUI:
            print "Running time step %i of %i" % (t + 1, N_DAYS_TOT)

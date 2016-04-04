@@ -2,6 +2,8 @@ var App = App || {};
 
 (function() {
 	App.initInput = function() {
+		if (App.inputs !== null) setExistingInputValues();
+		
 		// opening and closing input sections
 		$('.input-section .title').click(function() {
 			var contents = $(this).next().find('.input-subsection, .next-button-container');
@@ -27,9 +29,9 @@ var App = App || {};
 		
 		
 		var popAgeData = [
-			{age: '0-4', value: 0.20},
-			{age: '5-15', value: 0.34},
-			{age: '16+', value: 0.46},
+			{age: '0-4', value: App.inputs ? App.inputs.pop1 : 0.20},
+			{age: '5-15', value: App.inputs ? App.inputs.pop2 : 0.34},
+			{age: '16+', value: App.inputs ? App.inputs.pop3 : 0.46},
 		];
 		
 		// population age section
@@ -144,6 +146,12 @@ var App = App || {};
 				noty({text: '<b>Error!</b><br>Please make sure the age distribution in the population section adds up to 100%!'});
 				return false;
 			}
+			
+			// validate that an age range was chosen
+			if ($('.schisto-age-select').val() === null) {
+				noty({text: '<b>Error!</b><br>Please select an age range for praziquantel mass drug administration under the schistosomiasis section.'});
+				return false;
+			}
 
 			// create all malaria peak months
 			var malariaPeakMonths = [];
@@ -162,7 +170,7 @@ var App = App || {};
 			
 			
 			// run the model and redirect to outputs page
-			var inputs = {
+			App.inputs = {
 				pop1: Util.strToFloat($('.pop-age-table tbody tr:first-child input').val()) / 100, // age distribution for under 5
 				pop2: Util.strToFloat($('.pop-age-table tbody tr:nth-child(2) input').val()) / 100, // age distribution for 5-15
 				pop3: Util.strToFloat($('.pop-age-table tbody tr:nth-child(3) input').val()) / 100, // age distribution for 16+
@@ -170,21 +178,20 @@ var App = App || {};
 				schisto_age_range: $('.schisto-age-select').val(), // schisto age range
 				schisto_month_num: $('.schisto-month-select').val(), // schisto distribution time
 				malaria_timing: $('.malaria-timing-select').val(), // malaria timing
-				malaria_peak_month_num: malariaPeakMonths, // malaria peak transmission month number (1-Jan, 2-Feb, etc.)
+				malaria_peak_month_num: malariaPeakMonths, // array of malaria peak transmission month numbers (1-Jan, 2-Feb, etc.)
 				malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()), // malaria transmission rate
 				irs: $('.irs-checkbox').is(':checked') ? 1 : 0, // whether IRS is an option
 				irs_coverage: Util.strToFloat($('.irs-coverage-select').val()), // IRS target % coverage
 				irs_month_num: $('.irs-month-select').val(), // IRS distribution month number (1-Jan, 2-Feb, etc.)
 				itn: $('.itn-checkbox').is(':checked') ? 1 : 0, // whether ITN is an option
 				itn_coverage: Util.strToFloat($('.itn-coverage-select').val()), // ITN target % coverage
-				itn_month_num: $('.itn-month-select').val(), // ITN distribution month number (1-Jan, 2-Feb, etc.)
-				//irs_itn_distribution: $('.irs-itn-distribution-select').val() // IRS/ITN distribution strategy
+				itn_month_num: $('.itn-month-select').val() // ITN distribution month number (1-Jan, 2-Feb, etc.)
 			};
 			
-			var inputsWithIntegration = Util.copyObject(inputs);
+			var inputsWithIntegration = Util.copyObject(App.inputs);
 			inputsWithIntegration.use_integration = 1;
 			
-			var inputsWithoutIntegration = Util.copyObject(inputs);
+			var inputsWithoutIntegration = Util.copyObject(App.inputs);
 			inputsWithoutIntegration.use_integration = 0;
 			
 			// run model twice: once with integration, once without
@@ -194,6 +201,7 @@ var App = App || {};
 				.await(function(error, outputWith, outputWithout) {
 					if (error) {
 						console.log('failed to complete all model runs');
+						console.log(error);
 						noty({type: 'alert', text: '<b>Error!</b><br>There was an error running the model. Please contact the developers.'});
 						return false;
 					}
@@ -212,5 +220,29 @@ var App = App || {};
 		
 		// slide open first input section
 		$('.input-section[name="pop-age"]').find('.input-subsection, .next-button-container').slideDown();
+	};
+	
+	var setExistingInputValues = function() {
+		// set inputs in schisto section
+		$('.schisto-coverage-select').val(String(App.inputs.schisto_coverage));
+		$('.schisto-age-select').val(App.inputs.schisto_age_range);
+		$('.schisto-month-select').val(App.inputs.schisto_month_num);
+		
+		// set inputs in malaria section
+		$('.malaria-timing-select').val(App.inputs.malaria_timing);
+		if (App.inputs.malaria_timing === 'constant') $('.malaria-month-container').hide();		
+		$('.malaria-month-start-select').val(String(App.inputs.malaria_peak_month_num[0]));
+		$('.malaria-month-end-select').val(String(App.inputs.malaria_peak_month_num[App.inputs.malaria_peak_month_num.length-1]));
+		$('.malaria-trans-rate-select').val(App.inputs.malaria_rate);
+		
+		$('.irs-checkbox').prop('checked', App.inputs.irs);
+		if (!App.inputs.irs) $('.irs-true-contents').hide();
+		$('.irs-coverage-select').val(App.inputs.irs_coverage);
+		$('.irs-month-select').val(App.inputs.irs_month_num);
+		
+		$('.itn-checkbox').prop('checked', App.inputs.itn);
+		if (!App.inputs.itn) $('.itn-true-contents').hide();
+		$('.itn-coverage-select').val(App.inputs.itn_coverage);
+		$('.itn-month-select').val(App.inputs.itn_month_num);
 	};
 })();

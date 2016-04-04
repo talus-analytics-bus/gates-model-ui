@@ -6,6 +6,7 @@ node_modules/
 .gitignore
 
 # Project files
+.settings/
 .project
 .pydevproject
 .DS_Store

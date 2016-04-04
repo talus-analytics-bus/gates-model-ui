@@ -1,7 +1,8 @@
 var App = App || {};
 
 (function() {
-	App.outputs = {}; // stores all the outputs for a run
+	App.inputs = null; // stores inputs for the current browser session
+	App.outputs = null; // stores all the outputs
 	
 	App.initialize = function() {
 		// get cookies if its exists
