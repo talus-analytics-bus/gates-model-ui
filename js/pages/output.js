@@ -112,62 +112,22 @@ var App = App || {};
 			.attr('transform', 'translate(25,13)')
 			.text(function(d) { return d; });
 			
-			
-		/* ----------------- Matrix --------------- */
-		var matrixDiffData = [
-			{type: '0.3', '30': [0.04, 0.04], '50': [0.03, 0.01], '80': [-0.03, 0.01], '100': [-0.13, 0.01]},
-			{type: '0.5', '30': [0.02, -0.01], '50': [0.02, -0.01], '80': [-0.12, -0.03], '100': [-0.13, -0.01]},
-			{type: '0.8', '30': [-0.01, -0.01], '50': [0.00, -0.06], '80': [-0.10, -0.07], '100': [-0.14, -0.08]},
-			{type: '1', '30': [-0.01, -0.07], '50': [-0.05, -0.09], '80': [-0.09, -0.09], '100': [-0.14, -0.10]}
-		];
-		
-		var colors = ['rgba(252,141,89,0.5)','rgba(254,224,139,0.5)','rgba(255,255,191,0.5)','rgba(217,239,139,0.65)','rgba(145,207,96,0.5)'];
-		var diffColorScale = d3.scale.threshold()
-			.domain([-0.095, -0.045, -0.025, 0.001])
-			.range(colors);
-		
-		var updateMatrix = function(data) {
-			var rows = d3.select('.output-matrix-table tbody').selectAll('tr')
-				.data(data);
-			var newRows = rows.enter().append('tr');
-			
-			var cells = rows.selectAll('td')
-				.data(function(d) { return ['type', '30', '50', '80', '100'].map(function(dd) { return d[dd]; }); });
-			cells.enter().append('td');
-			
-			rows.selectAll('td')
-				.classed('success', function(d, i) { if (i > 0) return (d[0] + d[1]) / 2 < 0; })
-				.classed('danger', function(d, i) { if (i > 0) return (d[0] + d[1]) / 2 > 0; })
-				.html(function(d, i) {
-					if (i === 0) return Util.percentize(d);
-					else {
-						var yesOrNo = ((d[0] + d[1]) / 2 < 0) ? 'YES' : 'NO';
-						var numOneClass = (d[0] > 0) ? 'text-danger' : (d[0] < 0) ? 'text-success' : '';
-						var numTwoClass = (d[1] > 0) ? 'text-danger' : (d[1] < 0) ? 'text-success' : '';
-						
-						var htmlStr = '<div class="matrix-cell-yes">' + yesOrNo + '</div>';
-						htmlStr += '<div class="matrix-cell-perc">(';
-						htmlStr += '<span class="' + numOneClass + '">' + Util.percentizeDiff(d[0]) + '</span>';
-						htmlStr += ' / ';
-						htmlStr += '<span class="' + numTwoClass + '">' + Util.percentizeDiff(d[1]) + '</span>';
-						htmlStr += ')</div>';
-						return htmlStr;
-					}
-				});	
-
-			// add black border around relevant cell
-			d3.select('.output-matrix-table tbody tr:nth-child(3) td:nth-child(4)')
-				.style('font-weight', '600')
-				.append('div').attr('class', 'selected-border-box');
-		};
-		updateMatrix(matrixDiffData);
-
 		
 		// update control measure recommended execution times
 		var recOutput = isRecommended ? App.outputs.integrated : App.outputs.separate;		
 		d3.select('#rec_pzq_month').text(recOutput.pzq_month);
 		d3.select('#rec_net_month').text(recOutput.net_month);
 		d3.select('#rec_spray_month').text(recOutput.spray_month);
+		
+		// toggling display of assumptions
+		$('.assumption-bar').on('click', function() {
+			var $bar = $(this);
+			var $contents = $('.assumption-contents');
+			var isHiding = $contents.is(':visible');
+			$contents.slideToggle();
+			$bar.find('.down-arrow').toggleClass('rotated');
+			$bar.find('span').text(isHiding ? 'show assumptions' : 'hide assumptions');
+		});
 		
 		
 		// back to inputs button

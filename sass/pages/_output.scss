@@ -115,3 +115,26 @@
   td:nth-child(2) { text-align: right; }
   thead { font-weight: 600; }
 }
+.assumption-section { display: none; }
+.assumption-bar {
+  padding: 5px;
+  text-align: center;
+  
+  span {
+    cursor: pointer;
+    &:hover { text-decoration: underline; }
+  }
+  .down-arrow {
+    width: 12px;
+    height: 8px;
+    margin: 0px 10px;
+    @include opacity(0.75);
+    
+    &.rotated {
+      @include rotate(180deg);
+    }
+  }
+}
+.assumption-contents {
+  display: none;
+}

@@ -742,16 +742,11 @@ class App( object ):
             itn_output = self.net_date.strftime("%B")
             
         output = {\
-        "user_inputs": UI_INPUTS,\
         "schisto":schisto_avg_prev,\
         "malaria":malaria_avg_prev,\
-        "season":self.is_malaria_season,\
         "pzq_month":self.pzq_date.strftime("%B"),\
         "net_month":itn_output,\
         "spray_month":irs_output,\
-        "t_pzq":self.t_pzq,\
-        "t_net":self.t_net,\
-        "t_spray":self.t_spray,\
         "use_integration":USE_INTEGRATION,\
         }       
         print json.dumps(output)

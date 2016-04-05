@@ -41,6 +41,7 @@ var App = App || {};
 	// stores a cookie with a given name, value, and expiration time, in days
 	App.setCookie = function(cname, cvalue, exdays) {
 		if (typeof cvalue === 'object') cvalue = JSON.stringify(cvalue);
+		if (cvalue.length >= 4094) console.log('Cookie is too long! (over 4094 bytes)');
 		if (typeof exdays === 'undefined') var exdays = 7;
 		var d = new Date();
 		d.setTime(d.getTime() + (exdays*24*60*60*1000));
