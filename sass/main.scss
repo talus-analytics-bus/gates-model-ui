@@ -36,9 +36,10 @@ table input.form-control {
   margin-right: 10px;
 }
 .checkbox-label {
-  margin-left: 4px;
   position: relative;
   top: -2px;
+  left: 4px;
+  cursor: pointer;
 }
 .warning {
   color: #a94442;

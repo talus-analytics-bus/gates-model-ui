@@ -124,14 +124,24 @@ var App = App || {};
 		
 		
 		// checkboxes for IRS and ITN
-		$('.irs-checkbox').on('change', function() {
+		$('.irs-checkbox').on('change', function() { irsChange(); });
+		$('.irs-checkbox-label').on('click', function() {
+			$('.irs-checkbox').prop('checked', !$('.irs-checkbox').is(':checked'));
+			irsChange();
+		});
+		var irsChange = function() {
 			$('.irs-true-contents').slideToggle();
 			updateDistributionBlock();
+		};
+		$('.itn-checkbox').on('change', function() { itnChange(); });
+		$('.itn-checkbox-label').on('click', function() {
+			$('.itn-checkbox').prop('checked', !$('.itn-checkbox').is(':checked'));
+			itnChange();
 		});
-		$('.itn-checkbox').on('change', function() {
+		var itnChange = function() {
 			$('.itn-true-contents').slideToggle();
 			updateDistributionBlock();
-		});
+		};
 		var updateDistributionBlock = function() {
 			var show = $('.irs-checkbox').is(':checked') && $('.itn-checkbox').is(':checked');
 			if (show) $('.input-subsection[name="distribution-strategy"]').slideDown();
@@ -141,36 +151,8 @@ var App = App || {};
 		
 		// submit button
 		$('.input-submit-button').click(function() {
-			// validate that the population age distribution sums to 100%
-			if (validatePopAgeSum() === false) {
-				noty({text: '<b>Error!</b><br>Please make sure the age distribution in the population section adds up to 100%!'});
-				return false;
-			}
-			
-			// validate that an age range was chosen
-			if ($('.schisto-age-select').val() === null) {
-				noty({text: '<b>Error!</b><br>Please select an age range for praziquantel mass drug administration under the schistosomiasis section.'});
-				return false;
-			}
-
-			// create all malaria peak months
-			var malariaPeakMonths = [];
-			var mpsm = +$('.malaria-month-start-select').val();
-			var mpem = +$('.malaria-month-end-select').val();
-			do {
-				malariaPeakMonths.push(String(mpsm));
-				mpsm++;
-				if (mpsm === 13 && mpem !== 12) mpsm = 1;
-			} while (mpsm !== mpem + 1);
-			// check that more than 8 months havent been chosen
-			if (malariaPeakMonths.length > 8) {
-				noty({text: '<b>Error!</b><br>There may only be up to <b>8</b> peak transmission months for malaria.<br>There are currently <b>' + malariaPeakMonths.length + '</b> months chosen.'});
-				return false;
-			}
-			
-			
-			// run the model and redirect to outputs page
-			App.inputs = {
+			// define user inputs
+			var inputs = {
 				pop1: Util.strToFloat($('.pop-age-table tbody tr:first-child input').val()) / 100, // age distribution for under 5
 				pop2: Util.strToFloat($('.pop-age-table tbody tr:nth-child(2) input').val()) / 100, // age distribution for 5-15
 				pop3: Util.strToFloat($('.pop-age-table tbody tr:nth-child(3) input').val()) / 100, // age distribution for 16+
@@ -178,7 +160,7 @@ var App = App || {};
 				schisto_age_range: $('.schisto-age-select').val(), // schisto age range
 				schisto_month_num: $('.schisto-month-select').val(), // schisto distribution time
 				malaria_timing: $('.malaria-timing-select').val(), // malaria timing
-				malaria_peak_month_num: malariaPeakMonths, // array of malaria peak transmission month numbers (1-Jan, 2-Feb, etc.)
+				malaria_peak_month_num: [], // array of malaria peak transmission month numbers (1-Jan, 2-Feb, etc.); defined in next step
 				malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()), // malaria transmission rate
 				irs: $('.irs-checkbox').is(':checked') ? 1 : 0, // whether IRS is an option
 				irs_coverage: Util.strToFloat($('.irs-coverage-select').val()), // IRS target % coverage
@@ -187,14 +169,57 @@ var App = App || {};
 				itn_coverage: Util.strToFloat($('.itn-coverage-select').val()), // ITN target % coverage
 				itn_month_num: $('.itn-month-select').val() // ITN distribution month number (1-Jan, 2-Feb, etc.)
 			};
+
+			// create malaria peak month array for input parameter
+			var malariaPeakMonths = [];
+			var mpsm = +$('.malaria-month-start-select').val();
+			var mpem = +$('.malaria-month-end-select').val();
+			do {
+				malariaPeakMonths.push(String(mpsm));
+				mpsm++;
+				if (mpsm === 13 && mpem !== 12) mpsm = 1;
+			} while (mpsm !== mpem + 1);
+			inputs.malaria_peak_month_num = malariaPeakMonths;
+
+
+			/* -------- Validation -------- */
+			// validate that the population age distribution sums to 100%
+			if (validatePopAgeSum() === false) {
+				noty({text: '<b>Error!</b><br>Please make sure the age distribution in the population section adds up to 100%!'});
+				return false;
+			}
 			
+			// validate that an age range was chosen
+			if (inputs.schisto_age_range === null) {
+				noty({text: '<b>Error!</b><br>Please select an age range for praziquantel mass drug administration under the schistosomiasis section.'});
+				return false;
+			}
+			
+			// validate that either IRS or ITN was chosen
+			if (!inputs.irs && !inputs.itn) {
+				noty({text: '<b>Error!</b><br>Please select either <b>IRS</b> or <b>ITN</b> as an option for treatment of malaria.'});
+				return false;
+			}
+
+			// check that more than 8 months havent been chosen
+			if (malariaPeakMonths.length > 8) {
+				noty({text: '<b>Error!</b><br>There may only be up to <b>8</b> peak transmission months for malaria.<br>There are currently <b>' + malariaPeakMonths.length + '</b> months chosen.'});
+				return false;
+			}
+			/* -------- -------- --------*/
+			
+			
+			// validation completed, save inputs
+			App.inputs = inputs;
+			
+			// define parameters for model runs; one run with integration, one without
 			var inputsWithIntegration = Util.copyObject(App.inputs);
 			inputsWithIntegration.use_integration = 1;
 			
 			var inputsWithoutIntegration = Util.copyObject(App.inputs);
 			inputsWithoutIntegration.use_integration = 0;
 			
-			// run model twice: once with integration, once without
+			// run model twice, save outputs, redirect to output page
 			queue()
 				.defer(App.runModel, inputsWithIntegration)
 				.defer(App.runModel, inputsWithoutIntegration)

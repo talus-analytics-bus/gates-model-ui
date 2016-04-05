@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jan 27 08:53:24 2016
-Updated on Thu Mar 24
+Updated on Tue Apr 05
 
 @author: Mike Van Maele, Justin Kerr
 
@@ -81,6 +81,12 @@ T_NET = 150         #Number of days at which nets are distributed. Required
                     #user input if "constant" malaria transmission pattern selected
 ITN_MONTH_NUM = int(UI_INPUTS["itn_month_num"]) #Month nets are distributed in the "constant" case (without integration). Indexed
                                 #from 1 (i.e., January = 1)
+#If not using ITN or not using IRS, set their distro date to the same
+#date as PZQ so that they don't interfere with time
+if not IRS_CHECKED:
+    IRS_MONTH_NUM = PZQ_MONTH_NUM
+if not ITN_CHECKED:
+    ITN_MONTH_NUM = PZQ_MONTH_NUM
 
 #IRS_ITN_DIST_STRAT = UI_INPUTS["irs_itn_distribution"]  #Not currently used. The IRS/ITN countermeasure
                                 #distribution strategy.
@@ -88,7 +94,7 @@ ITN_MONTH_NUM = int(UI_INPUTS["itn_month_num"]) #Month nets are distributed in t
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
 N_PEOPLE = 1000    #Number of people to simulate
-N_DAYS_BURN_INIT = 60*3    #Baselineumber of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
+N_DAYS_BURN_INIT = 365    #Baselineumber of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
 N_DAYS_BURN = N_DAYS_BURN_INIT #Duration of the burn in period (may vary)
 #N_PEOPLE = 10000    #Number of people to simulate
 N_DAYS_SIM = 365*1 #Duration of the simulation
@@ -116,8 +122,8 @@ P_MALARIA_SEASONAL_MOD = 5.0  #Factor by which the daily prob. of getting malari
                             #increases during malaria season (Kelly-Hope and McKenzie 2009; based on difference between places with 7 or more months of rain vs. 6 or fewer)
 
 #TO DO: Justin figuring out these values
-P_SCHISTO = 0.9 #Fraction of people that get schisto infections (applied at model run initialization)
-NET_EFFICACY = 0.53 #(average of results from Eisele et al., 2010 and Guyatt et al., 2002)
+P_SCHISTO = 0.45 #Fraction of people that get schisto infections (applied at model run initialization)
+NET_EFFICACY =  0.53 #(average of results from Eisele et al., 2010 and Guyatt et al., 2002)
 SPRAY_EFFICACY = 0.65 #(Guyatt 2002)
 
 #Vector-related constants
@@ -157,7 +163,7 @@ class Person( object ):
         Person.count += 1        
         self.id = Person.count - 1
         runif = random.random
-		
+        
         # Malaria parameters #------------------------------------------------#
         self.has_malaria = False #do they have malaria?
         self.is_symptomatic = False #if they have malaria, is it symptomatic?
@@ -553,7 +559,7 @@ class App( object ):
         n_people_16_plus = Person.age_bin_counts["16+"]        
         
         N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
-		
+        
         #Store the prevalence for each disease (y) vs. time (x)
         x = range(0, N_DAYS_TOT)
         y = {}
@@ -621,23 +627,25 @@ class App( object ):
             
             #Plot prevalence for all
             age_group_to_plot = "All"
-            plt.plot(x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
-            plt.plot(x,y["malaria"][age_group_to_plot],label="Malaria"); 
-            plt.plot(x,y["coinfection"][age_group_to_plot],label="Coinfection");
+            shifted_x = [(x[val]- N_DAYS_BURN)/30.0 for val in range(len(x))]
+            plt.plot(shifted_x,y["schisto"][age_group_to_plot],label="Schistosomiasis"); 
+            plt.plot(shifted_x,y["malaria"][age_group_to_plot],label="Malaria"); 
+#            plt.plot(shifted_x,y["coinfection"][age_group_to_plot],label="Coinfection");
             
+            plt.legend();
             if DEBUG_MODE:
                 y_shift = 0.0
                 #PZQ
-                plt.plot(self.t_pzq,0.5,'.');
-                plt.text(self.t_pzq,0.5 + y_shift,"t_pzq: " + pzq_date.isoformat(),rotation=45)
+                plt.plot((self.t_pzq-N_DAYS_BURN)/30.0,0.5,'.');
+                plt.text((self.t_pzq-N_DAYS_BURN)/30.0,0.5 + y_shift,"t_pzq: " + pzq_date.isoformat(),rotation=45)
                 
                 #Nets
-                plt.plot(self.t_net,0.6,'.');
-                plt.text(self.t_net,0.6 + y_shift,"t_net: " + net_date.isoformat(),rotation=45);
+                plt.plot((self.t_net-N_DAYS_BURN)/30.0,0.6,'.');
+                plt.text((self.t_net-N_DAYS_BURN)/30.0,0.6 + y_shift,"t_net: " + net_date.isoformat(),rotation=45);
                 
                 #Sprays
-                plt.plot(self.t_spray,0.7,'.');
-                plt.text(self.t_spray,0.7 + y_shift,"t_spray: " + spray_date.isoformat(),rotation=45);       
+                plt.plot((self.t_spray-N_DAYS_BURN)/30.0,0.7,'.');
+                plt.text((self.t_spray-N_DAYS_BURN)/30.0,0.7 + y_shift,"t_spray: " + spray_date.isoformat(),rotation=45);       
                 
                 if not self.t_season_start == -1:
                     for cur_season in range(0,len(self.t_season_start)):
@@ -648,21 +656,19 @@ class App( object ):
                         cur_season_end_date = self.burn_start_date + ONE_DAY*cur_t_end
                         
                         #Season start
-                        plt.plot(cur_t_start,0.8,'.');
-                        plt.text(cur_t_start,0.8 + y_shift,"t_seas_start: " + cur_season_start_date.isoformat(),rotation=45);       
+                        plt.plot((cur_t_start - N_DAYS_BURN)/30.0,0.8,'.');
+                        plt.text((cur_t_start - N_DAYS_BURN)/30.0,0.8 + y_shift,"t_seas_start: " + cur_season_start_date.isoformat(),rotation=45);       
                         
-                        #Season start
-                        plt.plot(cur_t_end,0.8,'.');
-                        plt.text(cur_t_end - .5,0.8 + y_shift,"t_seas_end: " + cur_season_end_date.isoformat(),rotation=45);
-            else:
-                plt.legend();
+                        #Season end
+                        plt.plot((cur_t_end - N_DAYS_BURN)/30.0,0.8,'.');
+                        plt.text((cur_t_end - N_DAYS_BURN)/30.0 - .5,0.8 + y_shift,"t_seas_end: " + cur_season_end_date.isoformat(),rotation=45);
             plt.grid(True);
-            plt.xlabel("Time (d)");
-            plt.xticks(range(0,N_DAYS_TOT,X_TICKS));
-            plt.xlim(0,N_DAYS_TOT)
+            plt.xlabel("Time (months)");
+            plt.xticks(range(-4,int(math.ceil(N_DAYS_SIM/30.0)),2));
+            plt.xlim(-4,N_DAYS_SIM/30.0)
             plt.ylabel("Prevalence (fraction of population)")
-            plt.ylim([0,1.1]);
-            plt.title("Disease Prevalence vs. Time (d) for " + age_group_to_plot + integration);
+            plt.ylim([0,1]);
+            plt.title("Disease Prevalence vs. Time (months) for " + age_group_to_plot + integration);
 #            
     ##            fig, ax = plt.subplots()
     ##            plt.scatter(x, y)
@@ -672,6 +678,7 @@ class App( object ):
     ##                plt.annotate(txt, (x[i],y[i]))
             
             plt.savefig('output/output_graph_all_ages' + fn_int + '.png', format='png', dpi=dpi)
+            plt.savefig('output/output_graph_all_ages' + fn_int + '.svg', format='svg')
             plt.close()
     #        plt.show()
            
@@ -723,14 +730,25 @@ class App( object ):
         N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
         malaria_avg_prev = sum(self.prevalence_malaria["All"][(N_DAYS_BURN):(N_DAYS_TOT)])/(N_DAYS_TOT - N_DAYS_BURN)
         schisto_avg_prev = sum(self.prevalence_schisto["All"][(N_DAYS_BURN):(N_DAYS_TOT)])/(N_DAYS_TOT - N_DAYS_BURN)
-#        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}       
+#        output = {"schisto":schisto_avg_prev, "malaria":malaria_avg_prev}   
+        if not IRS_CHECKED:
+            irs_output = "N/A"
+        else:
+            irs_output = self.spray_date.strftime("%B")
+            
+        if not ITN_CHECKED:
+            itn_output = "N/A"
+        else:
+            itn_output = self.net_date.strftime("%B")
+            
         output = {\
         "user_inputs": UI_INPUTS,\
         "schisto":schisto_avg_prev,\
         "malaria":malaria_avg_prev,\
+        "season":self.is_malaria_season,\
         "pzq_month":self.pzq_date.strftime("%B"),\
-        "net_month":self.net_date.strftime("%B"),\
-        "spray_month":self.spray_date.strftime("%B"),\
+        "net_month":itn_output,\
+        "spray_month":irs_output,\
         "t_pzq":self.t_pzq,\
         "t_net":self.t_net,\
         "t_spray":self.t_spray,\
@@ -773,15 +791,16 @@ if __name__ == '__main__':
         malaria_season_len_days = (season_end_date - season_start_date).days
         is_malaria_season_tmp = [False]*(10000)
         
-		#Set total days of run
+        #Set total days of run
         N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN #note that N_DAYS_BURN may be changed below
-		
+        year_mod = 0
+    
         #Set intervention times
         if USE_INTEGRATION:
-            burn_end_date = season_start_date - ONE_MONTH*4
+            burn_end_date = season_start_date - ONE_MONTH*1
             burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
             
-            pzq_date = season_start_date - ONE_MONTH*4
+            pzq_date = season_start_date - ONE_MONTH*1
             net_date = season_start_date - ONE_MONTH*1
             spray_date = season_start_date - ONE_MONTH*1
 
@@ -793,8 +812,45 @@ if __name__ == '__main__':
             net_date = datetime.date(CUR_YEAR, ITN_MONTH_NUM, 1)
             spray_date = datetime.date(CUR_YEAR, IRS_MONTH_NUM, 1)
             
+            if season_end_date.year > CUR_YEAR:
+                season_start_date -= ONE_YEAR
+                season_end_date -= ONE_YEAR
+                if year_mod == 0:
+                    year_mod = -1            
+            
+            #If necessary, reorder intervention timing so that no interventions
+            #are given after the season has already ended
+            intervention_dates = (pzq_date, net_date, spray_date)
+            last_intervention_date_val = max(intervention_dates)
+            new_intervention_dates = [pzq_date, net_date, spray_date]
+            
+            last_int_given_after_seas_end =   last_intervention_date_val >= season_end_date          
+            some_ints_given_earlier = len([i for i, j in enumerate(intervention_dates) if j < season_end_date]) > 0         
+            
+            if last_int_given_after_seas_end and some_ints_given_earlier:
+                which_ints_least = [i for i, j in enumerate(intervention_dates) if j < season_end_date]
+                for i in which_ints_least:
+                    new_intervention_dates[i] += ONE_YEAR
+                season_start_date += ONE_YEAR
+                season_end_date += ONE_YEAR
+                year_mod = 1                
+                pzq_date = new_intervention_dates[0]
+                net_date = new_intervention_dates[1]
+                spray_date = new_intervention_dates[2]
+            
             sim_start_date = min(pzq_date, net_date, spray_date)
             sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY  
+            
+#            if season_start_date > season_end_date:
+#                season_start_date -= ONE_YEAR
+            
+           
+            
+            if season_start_date < sim_start_date:
+                season_start_date += ONE_YEAR
+                season_end_date += ONE_YEAR
+                if year_mod == 0:
+                    year_mod = 1
 
             burn_end_date = sim_start_date        
             burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
@@ -819,7 +875,7 @@ if __name__ == '__main__':
             season_end_dates.append(season_end_date)
         
         #Build least of season start/end dates
-        cur_season_start_date = datetime.date(CUR_YEAR, PEAK_TRANS_MONTHS[0], 1)
+        cur_season_start_date = datetime.date(CUR_YEAR + year_mod, PEAK_TRANS_MONTHS[0], 1)
         cur_season_end_date = season_end_dates[0]
         while(True):
             next_season_start_date = cur_season_start_date + ONE_YEAR
@@ -878,7 +934,9 @@ if __name__ == '__main__':
         app.t_season_end = t_season_end;
     else: #constant (not seasonal): start burn-in two months before first intervention
         if USE_INTEGRATION:
-            pzq_date = datetime.date(CUR_YEAR, PZQ_MONTH_NUM, 1)
+            INT_MONTH_NUM = min(PZQ_MONTH_NUM, ITN_MONTH_NUM, IRS_MONTH_NUM)
+            pzq_date = datetime.date(CUR_YEAR, INT_MONTH_NUM, 1)
+            
             sim_start_date = pzq_date
             sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY 
             
@@ -887,7 +945,7 @@ if __name__ == '__main__':
             burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
             app.t_burn_stop = (burn_end_date - burn_start_date).days;
 
-            net_date = pzq_date + ONE_MONTH*3
+            net_date = pzq_date
             spray_date = net_date
             
         else: #Without integration: start burn-in two months before first intervention
@@ -926,7 +984,7 @@ if __name__ == '__main__':
     vectors = Vectors(NUM_VEC)
     
     #For each time step:
-    N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
+    N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN    
     for t in range(0, N_DAYS_TOT):
        if not USE_GUI:
            print "Running time step %i of %i" % (t + 1, N_DAYS_TOT)
