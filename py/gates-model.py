@@ -54,8 +54,6 @@ PZQ_AGE_RANGE = tuple(UI_INPUTS["schisto_age_range"] )#Age groups that get PZQ (
                     #children will get it because they are school-age and PZQ
                     #interventions may be targeting school-age children)
 
-T_PZQ = 30          #Number of days at which PZQ is distributed. Required
-                    #user input if "constant" malaria transmission pattern selected
 PZQ_MONTH_NUM = int(UI_INPUTS["schisto_month_num"]) #Month PZQ is distributed in the "constant" case (without integration). Indexed
                                 #from 1 (i.e., January = 1)
 
@@ -70,15 +68,10 @@ N_BASELINE_INF_BITES = UI_INPUTS["malaria_rate"]  #Baseline infectious mosquito 
 IRS_CHECKED = bool(int(UI_INPUTS["irs"]))  #Can indoor residual insecticide spraying be used?
                     #True or false.
 F_IRS_TARGET_COV = float(UI_INPUTS["irs_coverage"]) #Target % coverage of indoor spraying.
-T_SPRAY = 150       #Number of days at which sprays are distributed. Required
-                    #user input if "constant" malaria transmission pattern selected
 IRS_MONTH_NUM = int(UI_INPUTS["irs_month_num"]) #Month IRS are distributed in the "constant" case (without integration). Indexed
                                 #from 1 (i.e., January = 1)
-    
 ITN_CHECKED = bool(int(UI_INPUTS["itn"]))  #Can insecticide-treated bed nets be used? True or false.
 F_ITN_TARGET_COV = float(UI_INPUTS["itn_coverage"]) #Target % coverage of indoor spraying.
-T_NET = 150         #Number of days at which nets are distributed. Required
-                    #user input if "constant" malaria transmission pattern selected
 ITN_MONTH_NUM = int(UI_INPUTS["itn_month_num"]) #Month nets are distributed in the "constant" case (without integration). Indexed
                                 #from 1 (i.e., January = 1)
 #If not using ITN or not using IRS, set their distro date to the same
@@ -87,9 +80,6 @@ if not IRS_CHECKED:
     IRS_MONTH_NUM = PZQ_MONTH_NUM
 if not ITN_CHECKED:
     ITN_MONTH_NUM = PZQ_MONTH_NUM
-
-#IRS_ITN_DIST_STRAT = UI_INPUTS["irs_itn_distribution"]  #Not currently used. The IRS/ITN countermeasure
-                                #distribution strategy.
 
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
@@ -120,29 +110,29 @@ INIT_P_MALARIA_BASELINE =  1.0 - math.exp(-1.0 * float(N_BASELINE_INF_BITES) * (
 F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Mbah et al, 2014)
 P_MALARIA_SEASONAL_MOD = 5.0  #Factor by which the daily prob. of getting malaria
                             #increases during malaria season (Kelly-Hope and McKenzie 2009; based on difference between places with 7 or more months of rain vs. 6 or fewer)
-
-#TO DO: Justin figuring out these values
-P_SCHISTO = 0.45 #Fraction of people that get schisto infections (applied at model run initialization)
 NET_EFFICACY =  0.53 #(average of results from Eisele et al., 2010 and Guyatt et al., 2002)
 SPRAY_EFFICACY = 0.65 #(Guyatt 2002)
 
-#Vector-related constants
-#Number of susceptible vectors (assume 4% are infected at the start
-#of the simulation)
-F_INF = 0.04 #ASK JUSTIN FOR CITATION
-F_SUS = 1 - F_INF
-TIME_DELTA = 1.0 #days, 1 by default (model time step is 1 day)
-a = 0.67 #bites per day on humans by a female vector (Mbah et al 2014)
-b = 0.25 #probability of successful human inoculation upon an infectious bite (Mbah et al 2014)
-MU_M = 0.125 #mosquito natural mortality rate (Mbah et al, 2014)
-T_INCUB = 10.0 #mosquito incubation period, days (Mbah et al, 2014)
-PSI = math.exp(-1.0 * MU_M * T_INCUB) #fraction of mosquitos that survive the incubation period and become infectious (Mbah et al, 2014)
-I_M_0 = 0.04 #percent of vector population infected with malaria at time zero
-#Total number of vectors (assumed constant)
-NUM_VEC = N_PEOPLE * float(N_BASELINE_INF_BITES) / (I_M_0 * a * b)
-C_D = 0.3 #probability of vector infection upon biting a human in a state of untreated symptomatic malaria (Mbah et al 2014)
-C_A = 0.1 #probability of vector infection upon biting a human in a state of asymp patent malaria (Mbah et al 2014)
-C_U = 0.05 ##probability of vector infection upon biting a human in a state of asymp subpatent malaria (Mbah et al 2014)
+#TO DO: Justin figuring out these values
+P_SCHISTO = 0.45 #Fraction of people that get schisto infections (applied at model run initialization)
+
+##Vector-related constants (for future version)
+##Number of susceptible vectors (assume 4% are infected at the start
+##of the simulation)
+#F_INF = 0.04 #Assumed
+#F_SUS = 1 - F_INF
+#TIME_DELTA = 1.0 #days, 1 by default (model time step is 1 day)
+#a = 0.67 #bites per day on humans by a female vector (Mbah et al 2014)
+#b = 0.25 #probability of successful human inoculation upon an infectious bite (Mbah et al 2014)
+#MU_M = 0.125 #mosquito natural mortality rate (Mbah et al, 2014)
+#T_INCUB = 10.0 #mosquito incubation period, days (Mbah et al, 2014)
+#PSI = math.exp(-1.0 * MU_M * T_INCUB) #fraction of mosquitos that survive the incubation period and become infectious (Mbah et al, 2014)
+#I_M_0 = 0.04 #percent of vector population infected with malaria at time zero
+##Total number of vectors (assumed constant)
+#NUM_VEC = N_PEOPLE * float(N_BASELINE_INF_BITES) / (I_M_0 * a * b)
+#C_D = 0.3 #probability of vector infection upon biting a human in a state of untreated symptomatic malaria (Mbah et al 2014)
+#C_A = 0.1 #probability of vector infection upon biting a human in a state of asymp patent malaria (Mbah et al 2014)
+#C_U = 0.05 ##probability of vector infection upon biting a human in a state of asymp subpatent malaria (Mbah et al 2014)
         
 #Miscellaneous global constants
 ONE_YEAR =  date.relativedelta(years=1)
@@ -207,7 +197,8 @@ class People( list ):
         self.A = 0.0
         self.U = 0.0
         
-    def update_interventions_and_infections( self, app, vectors):
+    def update_interventions_and_infections( self, app):
+#    def update_interventions_and_infections( self, app, vectors):
         """Once per time step, check whether each person gets malaria and/or
         schisto. Also, check whether a person's malaria timer has ended; if so,
         flag them as no longer having malaria."""
@@ -317,7 +308,8 @@ class People( list ):
                 #Check the person's intervention and schisto flags and modify
                 #their P_MALARIA value accordingly
 #                cur_p_malaria = cur_p_malaria_baseline
-                cur_AEIR = app.AEIR
+#                cur_AEIR = app.AEIR
+                cur_AEIR = float(N_BASELINE_INF_BITES) #for not using mosquitoes
                 if app.is_malaria_season[t]:
                     cur_AEIR *= P_MALARIA_SEASONAL_MOD
                 if cur_person.has_schisto:
@@ -447,55 +439,57 @@ class People( list ):
             #U: Subpatent
             elif cur_person.subpat_malaria_days_left > 0:
                 self.U += 1
-        #Update vectors
-        vectors.update_vectors(people)
-        updated_I_m = vectors.inf / (vectors.inf + vectors.sus)
-        app.AEIR = updated_I_m * a * b * NUM_VEC / N_PEOPLE
+#        #Update vectors (for  future version)
+#        vectors.update_vectors(people)
+#        updated_I_m = vectors.inf / (vectors.inf + vectors.sus)
+#        app.AEIR = updated_I_m * a * b * NUM_VEC / N_PEOPLE
 
-class Vectors( object ):
-    """Class that defines the vector pool. In this model, the malaria vector
-    is modeled as a pool of mosquitoes that can be either susceptible (S) to
-    malaria or infected (I) with malaria."""
-    
-    def __init__( self , NUM_VEC ):
-        
-        #Number of susceptible vectors        
-        self.sus = NUM_VEC * F_SUS    
-    
-        #Number of infected vectors
-        self.inf = NUM_VEC * F_INF
-        
-    def update_vectors( self, people ):
-        """Run at each time step to update the total number of susceptible (S)
-        and infectious (I) mosquitoes in the simulation. This is affected by
-        number of people with each type of malaria. A constant vector
-        population is assumed."""
-        
-        #Initialize variables
-        sus = self.sus
-        inf = self.inf
-                
-        #constant, will be replaced with equation from (Mbah et al, 2014)
-        D = people.D #symp untreat
-        A = people.A #patent
-        U = people.U #subpatent
-        total_inf_people = D + A + U
-        D_frac = D / total_inf_people
-        A_frac = A / total_inf_people
-        U_frac = U / total_inf_people
-        Lambda_M_vec = a * (C_D * D_frac + C_A * A_frac + C_U * U_frac)
-                
-        #Update differential equations (Mbah et al, 2014)
-        dS_M = TIME_DELTA * ((MU_M * (sus + inf)) - (Lambda_M_vec * sus * PSI) - (MU_M * sus))
-        dI_M = TIME_DELTA * ((Lambda_M_vec * sus * PSI) - (MU_M * inf))
-        
-        #Update variables
-        self.sus += dS_M
-        self.inf += dI_M
-        
-    def debug_vectors( self, people ):
-        for n in range(0,60):
-            self.update_vectors(people)
+#The code commented out below is a planned feature for a future version of the
+#model which will handle the interacti
+#class Vectors( object ):
+#    """Class that defines the vector pool. In this model, the malaria vector
+#    is modeled as a pool of mosquitoes that can be either susceptible (S) to
+#    malaria or infected (I) with malaria."""
+#    
+#    def __init__( self , NUM_VEC ):
+#        
+#        #Number of susceptible vectors        
+#        self.sus = NUM_VEC * F_SUS    
+#    
+#        #Number of infected vectors
+#        self.inf = NUM_VEC * F_INF
+#        
+#    def update_vectors( self, people ):
+#        """Run at each time step to update the total number of susceptible (S)
+#        and infectious (I) mosquitoes in the simulation. This is affected by
+#        number of people with each type of malaria. A constant vector
+#        population is assumed."""
+#        
+#        #Initialize variables
+#        sus = self.sus
+#        inf = self.inf
+#                
+#        #constant, will be replaced with equation from (Mbah et al, 2014)
+#        D = people.D #symp untreat
+#        A = people.A #patent
+#        U = people.U #subpatent
+#        total_inf_people = D + A + U
+#        D_frac = D / total_inf_people
+#        A_frac = A / total_inf_people
+#        U_frac = U / total_inf_people
+#        Lambda_M_vec = a * (C_D * D_frac + C_A * A_frac + C_U * U_frac)
+#                
+#        #Update differential equations (Mbah et al, 2014)
+#        dS_M = TIME_DELTA * ((MU_M * (sus + inf)) - (Lambda_M_vec * sus * PSI) - (MU_M * sus))
+#        dI_M = TIME_DELTA * ((Lambda_M_vec * sus * PSI) - (MU_M * inf))
+#        
+#        #Update variables
+#        self.sus += dS_M
+#        self.inf += dI_M
+#        
+#    def debug_vectors( self, people ):
+#        for n in range(0,60):
+#            self.update_vectors(people)
         
 #        print (self.inf/(self.inf + self.sus))
 
@@ -975,9 +969,9 @@ if __name__ == '__main__':
     for n in range(0, N_PEOPLE):
         append(Person())
     
-    #Initialize vectors and AEIR(0)
-    vectors = Vectors(NUM_VEC)
-    
+#    #Initialize vectors and AEIR(0)
+#    vectors = Vectors(NUM_VEC)
+#    
     #For each time step:
     N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN    
     for t in range(0, N_DAYS_TOT):
@@ -996,7 +990,8 @@ if __name__ == '__main__':
        #Apply interventions at the proper times and update everyone's malaria
        #and schisto infection status. Also update the prevalence vs. time
        #series for this time step.
-       update_interventions_and_infections(app, vectors)
+       update_interventions_and_infections(app)
+#       update_interventions_and_infections(app, vectors)
         
     #End model timer and print the time elapsed.
     end = time.time()
@@ -1019,10 +1014,10 @@ if __name__ == '__main__':
     app.spray_date = spray_date
     
     #Write JSON output (print)
-    tmp_vec = Vectors(NUM_VEC)
-    tmp_vec.debug_vectors(people)
-    tmp_inf = tmp_vec.inf / (tmp_vec.sus + tmp_vec.inf)
-    app.vec_inf = tmp_inf
+#    tmp_vec = Vectors(NUM_VEC)
+#    tmp_vec.debug_vectors(people)
+#    tmp_inf = tmp_vec.inf / (tmp_vec.sus + tmp_vec.inf)
+#    app.vec_inf = tmp_inf
     app.export_prevalence()
     
     #DEBUG OUTPUTS#-----------------------------------------------------------#
