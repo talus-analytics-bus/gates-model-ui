@@ -83,7 +83,7 @@ if not ITN_CHECKED:
 
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
-N_PEOPLE = 1000    #Number of people to simulate
+N_PEOPLE = 10000    #Number of people to simulate
 N_DAYS_BURN_INIT = 365    #Baselineumber of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
 N_DAYS_BURN = N_DAYS_BURN_INIT #Duration of the burn in period (may vary)
 #N_PEOPLE = 10000    #Number of people to simulate
