@@ -6,6 +6,7 @@ var App = App || {};
 	
 	App.initialize = function() {
 		// get cookies if its exists
+		App.inputs = App.getCookie('inputs');
 		App.outputs = App.getCookie('outputs');
 		
 		// clicking header in navbar navigates user to home screen

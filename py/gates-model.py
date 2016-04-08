@@ -728,17 +728,17 @@ class App( object ):
         if not IRS_CHECKED:
             irs_output = "N/A"
         else:
-            irs_output = self.spray_date.strftime("%B")
+            irs_output = self.spray_date.strftime("%m")
             
         if not ITN_CHECKED:
             itn_output = "N/A"
         else:
-            itn_output = self.net_date.strftime("%B")
+            itn_output = self.net_date.strftime("%m")
             
         output = {\
         "schisto":schisto_avg_prev,\
         "malaria":malaria_avg_prev,\
-        "pzq_month":self.pzq_date.strftime("%B"),\
+        "pzq_month":self.pzq_date.strftime("%m"),\
         "net_month":itn_output,\
         "spray_month":irs_output,\
         "use_integration":USE_INTEGRATION,\

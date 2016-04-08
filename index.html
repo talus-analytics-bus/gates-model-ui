@@ -316,7 +316,6 @@
 					</table>
 				</div>
 				<div class="output-chart-container">
-					<!-- patterns taken from http://iros.github.io/patternfills/ -->
 					<svg class="output-bar-chart">
 						<defs>
 							<pattern id="diagonal-stripe-1" patternUnits="userSpaceOnUse" width="10" height="10">
@@ -328,13 +327,20 @@
 				</div>
 			</div>
 			<div class="output-section">
+				<div class="title center">Distribution Strategy Timeline</div>
+				<div class="description">
+					Below shows the current and recommended distribution strategies for praziquantel (PZQ),
+					indoor residual insecticide spraying (IRS), and insectiicde treated bed nets (ITN).
+				</div>
+				<div class="output-timeline-container">
+					<svg class="output-timeline"></svg>
+				</div>
+			</div>
+			<div class="output-section">
 				<div class="title center">Distribution Strategy</div>
 				<div class="description">
 					Below shows recommended approximate times when treatment should be distributed. 
 				</div>
-				<!--<div class="description">
-					Below shows the recommended control measures to take, as well as the proper timing for which to complete the measures. 
-				</div>-->
 				<div class="output-table-container center">
 					<table class="output-strategy-table table table-condensed">
 						<thead>
@@ -398,12 +404,12 @@
 	<script src="build/lib.min.js"></script>
     
     <!-- Project Specific Files -->
-    <!--<script src="js/utility.js"></script>
+    <script src="js/utility.js"></script>
     <script src="js/routing.js"></script>
     <script src="js/pages/input.js"></script>
     <script src="js/pages/output.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/init.js"></script>-->
-    <script src="build/bundle.min.js"></script>
+    <script src="js/init.js"></script>
+    <!--<script src="build/bundle.min.js"></script>-->
 </body>
 </html>

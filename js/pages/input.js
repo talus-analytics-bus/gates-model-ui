@@ -235,7 +235,8 @@ var App = App || {};
 						'separate': outputWithout
 					};
 					
-					// set cookie
+					// set cookies
+					App.setCookie('inputs', App.inputs);
 					App.setCookie('outputs', App.outputs);
 					
 					hasher.setHash('output');
