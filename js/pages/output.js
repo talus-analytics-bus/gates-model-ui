@@ -28,9 +28,7 @@ var App = App || {};
 		];
 		d3.selectAll('.output-table tbody tr').each(function(d, i) {
 			d3.select(this).select('td:nth-child(2)')
-				.text(Util.percentize(data[i].schisto))
-				.classed('text-success', function() { if (i === 1) return (schistoPrevInt < schistoPrevNoInt); })
-				.classed('text-danger', function() { if (i === 1) return (schistoPrevInt > schistoPrevNoInt); });
+				.text(Util.percentize(data[i].schisto));
 			d3.select(this).select('td:nth-child(3)')
 				.text(Util.percentize(data[i].malaria))
 				.classed('text-success', function() { if (i === 1) return (malariaPrevInt < malariaPrevNoInt); })
