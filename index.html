@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <title>Malaria/Schisto Model</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="img/gf-favicon.ico">
+	<link rel="icon" href="img/favicon.ico">
     
     <!-- ----- CSS Files ----- -->
  	<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,600,400,300' rel='stylesheet' type='text/css'>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
+    <link href="css/tooltipster.min.css" rel="stylesheet" type="text/css">
+    <link href="css/tooltipster-light.css" rel="stylesheet" type="text/css">
     <link href="css/nprogress.css" rel="stylesheet" type="text/css">
    	<link href='css/main.css' rel='stylesheet' type='text/css'>
 </head>
@@ -283,7 +285,10 @@
     		<div class="center">
 	    		<div class="output-description">
 	    			Based on the chosen parameters, the following strategy is recommended:
-	    			<div class="output-recommendation"></div>
+	    			<div class="output-recommendation">
+	    				<span class="output-recommendation-text"></span>
+	    				<img class="explanation-icon" src="img/question-mark.png">
+	    			</div>
 	    		</div>
 	    	</div>
 			<div class="output-section">
@@ -293,19 +298,21 @@
 					of schistosomiasis and malaria treatment when using integrated control measures.
 				</div>
 				<div class="output-table-container">
+					<img class="explanation-icon" src="img/question-mark.png">
+					<img class="explanation-icon" src="img/question-mark.png">
 					<table class="output-table table table-condensed">
 						<thead>
 							<tr>
 								<td></td>
-								<td>Schistosomiasis</td>
-								<td>Malaria</td>
+								<td>schistosomiasis prevalence</td>
+								<td>malaria prevalence</td>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>without integration</td>
-								<td>36%</td>
-								<td>42%</td>
+								<td></td>
+								<td></td>
 							</tr>
 							<tr>
 								<td>with integration</td>
@@ -330,17 +337,8 @@
 				<div class="title center">Distribution Strategy Timeline</div>
 				<div class="description">
 					This timeline shows the current and recommended distribution strategies for praziquantel (PZQ),
-					indoor residual insecticide spraying (IRS), and insecticde treated bed nets (ITN).
+					indoor residual insecticide spraying (IRS), and insecticide treated bed nets (ITN) where applicable.
 					<div class="output-timeline-rec-text"></div>
-				</div>
-				<div class="output-timeline-container">
-					<svg class="output-timeline"></svg>
-				</div>
-			</div>
-			<div class="output-section">
-				<div class="title center">Distribution Strategy</div>
-				<div class="description">
-					This table lists the recommended times to complete each intervention. 
 				</div>
 				<div class="output-table-container center">
 					<table class="output-strategy-table table table-condensed">
@@ -365,6 +363,9 @@
 							</tr>
 						</tbody>
 					</table>
+				</div>
+				<div class="output-timeline-container">
+					<svg class="output-timeline"></svg>
 				</div>
 			</div>
 			<div class="assumption-section">
@@ -400,17 +401,18 @@
     <!--<script src="lib/signals.min.js"></script>
     <script src="lib/crossroads.min.js"></script>
     <script src="lib/hasher.min.js"></script>
-	<script src="lib/handlebars-v3.0.0.js"></script>-->
+	<script src="lib/handlebars-v3.0.0.js"></script>
+	<script src="lib/jquery.tooltipster.min.js"></script>-->
 	
 	<script src="build/lib.min.js"></script>
     
     <!-- Project Specific Files -->
-    <!--<script src="js/utility.js"></script>
+    <script src="js/utility.js"></script>
     <script src="js/routing.js"></script>
     <script src="js/pages/input.js"></script>
     <script src="js/pages/output.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/init.js"></script>-->
-    <script src="build/bundle.min.js"></script>
+    <script src="js/init.js"></script>
+    <!--<script src="build/bundle.min.js"></script>-->
 </body>
 </html>

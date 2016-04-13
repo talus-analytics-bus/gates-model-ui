@@ -23,25 +23,40 @@
 .output-recommendation {
   font-size: 1.7em;
   margin-top: 10px;
+  img {
+    position: relative;
+    top: -2px;
+    left: 10px;
+  }
 }
 .output-table-container {
+  display: inline-block;
+  position: relative;
   margin-top: 20px;
   margin-left: -20px;
   text-align: center;
+  
+  .explanation-icon {
+    position: absolute;
+    right: -30px;
+    &:first-child { top: 65px; }
+    &:nth-child(2) { top: 111px; }
+  }
 }
 .output-table {
   display: inline-block;
   text-align: center;
-  thead { font-size: 1.2em; }
+  margin-left: -20px;
+  thead td {
+    font-size: 1.1em;
+  }
   tbody td:first-child {
     position: relative;
     top: 7px;
-    padding-right: 30px;
+    padding-right: 20px;
+    width: 150px;
     text-align: right;
     font-size: 1.1em;
-  }
-  td:nth-child(2) {
-    padding-right: 35px;
   }
   tbody td:nth-child(n+2) {
     font-size: 1.8em;
@@ -64,18 +79,10 @@
 /* --- Timeline --- */
 .output-timeline-rec-text { margin-top: 12px; }
 .output-timeline {
-  .timeline-base-current { fill: steelblue; }
-  .timeline-base-rec { fill: steelblue; }
-  .timeline-seasonal-base {
-    fill: #ff7f0e;
-  }
-  .current-strat-marker, 
-  .rec-strat-marker {
-    fill: #333;
-  }
-  .strat-divider {
-    stroke: rgba(0,0,0,0.8);
-  }
+  .timeline-base { fill: #ddd; }
+  .timeline-seasonal-base { fill: lightsteelblue; }
+  .strat-marker { fill: #555; }
+  .strat-divider { stroke: rgba(0,0,0,0.8); }
   .strat-group text {
     text-anchor: end;
     font-size: 0.9em;
