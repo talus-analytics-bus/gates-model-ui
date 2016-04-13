@@ -192,17 +192,23 @@ var App = App || {};
 			stratGroup.append('circle')
 				.attr('class', className)
 				.attr('r', circleRadius);
-			stratGroup.append('text')
+			var label = stratGroup.append('text')
 				.attr('x', -10)
 				.attr('y', 4)
 				.text(text);
+			if (monthXCoord === 0) {
+				label
+					.style('text-anchor', 'start')
+					.attr('x', 10);
+			}
+			return monthXCoord;
 		};
-		drawStrat(App.inputs.schisto_month_num, 'current-strat-marker', 'PZQ', 12);
-		drawStrat(App.inputs.irs_month_num, 'current-strat-marker', 'IRS', 30);
-		drawStrat(App.inputs.itn_month_num, 'current-strat-marker', 'ITN', 48);
-		drawStrat(recOutput.pzq_month, 'rec-strat-marker', 'PZQ', 72);
-		drawStrat(recOutput.spray_month, 'rec-strat-marker', 'IRS', 90);
-		drawStrat(recOutput.net_month, 'rec-strat-marker', 'ITN', 108);
+		var currPzqX = drawStrat(App.inputs.schisto_month_num, 'current-strat-marker', 'PZQ', 12);
+		var currIrsX = drawStrat(App.inputs.irs_month_num, 'current-strat-marker', 'IRS', 30);
+		var currItnX = drawStrat(App.inputs.itn_month_num, 'current-strat-marker', 'ITN', 48);
+		var recPzqX = drawStrat(recOutput.pzq_month, 'rec-strat-marker', 'PZQ', 72);
+		var recIrsX = drawStrat(recOutput.spray_month, 'rec-strat-marker', 'IRS', 90);
+		var recItnX = drawStrat(recOutput.net_month, 'rec-strat-marker', 'ITN', 108);
 		
 		// draw line separating strategies
 		timeline.append('line')
@@ -216,20 +222,8 @@ var App = App || {};
 			.attr('class', 'timeline-legend')
 			.attr('transform', 'translate(0,' + (timelineHeight+45) + ')');
 		if (isSeasonal) {
-			var nonSeasonalGroup = timelineLegend.append('g')
-				.attr('transform', 'translate(140,0)');
-			nonSeasonalGroup.append('rect')
-				.attr('class', 'timeline-base-current')
-				.attr('width', 60)
-				.attr('height', 14);
-			nonSeasonalGroup.append('text')
-				.attr('class', 'legend-text')
-				.attr('x', 75)
-				.attr('y', 12)
-				.text('non-seasonal');
-				
 			var seasonalGroup = timelineLegend.append('g')
-				.attr('transform', 'translate(350,0)');
+				.attr('transform', 'translate(222,0)');
 			seasonalGroup.append('rect')
 				.attr('class', 'timeline-seasonal-base')
 				.attr('width', 60)
@@ -238,10 +232,10 @@ var App = App || {};
 				.attr('class', 'legend-text')
 				.attr('x', 75)
 				.attr('y', 12)
-				.text('seasonal');
+				.text('Malaria Season');
 		}
 		var legendStratGroup = timelineLegend.append('g')
-			.attr('transform', 'translate(220,' + (isSeasonal ? 35 : 0) + ')');
+			.attr('transform', 'translate(220,' + (isSeasonal ? 30 : 0) + ')');
 		legendStratGroup.append('circle')
 			.attr('class', 'current-strat-marker')
 			.attr('r', circleRadius)
@@ -250,9 +244,36 @@ var App = App || {};
 			.attr('x', circleRadius+10)
 			.attr('y', 12)
 			.text('Distribution of Treatment');
-		
-		
-		
+
+
+		// populate timeline recommendation text
+		var recText = '';
+		var treats = [];
+		if (recPzqX < currPzqX) treats.push('<b>PZQ</b>');
+		if (recIrsX < currIrsX) treats.push('<b>IRS</b>');
+		if (recItnX < currItnX) treats.push('<b>ITN</b>');
+		if (treats.length > 0) {
+			var ttext = (treats.length === 1) ? 'treatment' : 'treatments';
+			var verb = (treats.length === 1) ? 'is' : 'are';
+			recText += 'It is recommended that the ' + ttext + ', ' + treats.join(', ') + ', ' + verb + ' applied at an earlier time.';
+		}
+
+		treats = [];
+		if (recPzqX > currPzqX) treats.push('<b>PZQ</b>');
+		if (recIrsX > currIrsX) treats.push('<b>IRS</b>');
+		if (recItnX > currItnX) treats.push('<b>ITN</b>');
+		if (treats.length > 0) {
+			if (recText.length > 0) recText += '<br>';
+			var etext = (treats.length === 1) ? 'treatment' : 'treatments';
+			var verb = (treats.length === 1) ? 'is' : 'are';
+			recText += 'It is recommended that the ' + etext + ', ' + treats.join(', ') + ', ' + verb + ' applied at a later time.';
+		}
+		if (recPzqX !== currPzqX || recIrsX !== currIrsX || recItnX !== currItnX) {
+			$('.output-timeline-rec-text').html(recText);
+		}
+
+
+
 		/* ----------------------- Distribution Strategy Table ------------------------------- */
 		var formatMonth = function(monthNum) {
 			return d3.time.format('%B')(new Date(2015, monthNum-1, 1, 0, 0, 0, 0));
