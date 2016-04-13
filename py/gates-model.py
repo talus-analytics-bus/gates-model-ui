@@ -44,6 +44,7 @@ if (SHOW_PLOTS):
 USE_INTEGRATION = bool(int(UI_INPUTS["use_integration"]))
 
 #Initialize user-specified inputs (pulled from GUI)
+N_PEOPLE = int(UI_INPUTS["n_people"])    #Number of people to simulate
 F_AGE_UNDER_5 = float(UI_INPUTS["pop1"])     #% distribution of population under 5 years old
 F_AGE_5_TO_15 = float(UI_INPUTS["pop2"])       #% distribution of population between 5 and 15 years old
 F_AGE_16_PLUS = float(UI_INPUTS["pop3"])    #% distribution of population 16 years old or older
@@ -83,7 +84,6 @@ if not ITN_CHECKED:
 
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
-N_PEOPLE = 10000    #Number of people to simulate
 N_DAYS_BURN_INIT = 365    #Baselineumber of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
 N_DAYS_BURN = N_DAYS_BURN_INIT #Duration of the burn in period (may vary)
 #N_PEOPLE = 10000    #Number of people to simulate

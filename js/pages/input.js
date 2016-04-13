@@ -153,6 +153,7 @@ var App = App || {};
 		$('.input-submit-button').click(function() {
 			// define user inputs
 			var inputs = {
+				n_people: 5000,
 				pop1: Util.strToFloat($('.pop-age-table tbody tr:first-child input').val()) / 100, // age distribution for under 5
 				pop2: Util.strToFloat($('.pop-age-table tbody tr:nth-child(2) input').val()) / 100, // age distribution for 5-15
 				pop3: Util.strToFloat($('.pop-age-table tbody tr:nth-child(3) input').val()) / 100, // age distribution for 16+
