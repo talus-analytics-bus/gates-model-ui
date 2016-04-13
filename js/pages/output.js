@@ -22,7 +22,7 @@ var App = App || {};
 
 		// update recommendation text
 		d3.select('.output-recommendation')
-			.text(isRecommended ? 'INTEGRATED TREATMENT' : 'NON-INTEGRATED TREATMENT')
+			.text(isRecommended ? 'INTEGRATED INTERVENTIONS' : 'NON-INTEGRATED INTERVENTIONS')
 			.classed('text-success', isRecommended);
 		
 		// fill table showing prevalence
@@ -47,7 +47,7 @@ var App = App || {};
 		];
 		
 		// build bar chart for the population age distribution
-		var margin = {top: 30, right: 20, bottom: 80, left: 80};
+		var margin = {top: 20, right: 20, bottom: 80, left: 80};
 		var width = 650 - margin.left - margin.right;
 		var height = 300 - margin.top - margin.bottom;
    		var chart = d3.select('.output-bar-chart')
