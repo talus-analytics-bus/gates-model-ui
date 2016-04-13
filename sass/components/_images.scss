@@ -3,3 +3,13 @@
   height: 22px;
   cursor: pointer;
 }
+.arrow-icon {
+  position: relative;
+  top: 7px;
+  width: 13px;
+  height: 12px;
+  @include opacity(0.78);
+}
+.opacityred {
+  @include opacity(0.75);
+}

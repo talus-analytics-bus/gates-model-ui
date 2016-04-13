@@ -46,11 +46,16 @@
 .output-table {
   display: inline-block;
   text-align: center;
+  margin-top: 10px;
   margin-left: -20px;
   thead td {
     font-size: 1.1em;
   }
   tbody td:first-child {
+    width: 15px;
+    padding-right: 0px;
+  }
+  tbody td:nth-child(2) {
     position: relative;
     top: 7px;
     padding-right: 20px;
@@ -58,11 +63,11 @@
     text-align: right;
     font-size: 1.1em;
   }
-  tbody td:nth-child(n+2) {
+  tbody td:nth-child(n+3) {
     font-size: 1.8em;
     width: 100px;
   }
-  tbody tr:nth-child(2) td:nth-child(n+2) {
+  tbody tr:nth-child(2) td:nth-child(n+3) {
     font-weight: 700;
   }
 }

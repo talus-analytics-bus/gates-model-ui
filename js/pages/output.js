@@ -23,8 +23,8 @@ var App = App || {};
 			
 		// attach tooltip to question mark beside rec text
 		var nonIntContentStr = '<b>Non-integrated interventions</b> is the default strategy and the status quo. ' +
-			'It refers to the schedule the the user is currently following for distributing medical countermeasures and vector control interventions.';
-		var intContentStr = '<b>Integrated interventions</b> entails distributing medical countermeasures and vector control interventions ' +
+			'It refers to the schedule the user is currently following for distributing medical countermeasures and vector control interventions.';
+		var intContentStr = '<b>Integrated interventions</b> entails distributing medical countermeasures and vector control interventions for both diseases ' +
 			'according to a schedule which the literature suggests is effective for reducing the prevalence of malaria and schistosomiasis.';
 		var recContentStr = 'This is the <b>recommended</b> strategy for the user.';
 		if (isRecommended) intContentStr += ' ' + recContentStr;
@@ -40,7 +40,7 @@ var App = App || {};
 			var outputs = (i === 0) ? App.outputs.separate : App.outputs.integrated;
 			
 			// populate cells with prevalence value
-			var cells = d3.select(this).selectAll('td:nth-child(2), td:nth-child(3)').text(function(dd, j) {
+			var cells = d3.select(this).selectAll('td:nth-child(3), td:nth-child(4)').text(function(dd, j) {
 				var val = (j === 0) ? outputs.schisto : outputs.malaria;
 				return Util.percentize(val);
 			});
@@ -58,6 +58,12 @@ var App = App || {};
 					});
 			}
 		});
+		
+		// add arrow to recommended row for prevalence
+		var recRowNum = isRecommended ? 2 : 1;
+		d3.select('.output-table tbody tr:nth-child(' + recRowNum + ') td:first-child').append('img')
+			.attr('class', 'arrow-icon')
+			.attr('src', 'img/chevron_right.png');
 		
 		// build bar chart for the population age distribution
 		var barData = [
@@ -147,8 +153,8 @@ var App = App || {};
 			contentAsHTML: true,
 			content: 'The values shown are prevalence values for schistosomiasis and malaria when ' +
 				'<b>integrated interventions</b> are used. ' +
-				'<br><br>Values are colored <b class="text-success">green</b> if there is a non-trival reduction in prevalence (> 1% reduction). ' + 
-				'<br><br>Values are colored <b class="text-danger">red</b> if there is a non-trivial increase in prevalence (> 1% increase).'
+				'<br><br>Values are colored <b>green</b> if there is a non-trival reduction in prevalence (> 1% reduction). ' + 
+				'<br><br>Values are colored <b>red</b> if there is a non-trivial increase in prevalence (> 1% increase).'
 		});
 			
 		
