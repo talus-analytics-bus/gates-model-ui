@@ -67,7 +67,16 @@
   }
 }
 .pop-age-chart { margin-left: -65px; }
+.schisto-prevalence-container .explanation-icon {
+  position: relative;
+  top: -1px;
+  left: 10px;
+}
 .schisto-prevalence { width: 70px; }
+.malaria-month-container {
+  .row { padding: 10px 20px 0px; }
+  .row div { text-align: center; }
+}
 .malaria-trans-rate-select {
   option:first-child { color: #3c763d; }
   option:nth-child(2) { color: #8a6d3b; }

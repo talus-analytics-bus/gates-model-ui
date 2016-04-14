@@ -2,6 +2,11 @@
   width: 22px;
   height: 22px;
   cursor: pointer;
+  &.small {
+    width: 20px;
+    height: 20px;
+    @include opacity(0.9);
+  }
 }
 .arrow-icon {
   position: relative;

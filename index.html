@@ -99,9 +99,10 @@
 	    			<div class="input-subsection">
 		    			<div class="subtitle">Praziquantel Mass Drug Administration</div>
 		    			<div class="contents">
-		    				<div>
+		    				<div class="schisto-prevalence-container">
 		    					<div class="select-label">Schistosomiasis Prevalence:</div>
 		    					<input class="schisto-prevalence form-control" value="45%">
+		    					<img src="img/question-mark.png" class="explanation-icon small">
 		    				</div>
 		    				<div class="margin-top-10">
 			    				<div class="select-label">Target % Coverage:</div>
@@ -126,9 +127,9 @@
 				    				<option value="1">January</option>
 				    				<option value="2">February</option>
 				    				<option value="3">March</option>
-				    				<option value="4">April</option>
+				    				<option value="4" selected>April</option>
 				    				<option value="5">May</option>
-				    				<option value="6" selected>June</option>
+				    				<option value="6">June</option>
 				    				<option value="7">July</option>
 				    				<option value="8">August</option>
 				    				<option value="9">September</option>
@@ -162,20 +163,56 @@
 				    		</div>
 				    		<div class="malaria-month-container margin-top-10">
 				    			<div class="select-label">Peak Transmission Month(s):</div>
-				    			<select class="malaria-month-select form-control" multiple="multiple">
-				    				<option value="1">January</option>
-				    				<option value="2">February</option>
-				    				<option value="3">March</option>
-				    				<option value="4">April</option>
-				    				<option value="5">May</option>
-				    				<option value="6" selected>June</option>
-				    				<option value="7" selected>July</option>
-				    				<option value="8">August</option>
-				    				<option value="9">September</option>
-				    				<option value="10">October</option>
-				    				<option value="11">November</option>
-				    				<option value="12">December</option>
-				    			</select>
+				    			<div class="row">
+				    				<div class="col-md-1">
+				    					<input type="checkbox" checked>
+				    					<div>Jan</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox" checked>
+				    					<div>Feb</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox">
+				    					<div>Mar</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox">
+				    					<div>Apr</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox">
+				    					<div>May</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox">
+				    					<div>Jun</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox">
+				    					<div>Jul</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox">
+				    					<div>Aug</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox">
+				    					<div>Sep</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox" checked>
+				    					<div>Oct</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox" checked>
+				    					<div>Nov</div>
+				    				</div>
+				    				<div class="col-md-1">
+				    					<input type="checkbox" checked>
+				    					<div>Dec</div>
+				    				</div>
+				    			</div>
 				    		</div>
 			    		</div>
 			    	</div>
@@ -184,9 +221,9 @@
 		    			<div class="contents">
 			    			<div class="select-label">Baseline infectious bites per year:</div>
 			    			<select class="malaria-trans-rate-select form-control">
-			    				<option value="20" selected>< 20 (Low)</option>
+			    				<option value="20">< 20 (Low)</option>
 			    				<option value="100">20-200 (Medium)</option>
-			    				<option value="250">201+ (High)</option>
+			    				<option value="250" selected>201+ (High)</option>
 			    			</select>
 			    		</div>
 		    		</div>
@@ -209,13 +246,13 @@
 			    			<div class="irs-true-contents margin-top-10">
 			    				<div class="select-label">Current Distribution Month:</div>
 			    				<select class="irs-month-select form-control">
-				    				<option value="1">January</option>
+				    				<option value="1" selected>January</option>
 				    				<option value="2">February</option>
 				    				<option value="3">March</option>
 				    				<option value="4">April</option>
 				    				<option value="5">May</option>
 				    				<option value="6">June</option>
-				    				<option value="7" selected>July</option>
+				    				<option value="7">July</option>
 				    				<option value="8">August</option>
 				    				<option value="9">September</option>
 				    				<option value="10">October</option>
@@ -250,11 +287,11 @@
 				    				<option value="4">April</option>
 				    				<option value="5">May</option>
 				    				<option value="6">June</option>
-				    				<option value="7" selected>July</option>
+				    				<option value="7">July</option>
 				    				<option value="8">August</option>
 				    				<option value="9">September</option>
 				    				<option value="10">October</option>
-				    				<option value="11">November</option>
+				    				<option value="11" selected>November</option>
 				    				<option value="12">December</option>
 			    				</select>
 			    			</div>

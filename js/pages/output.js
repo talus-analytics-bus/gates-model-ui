@@ -239,16 +239,27 @@ var App = App || {};
 		}
 			
 		// add labels
-		timelineCurr.append('text')
+		var currLabel = timelineCurr.append('text')
 			.attr('class', 'y-label')
-			.attr('x', -10)
+			.attr('x', -15)
 			.attr('y', timHeight/2 + 3)
 			.text('current');
-		timelineRec.append('text')
-			.attr('class', 'y-label')
-			.attr('x', -10)
-			.attr('y', timHeight/2 + 3)
-			.text('recommended');
+		if (currMonthsEqualRec) {
+			currLabel
+				.attr('x', -33)
+				.attr('y', timHeight/2 - 6);
+			timelineCurr.append('text')
+				.attr('class', 'y-label')
+				.attr('x', -10)
+				.attr('y', timHeight/2 + 10)
+				.text('(recommended)');
+		} else {
+			timelineRec.append('text')
+				.attr('class', 'y-label')
+				.attr('x', -15)
+				.attr('y', timHeight/2 + 3)
+				.text('recommended');
+		}
 		
 		// draw rectangles showing mitigation strategies
 		var markerHeight = 10;
@@ -274,7 +285,7 @@ var App = App || {};
 			if (monthXCoord === 0) {
 				label
 					.style('text-anchor', 'start')
-					.attr('x', getMonthXCoord(malariaStartMonthNum-2) + 7);
+					.attr('x', nextMonthXCoord + 7);
 			}
 			return monthXCoord;
 		};

@@ -113,6 +113,14 @@ var App = App || {};
 		
 		
 		/* --------------------- Schisto Section ----------------------- */
+		// tooltip for schisto prevalence
+		$('.schisto-prevalence-container .explanation-icon').tooltipster({
+			maxWidth: 350,
+			contentAsHTML: true,
+			content: '<b>Schistosomiasis prevalence</b> indicates the percentage of the population currently ' +
+				'infected with schistosomiasis (medium-high intensity).'
+		});
+		
 		// picking a schistosomiasis prevalence
 		$('.schisto-prevalence').on('change', function() {
 			var val = Math.round(Util.strToFloat($(this).val()));
@@ -140,7 +148,6 @@ var App = App || {};
 			if ($(this).val() === 'seasonal') $('.malaria-month-container').slideDown();
 			else $('.malaria-month-container').slideUp();
 		});
-		$('.malaria-month-select').multiselect();
 		
 		
 		// checkboxes for IRS and ITN
@@ -172,6 +179,13 @@ var App = App || {};
 		/* --------------------- Submission ----------------------- */
 		// submit button
 		$('.input-submit-button').click(function() {
+			// calculate malaria peak months
+			var malariaPeakMonths = [];
+			d3.selectAll('.malaria-month-container input').each(function(d, i) {
+				if ($(this).is(':checked')) malariaPeakMonths.push(i+1);
+			});
+			console.log(malariaPeakMonths);
+			
 			// define user inputs
 			var inputs = {
 				n_people: 2000,
@@ -183,7 +197,7 @@ var App = App || {};
 				schisto_age_range: $('.schisto-age-select').val(), // schisto age range
 				schisto_month_num: $('.schisto-month-select').val(), // schisto distribution time
 				malaria_timing: $('.malaria-timing-select').val(), // malaria timing
-				malaria_peak_month_num: $('.malaria-month-select').val(), // array of malaria peak transmission month numbers (1-Jan, 2-Feb, etc.)
+				malaria_peak_month_num: malariaPeakMonths, // array of malaria peak transmission month numbers (1-Jan, 2-Feb, etc.)
 				malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()), // malaria transmission rate
 				irs: $('.irs-checkbox').is(':checked') ? 1 : 0, // whether IRS is an option
 				irs_coverage: Util.strToFloat($('.irs-coverage-select').val()), // IRS target % coverage
@@ -192,7 +206,6 @@ var App = App || {};
 				itn_coverage: Util.strToFloat($('.itn-coverage-select').val()), // ITN target % coverage
 				itn_month_num: $('.itn-month-select').val() // ITN distribution month number (1-Jan, 2-Feb, etc.)
 			};
-
 
 			/* -------- Validation -------- */
 			// validate that the population age distribution sums to 100%
@@ -215,9 +228,15 @@ var App = App || {};
 				noty({text: '<b>Error!</b><br>Please select either <b>IRS</b> or <b>ITN</b> as an option for treatment of malaria.'});
 				return false;
 			}
+			
+			// check that a malaria peak transmission month has been picked if seasonal
+			if (inputs.malaria_timing === 'seasonal' && inputs.malaria_peak_month_num.length === 0) {
+				noty({text: '<b>Error!</b><br>Please select at least 1 peak transmission month for malaria.'});
+				return false;
+			}
 
 			// check that more than 8 months havent been chosen
-			if (inputs.malaria_peak_month_num.length > 8) {
+			if (inputs.malaria_timing === 'seasonal' && inputs.malaria_peak_month_num.length > 8) {
 				noty({
 					text: '<b>Error!</b><br>There may only be up to <b>8</b> peak transmission months for malaria.' + 
 						'<br>There are currently <b>' + inputs.malaria_peak_month_num.length + '</b> months chosen.'
@@ -275,7 +294,9 @@ var App = App || {};
 		// set inputs in malaria section
 		$('.malaria-timing-select').val(App.inputs.malaria_timing);
 		if (App.inputs.malaria_timing === 'constant') $('.malaria-month-container').hide();		
-		$('.malaria-month-select').val(App.inputs.malaria_peak_month_num);
+		d3.selectAll('.malaria-month-container input').property('checked', function(d, i) {
+			return App.inputs.malaria_peak_month_num.indexOf(i+1) > -1;
+		});
 		$('.malaria-trans-rate-select').val(App.inputs.malaria_rate);
 		
 		$('.irs-checkbox').prop('checked', App.inputs.irs);
