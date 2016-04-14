@@ -49,6 +49,7 @@ F_AGE_UNDER_5 = float(UI_INPUTS["pop1"])     #% distribution of population under
 F_AGE_5_TO_15 = float(UI_INPUTS["pop2"])       #% distribution of population between 5 and 15 years old
 F_AGE_16_PLUS = float(UI_INPUTS["pop3"])    #% distribution of population 16 years old or older
 
+SCHISTO_PREVALENCE = float(UI_INPUTS["schisto_prevalence"]) # % schistosomiasis prevalence
 F_PZQ_TARGET_COV = float(UI_INPUTS["schisto_coverage"])    #Target % coverage of praziquantel (PZQ) mass drug 
                         #administration
 PZQ_AGE_RANGE = tuple(UI_INPUTS["schisto_age_range"] )#Age groups that get PZQ (by default, only 5-15 y/o 
@@ -763,18 +764,12 @@ if __name__ == '__main__':
     #Intervention timing calculations
     if MALARIA_TRANS_PATTERN == "seasonal":
         #Error checking
-        more_than_8_months = len(PEAK_TRANS_MONTHS) > 8
-        discontinuous_months = False
         n_months = len(PEAK_TRANS_MONTHS)
-        for n in range(0, n_months - 1):
-            cur_month = PEAK_TRANS_MONTHS[n]
-            nxt_month = PEAK_TRANS_MONTHS[n+1]
-            if (nxt_month-cur_month != -11) and (nxt_month-cur_month != 1):
-                discontinuous_months = True
-        if discontinuous_months or more_than_8_months:
-            print "Error: Peak transmission months must be a continuous block of 8 or fewer months."
+        if n_months > 8:
+            print "Error: Peak transmission months must be 8 or fewer months."
         
         #Get length of malaria season based on months input (for one year)
+        # TODO may not be continuous
         season_start_date = datetime.date(CUR_YEAR, PEAK_TRANS_MONTHS[0], 1)
         season_end_date = season_start_date + (n_months)*ONE_MONTH
         malaria_season_len_days = (season_end_date - season_start_date).days

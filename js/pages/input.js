@@ -28,6 +28,7 @@ var App = App || {};
 		});
 		
 		
+		/* --------------------- Population Section ----------------------- */
 		var popAgeData = [
 			{age: '0-4', value: App.inputs ? App.inputs.pop1 : 0.20},
 			{age: '5-15', value: App.inputs ? App.inputs.pop2 : 0.34},
@@ -111,10 +112,29 @@ var App = App || {};
 		updatePopAgeChart();
 		
 		
+		/* --------------------- Schisto Section ----------------------- */
+		// picking a schistosomiasis prevalence
+		$('.schisto-prevalence').on('change', function() {
+			var val = Math.round(Util.strToFloat($(this).val()));
+			if (isNaN(val)) {
+				noty({text: '<b>Error!</b><br>Please select a valid number for schistosomiasis prevalence.'});
+				$(this).val(Util.percentize(0.45));
+			} else if (val <= 0) {
+				noty({text: '<b>Warning!</b><br>The percentage for schistosomiasis prevalence must be <b>greater than 0%</b>.'});
+				$(this).val(Util.percentize(0.01));
+			} else if (val > 100) {
+				noty({text: '<b>Warning!</b><br>The maximum percentage for schistosomiasis prevalence is <b>100%</b>.'});
+				$(this).val(Util.percentize(1));
+			} else {
+				$(this).val(Util.percentize(val/100));
+			}
+		});
+		
 		// multiselect for age range
 		$('.schisto-age-select').multiselect();
 		
 		
+		/* --------------------- Malaria Section ----------------------- */
 		// malaria transmission pattern
 		$('.malaria-timing-select').on('change', function() {
 			if ($(this).val() === 'seasonal') $('.malaria-month-container').slideDown();
@@ -149,6 +169,7 @@ var App = App || {};
 		};
 		
 		
+		/* --------------------- Submission ----------------------- */
 		// submit button
 		$('.input-submit-button').click(function() {
 			// define user inputs
@@ -157,11 +178,12 @@ var App = App || {};
 				pop1: Util.strToFloat($('.pop-age-table tbody tr:first-child input').val()) / 100, // age distribution for under 5
 				pop2: Util.strToFloat($('.pop-age-table tbody tr:nth-child(2) input').val()) / 100, // age distribution for 5-15
 				pop3: Util.strToFloat($('.pop-age-table tbody tr:nth-child(3) input').val()) / 100, // age distribution for 16+
+				schisto_prevalence: Util.strToFloat($('.schisto-prevalence').val()) / 100, // schistosomiasis prevalence percentage
 				schisto_coverage: Util.strToFloat($('.schisto-coverage-select').val()), // target % coverage for schisto
 				schisto_age_range: $('.schisto-age-select').val(), // schisto age range
 				schisto_month_num: $('.schisto-month-select').val(), // schisto distribution time
 				malaria_timing: $('.malaria-timing-select').val(), // malaria timing
-				malaria_peak_month_num: [], // array of malaria peak transmission month numbers (1-Jan, 2-Feb, etc.); defined in next step
+				malaria_peak_month_num: $('.malaria-month-select').val(), // array of malaria peak transmission month numbers (1-Jan, 2-Feb, etc.)
 				malaria_rate: Util.strToFloat($('.malaria-trans-rate-select').val()), // malaria transmission rate
 				irs: $('.irs-checkbox').is(':checked') ? 1 : 0, // whether IRS is an option
 				irs_coverage: Util.strToFloat($('.irs-coverage-select').val()), // IRS target % coverage
@@ -170,17 +192,6 @@ var App = App || {};
 				itn_coverage: Util.strToFloat($('.itn-coverage-select').val()), // ITN target % coverage
 				itn_month_num: $('.itn-month-select').val() // ITN distribution month number (1-Jan, 2-Feb, etc.)
 			};
-
-			// create malaria peak month array for input parameter
-			var malariaPeakMonths = [];
-			var mpsm = +$('.malaria-month-start-select').val();
-			var mpem = +$('.malaria-month-end-select').val();
-			do {
-				malariaPeakMonths.push(String(mpsm));
-				mpsm++;
-				if (mpsm === 13 && mpem !== 12) mpsm = 1;
-			} while (mpsm !== mpem + 1);
-			inputs.malaria_peak_month_num = malariaPeakMonths;
 
 
 			/* -------- Validation -------- */
@@ -192,7 +203,10 @@ var App = App || {};
 			
 			// validate that an age range was chosen
 			if (inputs.schisto_age_range === null) {
-				noty({text: '<b>Error!</b><br>Please select an age range for praziquantel mass drug administration under the schistosomiasis section.'});
+				noty({
+					text: '<b>Error!</b><br>Please select an age range for praziquantel ' +
+						'mass drug administration under the schistosomiasis section.'
+				});
 				return false;
 			}
 			
@@ -203,8 +217,11 @@ var App = App || {};
 			}
 
 			// check that more than 8 months havent been chosen
-			if (malariaPeakMonths.length > 8) {
-				noty({text: '<b>Error!</b><br>There may only be up to <b>8</b> peak transmission months for malaria.<br>There are currently <b>' + malariaPeakMonths.length + '</b> months chosen.'});
+			if (inputs.malaria_peak_month_num.length > 8) {
+				noty({
+					text: '<b>Error!</b><br>There may only be up to <b>8</b> peak transmission months for malaria.' + 
+						'<br>There are currently <b>' + inputs.malaria_peak_month_num.length + '</b> months chosen.'
+				});
 				return false;
 			}
 			/* -------- -------- --------*/
@@ -258,8 +275,7 @@ var App = App || {};
 		// set inputs in malaria section
 		$('.malaria-timing-select').val(App.inputs.malaria_timing);
 		if (App.inputs.malaria_timing === 'constant') $('.malaria-month-container').hide();		
-		$('.malaria-month-start-select').val(String(App.inputs.malaria_peak_month_num[0]));
-		$('.malaria-month-end-select').val(String(App.inputs.malaria_peak_month_num[App.inputs.malaria_peak_month_num.length-1]));
+		$('.malaria-month-select').val(App.inputs.malaria_peak_month_num);
 		$('.malaria-trans-rate-select').val(App.inputs.malaria_rate);
 		
 		$('.irs-checkbox').prop('checked', App.inputs.irs);

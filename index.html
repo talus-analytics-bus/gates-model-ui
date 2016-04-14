@@ -100,6 +100,10 @@
 		    			<div class="subtitle">Praziquantel Mass Drug Administration</div>
 		    			<div class="contents">
 		    				<div>
+		    					<div class="select-label">Schistosomiasis Prevalence:</div>
+		    					<input class="schisto-prevalence form-control" value="45%">
+		    				</div>
+		    				<div class="margin-top-10">
 			    				<div class="select-label">Target % Coverage:</div>
 			    				<select class="schisto-coverage-select form-control">
 			    					<option value="0.3">30%</option>
@@ -158,30 +162,15 @@
 				    		</div>
 				    		<div class="malaria-month-container margin-top-10">
 				    			<div class="select-label">Peak Transmission Month(s):</div>
-				    			<select class="malaria-month-start-select form-control">
+				    			<select class="malaria-month-select form-control" multiple="multiple">
 				    				<option value="1">January</option>
 				    				<option value="2">February</option>
 				    				<option value="3">March</option>
 				    				<option value="4">April</option>
 				    				<option value="5">May</option>
 				    				<option value="6" selected>June</option>
-				    				<option value="7">July</option>
+				    				<option value="7" selected>July</option>
 				    				<option value="8">August</option>
-				    				<option value="9">September</option>
-				    				<option value="10">October</option>
-				    				<option value="11">November</option>
-				    				<option value="12">December</option>
-				    			</select>
-				    			<span class="select-sep-text">to</span>
-				    			<select class="malaria-month-end-select form-control">
-				    				<option value="1">January</option>
-				    				<option value="2">February</option>
-				    				<option value="3">March</option>
-				    				<option value="4">April</option>
-				    				<option value="5">May</option>
-				    				<option value="6">June</option>
-				    				<option value="7">July</option>
-				    				<option value="8" selected>August</option>
 				    				<option value="9">September</option>
 				    				<option value="10">October</option>
 				    				<option value="11">November</option>
@@ -297,7 +286,7 @@
 					Below shows the <span class="text-success">reduced</span> or <span class="text-danger">increased</span> prevalence
 					of schistosomiasis and malaria treatment when using integrated control measures.
 					<br><br>
-					An integrated treatment approach is recommended if the prevalence for malaria is reduced by 5% or more.
+					Integrated interventions are recommended if malaria prevalence is reduced by <b>5% or more</b>.
 				</div>
 				<div class="output-table-container">
 					<img class="explanation-icon" src="img/question-mark.png">

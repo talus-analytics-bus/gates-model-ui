@@ -158,6 +158,21 @@ var App = App || {};
 		});
 			
 		
+		/* ----------------------- Distribution Strategy Table ------------------------------- */
+		var formatMonth = function(monthNum) {
+			return d3.time.format('%B')(new Date(2015, monthNum-1, 1, 0, 0, 0, 0));
+		};
+		
+		// update control measure recommended execution times
+		d3.select('#rec_pzq_month').text(formatMonth(recOutput.pzq_month));
+		
+		if (App.inputs.irs) d3.select('#rec_spray_month').text(formatMonth(recOutput.spray_month));
+		else $('.output-strategy-table tbody tr:nth-child(2)').hide();
+		
+		if (App.inputs.itn) d3.select('#rec_net_month').text(formatMonth(recOutput.net_month));
+		else $('.output-strategy-table tbody tr:nth-child(3)').hide();
+
+
 		/* ----------------------- Distribution Strategy Timeline ------------------------------- */
 		var currMonthsEqualRec = (+App.inputs.schisto_month_num === +recOutput.pzq_month &&
 			+App.inputs.irs_month_num === +recOutput.spray_month &&
@@ -178,6 +193,7 @@ var App = App || {};
 		var timelineRec = timeline.append('g')
 			.attr('class', 'timeline-group')
 			.attr('transform', 'translate(0,' + (timHeight+timSep) + ')');
+		var timelineGroups = timeline.selectAll('.timeline-group');
 		timelineCurr.append('rect')
 			.attr('class', 'timeline-base')
 			.attr('width', timelineWidth)
@@ -188,14 +204,9 @@ var App = App || {};
 			.attr('height', timHeight);
 
 		// establish dates
-		var getMonthXCoord = function(monthNum, year) {
-			if (typeof year === 'undefined') var year = 2015;
-			return timelineX(new Date(year, monthNum-1, 1, 0, 0, 0, 0));
-		};
-		var malariaStartMonthNum = +App.inputs.malaria_peak_month_num[0];
-		var malariaEndMonthNum = +App.inputs.malaria_peak_month_num[App.inputs.malaria_peak_month_num.length - 1];
-		var startTime = new Date(2015, malariaStartMonthNum-4, 1, 0, 0, 0, 0); // 3 months before seasonal starts
-		var endTime = new Date(2016, malariaStartMonthNum-4, 1, 0, 0, 0, 0);
+		var getMonthXCoord = function(monthNum) { return timelineX(new Date(2015, monthNum-1, 1, 0, 0, 0, 0)); };
+		var startTime = new Date(2015, 0, 1, 0, 0, 0, 0); // 3 months before seasonal starts
+		var endTime = new Date(2016, 0, 1, 0, 0, 0, 0);
 		
 		// establish timeline axis
 		var timelineX = d3.time.scale()
@@ -218,19 +229,13 @@ var App = App || {};
 		
 		// add seasonal bar
 		if (isSeasonal) {
-			var malariaStartDate = getMonthXCoord(malariaStartMonthNum);
-			var malariaEndDate = getMonthXCoord(malariaEndMonthNum);
-			if (malariaEndDate < malariaStartDate) malariaEndDate = getMonthXCoord(malariaEndMonthNum, 2016);
-			timelineCurr.append('rect')
-				.attr('class', 'timeline-seasonal-base')
-				.attr('x', malariaStartDate)
-				.attr('width', malariaEndDate - malariaStartDate)
-				.attr('height', timHeight);
-			timelineRec.append('rect')
-				.attr('class', 'timeline-seasonal-base')
-				.attr('x', malariaStartDate)
-				.attr('width', malariaEndDate - malariaStartDate)
-				.attr('height', timHeight);
+			timelineGroups.selectAll('.timeline-seasonal-base')
+				.data(App.inputs.malaria_peak_month_num)
+				.enter().append('rect')
+					.attr('class', 'timeline-seasonal-base')
+					.attr('x', function(d) { return getMonthXCoord(d); })
+					.attr('width', function(d) { return getMonthXCoord(+d+1) - getMonthXCoord(d); })
+					.attr('height', timHeight);
 		}
 			
 		// add labels
@@ -245,17 +250,13 @@ var App = App || {};
 			.attr('y', timHeight/2 + 3)
 			.text('recommended');
 		
-		// draw lines showing mitigation strategies
+		// draw rectangles showing mitigation strategies
 		var markerHeight = 10;
 		var drawStrat = function(t, monthNum, text, yVal) {
 			// calculate x-coordinates for the month supplied
 			if (typeof monthNum === 'string') monthNum = +monthNum;
 			var monthXCoord = getMonthXCoord(monthNum);
 			var nextMonthXCoord = getMonthXCoord(monthNum+1);
-			if (monthXCoord < 0) {
-				monthXCoord = getMonthXCoord(monthNum, 2016);
-				nextMonthXCoord = getMonthXCoord(monthNum+1, 2016);
-			}
 			
 			// draw the marker
 			var stratGroup = t.append('g')
@@ -292,7 +293,6 @@ var App = App || {};
 		}
 		
 		// draw borders around timelines
-		var timelineGroups = d3.selectAll('.timeline-group');
 		timelineGroups.append('line')
 			.attr('class', 'strat-divider')
 			.attr('x2', timelineWidth)
@@ -365,21 +365,7 @@ var App = App || {};
 		}
 
 
-
-		/* ----------------------- Distribution Strategy Table ------------------------------- */
-		var formatMonth = function(monthNum) {
-			return d3.time.format('%B')(new Date(2015, monthNum-1, 1, 0, 0, 0, 0));
-		};
-		
-		// update control measure recommended execution times
-		d3.select('#rec_pzq_month').text(formatMonth(recOutput.pzq_month));
-		
-		if (App.inputs.irs) d3.select('#rec_spray_month').text(formatMonth(recOutput.spray_month));
-		else $('.output-strategy-table tbody tr:nth-child(2)').hide();
-		
-		if (App.inputs.itn) d3.select('#rec_net_month').text(formatMonth(recOutput.net_month));
-		else $('.output-strategy-table tbody tr:nth-child(3)').hide();
-		
+		/* ----------------------- Assumptions & Back to Inputs ------------------------------- */
 		// toggling display of assumptions
 		$('.assumption-bar').on('click', function() {
 			var $bar = $(this);

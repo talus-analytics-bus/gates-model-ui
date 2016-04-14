@@ -91,3 +91,6 @@ table input.form-control {
 .text-danger {
   font-weight: 600;
 }
+
+/* --- Multiselect Overrides --- */
+.multiselect .caret { margin-left: 5px; }
