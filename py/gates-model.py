@@ -1,27 +1,33 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jan 27 08:53:24 2016
-Updated on Fri Apr 08
+Updated on Fri Apr 17
 
 @author: Mike Van Maele, Justin Kerr
-
-Model now object oriented to allow for interaction between disease states. Only
-a single high-worm burden state of schistosomiasis has been implemented. Malaria
-reinfections simply supercede existing infections (no super-infection)
 """
 
-"Libraries"
-import time
-import random
-import csv
-import datetime
+"Python Standard Libraries (versions listed)"
+import time #15.3
+import random #9.6
+import csv #13.1
+import datetime #8.1
+import json #18.2
+import sys #28.1
+import math #9.2
+
+"External Libraries (author and source link listed)"
+#python-dateutil (2.0) 
+#Author: Gustavo Niemeyer <gustavo@niemeyer.net>
+#Accessed 4/17/2016
+#URL: https://labix.org/python-dateutil#head-8ec264be46f5eb8d8c6f2c4e371977c3ac861ca0
+#Source code: https://launchpad.net/dateutil
 import dateutil.relativedelta as date
-import json
-import sys
-import math
-start = time.time()
+
 
 "Initialize variables and constants"
+#Timer
+start = time.time()
+
 #Load from JS GUI
 USE_GUI = True
 X_TICKS = 60 #number of days along x-axis ticks
@@ -49,7 +55,7 @@ F_AGE_UNDER_5 = float(UI_INPUTS["pop1"])     #% distribution of population under
 F_AGE_5_TO_15 = float(UI_INPUTS["pop2"])       #% distribution of population between 5 and 15 years old
 F_AGE_16_PLUS = float(UI_INPUTS["pop3"])    #% distribution of population 16 years old or older
 
-SCHISTO_PREVALENCE = float(UI_INPUTS["schisto_prevalence"]) # % schistosomiasis prevalence
+P_SCHISTO = float(UI_INPUTS["schisto_prevalence"]) # % schistosomiasis prevalence
 F_PZQ_TARGET_COV = float(UI_INPUTS["schisto_coverage"])    #Target % coverage of praziquantel (PZQ) mass drug 
                         #administration
 PZQ_AGE_RANGE = tuple(UI_INPUTS["schisto_age_range"] )#Age groups that get PZQ (by default, only 5-15 y/o 
@@ -88,7 +94,7 @@ CUR_YEAR = 2016
 N_DAYS_BURN_INIT = 365    #Baselineumber of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
 N_DAYS_BURN = N_DAYS_BURN_INIT #Duration of the burn in period (may vary)
 #N_PEOPLE = 10000    #Number of people to simulate
-N_DAYS_SIM = 365*1 #Duration of the simulation
+N_DAYS_SIM = 365 #Duration of the simulation
     
 D_PROTECT = 20      #Number of days malaria treatment protects against re-
                     #infection (default is 20)
@@ -113,9 +119,6 @@ P_MALARIA_SEASONAL_MOD = 5.0  #Factor by which the daily prob. of getting malari
                             #increases during malaria season (Kelly-Hope and McKenzie 2009; based on difference between places with 7 or more months of rain vs. 6 or fewer)
 NET_EFFICACY =  0.53 #(average of results from Eisele et al., 2010 and Guyatt et al., 2002)
 SPRAY_EFFICACY = 0.65 #(Guyatt 2002)
-
-#TO DO: Justin figuring out these values
-P_SCHISTO = 0.45 #Fraction of people that get schisto infections (applied at model run initialization)
 
 ##Vector-related constants (for future version)
 ##Number of susceptible vectors (assume 4% are infected at the start
@@ -647,16 +650,17 @@ class App( object ):
                         cur_t_start = self.t_season_start[cur_season]
                         cur_t_end = self.t_season_end[cur_season]
                         
-                        cur_season_start_date = self.burn_start_date + ONE_DAY*cur_t_start
-                        cur_season_end_date = self.burn_start_date + ONE_DAY*cur_t_end
-                        
-                        #Season start
-                        plt.plot((cur_t_start - N_DAYS_BURN)/30.0,0.8,'.');
-                        plt.text((cur_t_start - N_DAYS_BURN)/30.0,0.8 + y_shift,"t_seas_start: " + cur_season_start_date.isoformat(),rotation=45);       
-                        
-                        #Season end
-                        plt.plot((cur_t_end - N_DAYS_BURN)/30.0,0.8,'.');
-                        plt.text((cur_t_end - N_DAYS_BURN)/30.0 - .5,0.8 + y_shift,"t_seas_end: " + cur_season_end_date.isoformat(),rotation=45);
+                        if not cur_t_start > N_DAYS_TOT and not cur_t_end > N_DAYS_TOT: 
+                            cur_season_start_date = self.burn_start_date + ONE_DAY*cur_t_start
+                            cur_season_end_date = self.burn_start_date + ONE_DAY*cur_t_end
+                            
+                            #Season start
+                            plt.plot((cur_t_start - N_DAYS_BURN)/30.0,0.8,'.');
+                            plt.text((cur_t_start - N_DAYS_BURN)/30.0,0.8 + y_shift,"t_seas_start: " + cur_season_start_date.isoformat(),rotation=45);       
+                            
+                            #Season end
+                            plt.plot((cur_t_end - N_DAYS_BURN)/30.0,0.8,'.');
+                            plt.text((cur_t_end - N_DAYS_BURN)/30.0 - .5,0.8 + y_shift,"t_seas_end: " + cur_season_end_date.isoformat(),rotation=45);
             plt.grid(True);
             plt.xlabel("Time (months)");
             plt.xticks(range(-4,int(math.ceil(N_DAYS_SIM/30.0)),2));
@@ -753,158 +757,146 @@ if __name__ == '__main__':
     #Currently assumes that no one is infected at time zero
     app = App()
     people = People()
-#    update_p_malaria_baseline = app.update_p_malaria_baseline
     update_interventions_and_infections = people.update_interventions_and_infections
     append = people.append    
-
-    #Initialize lists of season start and end dates
-    season_start_dates = list()
-    season_end_dates = list()
     
-    #Intervention timing calculations
     if MALARIA_TRANS_PATTERN == "seasonal":
-        #Error checking
-        n_months = len(PEAK_TRANS_MONTHS)
-        if n_months > 8:
-            print "Error: Peak transmission months must be 8 or fewer months."
-        
-        #Get length of malaria season based on months input (for one year)
-        # TODO may not be continuous
-        season_start_date = datetime.date(CUR_YEAR, PEAK_TRANS_MONTHS[0], 1)
-        season_end_date = season_start_date + (n_months)*ONE_MONTH
-        malaria_season_len_days = (season_end_date - season_start_date).days
-        is_malaria_season_tmp = [False]*(10000)
-        
-        #Set total days of run
-        N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN #note that N_DAYS_BURN may be changed below
-        year_mod = 0
-    
-        #Set intervention times
+        #Integration:        
         if USE_INTEGRATION:
-            burn_end_date = season_start_date - ONE_MONTH*1
-            burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
+            #Int dist times are one month before the first season "block"
+            #start in calendar year
+            for cur_month in PEAK_TRANS_MONTHS:
+                prev_month = ((cur_month-2) % 12) + 1
+                if prev_month not in PEAK_TRANS_MONTHS:
+                    int_dist_month = cur_month - 1                    
+                    break
+            else:
+                int_dist_month = 1
+                print "Error: no dist month found for seasonal, integrated"
+            pzq_date = datetime.date(CUR_YEAR, int_dist_month, 1)
+            net_date = datetime.date(CUR_YEAR, int_dist_month, 1)
+            spray_date = datetime.date(CUR_YEAR, int_dist_month, 1)
+            days_to_shift_burn_start = 0
             
-            pzq_date = season_start_date - ONE_MONTH*1
-            net_date = season_start_date - ONE_MONTH*1
-            spray_date = season_start_date - ONE_MONTH*1
-
-            sim_start_date = burn_end_date
-            sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY            
-                            
-        else: #Without integration: start burn-in two months before first intervention
+        #Non-integration:
+        else:
+            #Any ints. distributed out of season? If so, start the sim. with the
+            #earliest distributed.
+            #0 - PZQ, 1 - nets, 2 - sprays
+            #Determine which ints are given out of season, if any
+            int_mos = (PZQ_MONTH_NUM,ITN_MONTH_NUM,IRS_MONTH_NUM);
+            ints_not_in_seas_idx = [i for i, j in enumerate(int_mos) if j not in PEAK_TRANS_MONTHS]
+            some_ints_out_of_seas = len(ints_not_in_seas_idx) > 0
+            
+            #Make tuple of int dist dates
             pzq_date = datetime.date(CUR_YEAR, PZQ_MONTH_NUM, 1)
             net_date = datetime.date(CUR_YEAR, ITN_MONTH_NUM, 1)
             spray_date = datetime.date(CUR_YEAR, IRS_MONTH_NUM, 1)
+            #0 - PZQ, 1 - nets, 2 - sprays
+            ints_dates = [pzq_date,net_date,spray_date]
             
-            if season_end_date.year > CUR_YEAR:
-                season_start_date -= ONE_YEAR
-                season_end_date -= ONE_YEAR
-                if year_mod == 0:
-                    year_mod = -1            
+            #If some int are given out of season, start sim with earliest of these
+            #and if some int distribution dates are prior to this date, push them
+            #forward a year
+            ints_checked = list()        
+            if some_ints_out_of_seas:
+                earliest_int_idx = ints_not_in_seas_idx[0]
+                earliest_int_date = ints_dates[earliest_int_idx]
+                ints_checked.append(earliest_int_idx)
+                for i in range(0,3):
+                    if i not in ints_checked:
+                        cur_int_date = ints_dates[i]
+                        cur_int_needs_to_be_pushed = earliest_int_date > cur_int_date
+                        if cur_int_needs_to_be_pushed:
+                            pushed_cur_int_date = cur_int_date + ONE_YEAR
+                            ints_dates[i] = pushed_cur_int_date
+                        ints_checked.append(i)
+                pzq_date = ints_dates[0]
+                net_date = ints_dates[1]
+                spray_date = ints_dates[2]
+            #If no ints are distributed out of season, distribute them in
+            #the user-given order because it doesn't matter (they'll all be
+            #in the middle of a season)
+            else:
+                pass
             
-            #If necessary, reorder intervention timing so that no interventions
-            #are given after the season has already ended
-            intervention_dates = (pzq_date, net_date, spray_date)
-            last_intervention_date_val = max(intervention_dates)
-            new_intervention_dates = [pzq_date, net_date, spray_date]
-            
-            last_int_given_after_seas_end =   last_intervention_date_val >= season_end_date          
-            some_ints_given_earlier = len([i for i, j in enumerate(intervention_dates) if j < season_end_date]) > 0         
-            
-            if last_int_given_after_seas_end and some_ints_given_earlier:
-                which_ints_least = [i for i, j in enumerate(intervention_dates) if j < season_end_date]
-                for i in which_ints_least:
-                    new_intervention_dates[i] += ONE_YEAR
-                season_start_date += ONE_YEAR
-                season_end_date += ONE_YEAR
-                year_mod = 1                
-                pzq_date = new_intervention_dates[0]
-                net_date = new_intervention_dates[1]
-                spray_date = new_intervention_dates[2]
-            
-            sim_start_date = min(pzq_date, net_date, spray_date)
-            sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY  
-            
-#            if season_start_date > season_end_date:
-#                season_start_date -= ONE_YEAR
-            
-           
-            
-            if season_start_date < sim_start_date:
-                season_start_date += ONE_YEAR
-                season_end_date += ONE_YEAR
-                if year_mod == 0:
-                    year_mod = 1
-
-            burn_end_date = sim_start_date        
-            burn_start_date = burn_end_date - ONE_DAY*N_DAYS_BURN
-            
-            #If they started the first intervention in the middle of the
-            #malaria season, burn the model in during malaria season
-#            if (sim_start_date >= season_start_date) and (sim_start_date < season_end_date):
-#                is_malaria_season_tmp[0:app.t_burn_stop] = [True]*app.t_burn_stop
-                          
-        #Season dates#--------------------------------------------------------#
-        #If sim start date is in the season, set the first season start date
-        #to the beginning of the burn-in period, and finish the rest of the
-        #season when the simulation starts
-        sim_starts_in_season = sim_start_date.month in PEAK_TRANS_MONTHS
-        if sim_starts_in_season:
-            months_to_add =  PEAK_TRANS_MONTHS.index(sim_start_date.month)
-            season_start_dates.append(sim_start_date - ONE_MONTH*months_to_add)
-            burn_start_date = season_start_dates[0] - ONE_DAY*N_DAYS_BURN
-            season_end_dates.append(season_end_date)
+        #Set sim start date to date of first int dist, and sim end date to
+        #one year later
+        sim_start_date = min(pzq_date,net_date,spray_date)
+        sim_end_date = sim_start_date + N_DAYS_SIM * ONE_DAY
+        
+        #Setup burn-in period seasonality
+        #If simulation starts in season, add the correct number of
+        #malaria season months to the end of the burn-in
+        sim_start_month = sim_start_date.month
+        sim_starts_in_seas = sim_start_month in PEAK_TRANS_MONTHS
+        burn_end_date = sim_start_date
+        burn_seas_end_date = burn_end_date
+        if sim_starts_in_seas:
+            #Figure out how many months longer burn-in should be
+            cur_month = ((sim_start_month-2) % 12) + 1
+            months_to_add = 0
+            while cur_month in PEAK_TRANS_MONTHS:
+                months_to_add += 1
+                cur_month = ((cur_month-2) % 12) + 1
+            burn_seas_start_date = burn_seas_end_date - months_to_add * ONE_MONTH
         else:
-            season_start_dates.append(season_start_date)
-            season_end_dates.append(season_end_date)
+            burn_seas_start_date = burn_seas_end_date
+        days_to_shift_burn_start = (burn_seas_end_date - burn_seas_start_date).days
+        burn_start_date = sim_start_date - (N_DAYS_BURN + days_to_shift_burn_start) * ONE_DAY
+
+        #Update N_DAYS_BURN and N_DAYS_TOT
+        N_DAYS_BURN = (burn_end_date - burn_start_date).days            
+        N_DAYS_TOT = N_DAYS_BURN + N_DAYS_SIM            
         
-        #Build least of season start/end dates
-        cur_season_start_date = datetime.date(CUR_YEAR + year_mod, PEAK_TRANS_MONTHS[0], 1)
-        cur_season_end_date = season_end_dates[0]
-        while(True):
-            next_season_start_date = cur_season_start_date + ONE_YEAR
-            next_start_lesst_sim_end = next_season_start_date < sim_end_date
-            if next_start_lesst_sim_end:
-                season_start_dates.append(next_season_start_date)
-                cur_season_start_date += ONE_YEAR
-            else:
-                break
-            next_season_end_date = cur_season_end_date + ONE_YEAR
-            next_end_lesst_sim_end = next_season_end_date < sim_end_date
-            if next_end_lesst_sim_end:
-                season_end_dates.append(next_season_end_date)
-                cur_season_end_date += ONE_YEAR
-            else:
-                season_end_dates.append(sim_end_date)
-                break
-        
-        #Update N_DAYS_BURN AND N_DAYS
-        N_DAYS_BURN = (burn_end_date - burn_start_date).days 
-        N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
-        
-        #Set burn-in stop time
-        app.t_burn_stop = N_DAYS_BURN
-        app.burn_start_date = burn_start_date
-        
-        #Update sim end date
-        sim_end_date = sim_start_date + (N_DAYS_SIM)*ONE_DAY        
-        
-        #Error check: start and end date lists must be same length
-        if len(season_start_dates) is not len (season_end_dates):
-            print "Error: season start and end date lists must be same length"
-        
-        #Build is_malaria_season: bool vec that says whether a day of the sim is malaria season or not
+        #Setup variable to track whether it's malaria season
+        #Setup burn-in period properly, capturing the need to start in
+        #season if necessary
+        is_malaria_season_tmp = [False]*(10000)
+        burn_start_tstep = 0
+        burn_end_tstep = N_DAYS_BURN
+        burn_seas_start_tstep = burn_end_tstep - days_to_shift_burn_start
+        burn_seas_end_tstep = burn_end_tstep
+        is_malaria_season_tmp[burn_seas_start_tstep:burn_seas_end_tstep] =\
+            [True]*days_to_shift_burn_start
+            
+        #Setup other seasonal periods
+        sim_start_month = sim_start_date.month
+        cur_date = sim_start_date
         t_season_start = list()
         t_season_end = list()
-        for cur_season in range(0,len(season_start_dates)):
-            cur_start = season_start_dates[cur_season]
-            cur_end = season_end_dates[cur_season]
-            idx_start = (cur_start - burn_start_date).days
-            idx_end = (cur_end - burn_start_date).days
-            is_malaria_season_tmp[idx_start:idx_end] = [True]*(idx_end-idx_start)
-            t_season_start.append(idx_start)
-            t_season_end.append(idx_end)
-    
+        
+        for i in range(0,12):
+            cur_month = ((sim_start_month - 1 + i) % 12) + 1
+            cur_date_plus_one_month = cur_date + ONE_MONTH
+            if cur_month in PEAK_TRANS_MONTHS:
+                start_tstep = (cur_date - burn_start_date).days
+                end_tstep = start_tstep + (cur_date_plus_one_month - cur_date).days
+                is_malaria_season_tmp[start_tstep:end_tstep] = \
+                    [True]*(end_tstep - start_tstep)
+            cur_date = cur_date_plus_one_month
+        #Handle last day of simulation (first of the month)
+        cur_month = ((sim_start_month - 1 + 12) % 12) + 1
+        if cur_month in PEAK_TRANS_MONTHS:
+            cur_date_plus_one_day = cur_date + ONE_DAY
+            start_tstep = (cur_date - burn_start_date).days
+            end_tstep = start_tstep + (cur_date_plus_one_day - cur_date).days
+            is_malaria_season_tmp[start_tstep:end_tstep] = \
+                [True]*(end_tstep - start_tstep)
+        is_malaria_season = is_malaria_season_tmp[0:N_DAYS_TOT]
+        app.is_malaria_season = is_malaria_season
+        
+        for i in range(0,len(is_malaria_season)-1):
+            cur_step = is_malaria_season[i]
+            nxt_step = is_malaria_season[i+1]
+            if cur_step and not nxt_step:
+                t_season_end.append(i + 1)
+            elif nxt_step and not cur_step:
+                t_season_start.append(i + 1)
+        
+        if is_malaria_season[N_DAYS_TOT-1]:
+            t_season_end.append(N_DAYS_TOT)
+                
         #Set intervention times
         #PZQ
         app.t_pzq = (pzq_date - burn_start_date).days
@@ -912,10 +904,14 @@ if __name__ == '__main__':
         app.t_net = (net_date - burn_start_date).days
         #Spray
         app.t_spray = (spray_date - burn_start_date).days
-            
-        app.is_malaria_season = is_malaria_season_tmp[0:N_DAYS_TOT]
-        app.t_season_start = t_season_start;
-        app.t_season_end = t_season_end;
+        
+        #Set burn in stop time
+        app.t_burn_stop = (burn_end_date - burn_start_date).days
+        
+        #For plotting: Set season start/end times
+        app.t_season_start = t_season_start
+        app.t_season_end = t_season_end
+        
     else: #constant (not seasonal): start burn-in two months before first intervention
         if USE_INTEGRATION:
             INT_MONTH_NUM = min(PZQ_MONTH_NUM, ITN_MONTH_NUM, IRS_MONTH_NUM)
@@ -956,6 +952,15 @@ if __name__ == '__main__':
 
         app.t_season_start = -1
         app.t_season_end = -1
+    
+    #Write key dates to app
+    app.sim_start_date = sim_start_date
+    app.sim_end_date = sim_end_date
+    app.burn_start_date = burn_start_date
+    app.burn_end_date = burn_end_date
+    app.pzq_date = pzq_date
+    app.net_date = net_date
+    app.spray_date = spray_date
 
     #Initialize prevalence counters
     app.initialize_prevalence_counts()   
@@ -990,71 +995,7 @@ if __name__ == '__main__':
         
     #End model timer and print the time elapsed.
     end = time.time()
-#    print "Time elapsed (sec): %f" % (end-start)
-#    print "Getting outputs..."
     
     #Write prevalence values to three CSV files and plot it for 5-15 y/o
     app.write_prevalence()
-    
-    #DEBUG: Write key dates to app
-    app.sim_start_date = sim_start_date
-    app.sim_end_date = sim_end_date
-    if not app.t_season_start == -1:
-        app.season_start_date = season_start_date
-        app.season_end_date = season_end_date
-    app.burn_start_date = burn_start_date
-    app.burn_end_date = burn_end_date
-    app.pzq_date = pzq_date
-    app.net_date = net_date
-    app.spray_date = spray_date
-    
-    #Write JSON output (print)
-#    tmp_vec = Vectors(NUM_VEC)
-#    tmp_vec.debug_vectors(people)
-#    tmp_inf = tmp_vec.inf / (tmp_vec.sus + tmp_vec.inf)
-#    app.vec_inf = tmp_inf
     app.export_prevalence()
-    
-    #DEBUG OUTPUTS#-----------------------------------------------------------#
-    #Sim start and end dates (excludes burn-in period)
-#    print "Sim start:"    
-#    print(sim_start_date)
-#    print ""
-#
-#    print "Sim end:"    
-#    print(sim_end_date)
-#    print "%i days after sim start" % ((sim_end_date - sim_start_date).days)
-#    print ""
-#    
-#    #PZQ timing    
-#    print "PZQ:"    
-#    print(pzq_date)
-#    print "%i days after sim start" % ((pzq_date - sim_start_date).days)
-#    print ""
-#    
-#    #Net timing    
-#    print "Nets:"    
-#    print(net_date)
-#    print "%i days after sim start" % ((net_date - sim_start_date).days)
-#    print ""
-#    
-#    #Spray timing    
-#    print "Sprays:"    
-#    print(spray_date)
-#    print "%i days after sim start" % ((spray_date - sim_start_date).days)
-#    print ""
-#    
-#    #Seasons (each one)
-#    N_SEASONS = 1 #to-do
-#    for i in range(0,N_SEASONS):
-#        print "Season %i start:" % (i+1)    
-#        print(season_start_date)
-#        print "%i days after sim start" % ((season_start_date - sim_start_date).days)
-#        print ""
-#        print "Season %i end:" % (i+1)    
-#        print(season_end_date)
-#        print "%i days after sim start" % ((season_end_date - sim_start_date).days)
-#        print ""
-#    
-#    
-#    
