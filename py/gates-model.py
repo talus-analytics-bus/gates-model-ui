@@ -23,7 +23,6 @@ import math #9.2
 #Source code: https://launchpad.net/dateutil
 import dateutil.relativedelta as date
 
-
 "Initialize variables and constants"
 #Timer
 start = time.time()
@@ -67,9 +66,12 @@ PZQ_MONTH_NUM = int(UI_INPUTS["schisto_month_num"]) #Month PZQ is distributed in
 
 MALARIA_TRANS_PATTERN = UI_INPUTS["malaria_timing"]  #Malaria transmission pattern. Either
                                     #"Seasonal" (automatically implements integration) or "Constant" (uses user-input intervention timing)
-PEAK_TRANS_MONTHS_TMP = tuple(UI_INPUTS["malaria_peak_month_num"])
-PEAK_TRANS_MONTHS = [ int(x) for x in PEAK_TRANS_MONTHS_TMP ]     #Peak malaria transmission month(s). Indexed
+if UI_INPUTS.has_key("malaria_peak_month_num"):
+    PEAK_TRANS_MONTHS_TMP = tuple(UI_INPUTS["malaria_peak_month_num"])
+    PEAK_TRANS_MONTHS = [ int(x) for x in PEAK_TRANS_MONTHS_TMP ]     #Peak malaria transmission month(s). Indexed
                                 #from 1 (i.e., January = 1)
+else:
+    PEAK_TRANS_MONTHS = []
 N_BASELINE_INF_BITES = UI_INPUTS["malaria_rate"]  #Baseline infectious mosquito bites per year for
                             #the transmission of malaria. Can be low (20),
                             #medium (100), or high (250).
