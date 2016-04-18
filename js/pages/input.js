@@ -148,6 +148,10 @@ var App = App || {};
 			if ($(this).val() === 'seasonal') $('.malaria-month-container').slideDown();
 			else $('.malaria-month-container').slideUp();
 		});
+		$('.malaria-month-label').click(function() {
+			var $checkbox = $(this).prev();
+			$checkbox.prop('checked', !$checkbox.is(':checked'));
+		});
 		
 		
 		// checkboxes for IRS and ITN
@@ -235,11 +239,11 @@ var App = App || {};
 				return false;
 			}
 
-			// check that more than 8 months havent been chosen
-			if (inputs.malaria_timing === 'seasonal' && inputs.malaria_peak_month_num.length > 8) {
+			// check if every month was picked
+			if (inputs.malaria_timing === 'seasonal' && inputs.malaria_peak_month_num.length === 12) {
 				noty({
-					text: '<b>Error!</b><br>There may only be up to <b>8</b> peak transmission months for malaria.' + 
-						'<br>There are currently <b>' + inputs.malaria_peak_month_num.length + '</b> months chosen.'
+					text: '<b>Error!</b><br>For a <b>seasonal</b> malaria transmission pattern, please select less than <b>12</b> ' + 
+						'peak transmission months'
 				});
 				return false;
 			}
