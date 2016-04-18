@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan 27 08:53:24 2016
-Updated on Fri Apr 17
-
+Gates Foundation Malaria and Schistosomiasis Intervention Timing Model
 @author: Mike Van Maele, Justin Kerr
+
+Created on Wed Jan 27, 2016
+Updated on Mon Apr 18, 2016
 """
 
 "Python Standard Libraries (versions listed)"
@@ -44,18 +45,17 @@ SHOW_PLOTS = False
 if (SHOW_PLOTS):
     import matplotlib.pyplot as plt
 
-#With or without integration (defined as "smartly" setting the timing of
-#interventions as per recommendations in the literature)
+#With or without integration
 USE_INTEGRATION = bool(int(UI_INPUTS["use_integration"]))
 
 #Initialize user-specified inputs (pulled from GUI)
 N_PEOPLE = int(UI_INPUTS["n_people"])    #Number of people to simulate
-F_AGE_UNDER_5 = float(UI_INPUTS["pop1"])     #% distribution of population under 5 years old
-F_AGE_5_TO_15 = float(UI_INPUTS["pop2"])       #% distribution of population between 5 and 15 years old
-F_AGE_16_PLUS = float(UI_INPUTS["pop3"])    #% distribution of population 16 years old or older
+F_AGE_UNDER_5 = float(UI_INPUTS["pop1"]) #% distribution of population under 5 years old
+F_AGE_5_TO_15 = float(UI_INPUTS["pop2"]) #% distribution of population between 5 and 15 years old
+F_AGE_16_PLUS = float(UI_INPUTS["pop3"]) #% distribution of population 16 years old or older
 
 P_SCHISTO = float(UI_INPUTS["schisto_prevalence"]) # % schistosomiasis prevalence
-F_PZQ_TARGET_COV = float(UI_INPUTS["schisto_coverage"])    #Target % coverage of praziquantel (PZQ) mass drug 
+F_PZQ_TARGET_COV = float(UI_INPUTS["schisto_coverage"]) #Target % coverage of praziquantel (PZQ) mass drug 
                         #administration
 PZQ_AGE_RANGE = tuple(UI_INPUTS["schisto_age_range"] )#Age groups that get PZQ (by default, only 5-15 y/o 
                     #children will get it because they are school-age and PZQ
@@ -93,15 +93,14 @@ if not ITN_CHECKED:
 
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
-N_DAYS_BURN_INIT = 365    #Baselineumber of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
+N_DAYS_BURN_INIT = 365 #Baseline number of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
 N_DAYS_BURN = N_DAYS_BURN_INIT #Duration of the burn in period (may vary)
-#N_PEOPLE = 10000    #Number of people to simulate
 N_DAYS_SIM = 365 #Duration of the simulation
     
 D_PROTECT = 20      #Number of days malaria treatment protects against re-
-                    #infection (default is 20)
+                    #infection (default is 20) (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
 F_ASYMP = 0.28      #The fraction of people infected with malaria who are
-                    #asymptomatic (do not get treatment) (Mbah et al, 2014)
+                    #asymptomatic (do not get treatment) (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
 F_TREATED = 0.8     #TO DO: Figure out a good way to initialize this value
                     #The fraction of people with symptomatic malaria who get
                     #treatment
@@ -112,15 +111,15 @@ F_SYMP_UNTREATED = (1 - F_ASYMP)*(1 - F_TREATED) #The fraction of people who get
 BREAKPOINT_1 = F_SYMP_TREATED #Used when randomly binning malaria infectives
 BREAKPOINT_2 = F_SYMP_TREATED + F_SYMP_UNTREATED
 
-D_MALARIA = 5 #Malaria infection lasts about 5 days (Mbah et al, 2014)
-D_PAT_ASYMP_MALARIA = 180 #Patent malaria infection lasts 180 days (Mbah et al 2014)
-D_SUBPAT_ASYMP_MALARIA = 180 #Subpatent malaria infection lasts 180 days (Mbah et al 2014)
+D_MALARIA = 5 #Malaria infection lasts about 5 days (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
+D_PAT_ASYMP_MALARIA = 180 #Patent malaria infection lasts 180 days (Ndeffo Mbah et al. (2014) and Griffin et al. (2010)) 
+D_SUBPAT_ASYMP_MALARIA = 180 #Subpatent malaria infection lasts 180 days (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
 INIT_P_MALARIA_BASELINE =  1.0 - math.exp(-1.0 * float(N_BASELINE_INF_BITES) * (1 / 365.0)) #Baseline daily prob. of getting malaria.
-F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Mbah et al, 2014)
+F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Ndeffo Mbah et al. (2014))
 P_MALARIA_SEASONAL_MOD = 5.0  #Factor by which the daily prob. of getting malaria
                             #increases during malaria season (Kelly-Hope and McKenzie 2009; based on difference between places with 7 or more months of rain vs. 6 or fewer)
-NET_EFFICACY =  0.53 #(average of results from Eisele et al., 2010 and Guyatt et al., 2002)
-SPRAY_EFFICACY = 0.65 #(Guyatt 2002)
+NET_EFFICACY =  0.53 #(average of results from Eisele et al. (2010) and Guyatt et al. (2002))
+SPRAY_EFFICACY = 0.65 #(Guyatt et al. (2002))
 
 ##Vector-related constants (for future version)
 ##Number of susceptible vectors (assume 4% are infected at the start
@@ -128,17 +127,17 @@ SPRAY_EFFICACY = 0.65 #(Guyatt 2002)
 #F_INF = 0.04 #Assumed
 #F_SUS = 1 - F_INF
 #TIME_DELTA = 1.0 #days, 1 by default (model time step is 1 day)
-#a = 0.67 #bites per day on humans by a female vector (Mbah et al 2014)
-#b = 0.25 #probability of successful human inoculation upon an infectious bite (Mbah et al 2014)
-#MU_M = 0.125 #mosquito natural mortality rate (Mbah et al, 2014)
-#T_INCUB = 10.0 #mosquito incubation period, days (Mbah et al, 2014)
-#PSI = math.exp(-1.0 * MU_M * T_INCUB) #fraction of mosquitos that survive the incubation period and become infectious (Mbah et al, 2014)
+#a = 0.67 #bites per day on humans by a female vector (Ndeffo Mbah et al. (2014))
+#b = 0.25 #probability of successful human inoculation upon an infectious bite (Ndeffo Mbah et al. (2014))
+#MU_M = 0.125 #mosquito natural mortality rate (Ndeffo Mbah et al. (2014))
+#T_INCUB = 10.0 #mosquito incubation period, days (Ndeffo Mbah et al. (2014))
+#PSI = math.exp(-1.0 * MU_M * T_INCUB) #fraction of mosquitos that survive the incubation period and become infectious (Ndeffo Mbah et al. (2014))
 #I_M_0 = 0.04 #percent of vector population infected with malaria at time zero
 ##Total number of vectors (assumed constant)
 #NUM_VEC = N_PEOPLE * float(N_BASELINE_INF_BITES) / (I_M_0 * a * b)
-#C_D = 0.3 #probability of vector infection upon biting a human in a state of untreated symptomatic malaria (Mbah et al 2014)
-#C_A = 0.1 #probability of vector infection upon biting a human in a state of asymp patent malaria (Mbah et al 2014)
-#C_U = 0.05 ##probability of vector infection upon biting a human in a state of asymp subpatent malaria (Mbah et al 2014)
+#C_D = 0.3 #probability of vector infection upon biting a human in a state of untreated symptomatic malaria (Ndeffo Mbah et al. (2014))
+#C_A = 0.1 #probability of vector infection upon biting a human in a state of asymp patent malaria (Ndeffo Mbah et al. (2014))
+#C_U = 0.05 ##probability of vector infection upon biting a human in a state of asymp subpatent malaria (Ndeffo Mbah et al. (2014))
         
 #Miscellaneous global constants
 ONE_YEAR =  date.relativedelta(years=1)
@@ -313,8 +312,6 @@ class People( list ):
             if not is_protected:
                 #Check the person's intervention and schisto flags and modify
                 #their P_MALARIA value accordingly
-#                cur_p_malaria = cur_p_malaria_baseline
-#                cur_AEIR = app.AEIR
                 cur_AEIR = float(N_BASELINE_INF_BITES) #for not using mosquitoes
                 if app.is_malaria_season[t]:
                     cur_AEIR *= P_MALARIA_SEASONAL_MOD
@@ -475,7 +472,7 @@ class People( list ):
 #        sus = self.sus
 #        inf = self.inf
 #                
-#        #constant, will be replaced with equation from (Mbah et al, 2014)
+#        #constant, will be replaced with equation from (Ndeffo Mbah et al. (2014))
 #        D = people.D #symp untreat
 #        A = people.A #patent
 #        U = people.U #subpatent
@@ -485,7 +482,7 @@ class People( list ):
 #        U_frac = U / total_inf_people
 #        Lambda_M_vec = a * (C_D * D_frac + C_A * A_frac + C_U * U_frac)
 #                
-#        #Update differential equations (Mbah et al, 2014)
+#        #Update differential equations (Ndeffo Mbah et al. (2014))
 #        dS_M = TIME_DELTA * ((MU_M * (sus + inf)) - (Lambda_M_vec * sus * PSI) - (MU_M * sus))
 #        dI_M = TIME_DELTA * ((Lambda_M_vec * sus * PSI) - (MU_M * inf))
 #        
@@ -517,33 +514,12 @@ class App( object ):
         {'0-4': [0.0]*N_DAYS_TOT, '5-15': [0.0]*N_DAYS_TOT, '16+': [0.0]*N_DAYS_TOT}    
     
     #Functions
-#    def update_p_malaria_baseline(self):
-#        """Modifies the baseline daily probability of being infected with
-#        malaria based on (1) seasonality and (2) vector pressure (to-do)."""
-#        #If the current time step is malaria season and the previous one
-#        #was not, multiply the daily probability of getting malaria by the
-#        #seasonal modifier.
-#        cur_time_step = self.cur_time_step
-#        prev_time_step = cur_time_step - 1
-#        is_malaria_season = self.is_malaria_season
-#        
-#        #Note: the model assumes the time step before the FIRST time step
-#        #(i.e., time step -1) is NOT malaria season
-#        if prev_time_step == -1:
-#            self.cur_p_malaria_baseline = INIT_P_MALARIA_BASELINE
-#        elif is_malaria_season[cur_time_step] and not is_malaria_season[prev_time_step]:
-#            self.cur_p_malaria_baseline *= P_MALARIA_SEASONAL_MOD
-#        elif not is_malaria_season[cur_time_step] and is_malaria_season[prev_time_step]:
-#            self.cur_p_malaria_baseline /= P_MALARIA_SEASONAL_MOD
-#            
-#        #TO DO: Update p_malaria based on vector pressure. Justin and/or the
-#        #GWU team will figure out the best way to approach this.
     def __init__( self ):
         #Initialize baseline AEIR (for time zero)
         self.AEIR = float(N_BASELINE_INF_BITES)
         
     def write_prevalence( self ):
-        #Writes prevalence values and graphs them for school-age children (5-15)
+        #Writes prevalence values and graphs them
     
         #With or without integration?
         if USE_INTEGRATION:
@@ -982,11 +958,6 @@ if __name__ == '__main__':
        
        # Initialization #-----------------------------------------------------#
        app.cur_time_step = t
-
-#       #Update the daily probability of being infected with malaria based on
-#       #(1) seasonality (if enabled) and (2) vector pressure. Note: The effect
-#       #of vector pressure has not yet been implemented.
-#       update_p_malaria_baseline()
 
        # Interventions / Infections / Prevalence #----------------------------#
        #Apply interventions at the proper times and update everyone's malaria
