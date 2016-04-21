@@ -124,6 +124,14 @@ var App = App || {};
 			.attr('height', function(d) { return height - y(d.value); });
 		bars.exit().remove();
 		
+		// add axis label
+		chart.append('text')
+			.attr('class', 'axis-label')
+			.attr('transform', 'rotate(-90)')
+			.attr('x', -height/2)
+			.attr('y', -55)
+			.text('% Prevalence');
+		
 		// add legend
 		var legend = chart.append('g')
 			.attr('class', 'legend')

@@ -30,7 +30,7 @@ var App = App || {};
 		
 		/* --------------------- Population Section ----------------------- */
 		var popAgeData = [
-			{age: '0-4', value: App.inputs ? App.inputs.pop1 : 0.20},
+			{age: 'under 5', value: App.inputs ? App.inputs.pop1 : 0.20},
 			{age: '5-15', value: App.inputs ? App.inputs.pop2 : 0.34},
 			{age: '16+', value: App.inputs ? App.inputs.pop3 : 0.46},
 		];
@@ -65,7 +65,7 @@ var App = App || {};
 		};
 		
 		// build bar chart for the population age distribution
-		var margin = {top: 25, right: 20, bottom: 20, left: 100};
+		var margin = {top: 25, right: 20, bottom: 48, left: 100};
 		var width = 420 - margin.left - margin.right;
 		var height = 200 - margin.top - margin.bottom;
    		var chart = d3.select('.pop-age-chart')
@@ -73,6 +73,12 @@ var App = App || {};
    			.attr('height', height + margin.top + margin.bottom)
    			.append('g')
    				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+   				
+   		chart.append('text')
+   			.attr('class', 'axis-label')
+   			.attr('x', width/2)
+   			.attr('y', height + 45)
+   			.text('Age');
 
 		var x = d3.scale.ordinal()
 			.domain(popAgeData.map(function(d) { return d.age; }))

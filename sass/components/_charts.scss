@@ -19,3 +19,5 @@ rect {
   stroke-dasharray: 4,4;
 }
 .y.axis .tick:first-child line { display: none; }
+
+.axis-label { text-anchor: middle; }
