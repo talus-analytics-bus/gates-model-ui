@@ -2,6 +2,8 @@ var App = App || {};
 
 (function() {
 	App.initInput = function() {
+		var windowWidth = $(window).width();
+		
 		if (App.inputs !== null) setExistingInputValues();
 		
 		// opening and closing input sections
@@ -66,7 +68,8 @@ var App = App || {};
 		
 		// build bar chart for the population age distribution
 		var margin = {top: 25, right: 20, bottom: 48, left: 100};
-		var width = 420 - margin.left - margin.right;
+		var chartWidth = (windowWidth < 440) ? windowWidth - 20 : 420;
+		var width = chartWidth - margin.left - margin.right;
 		var height = 200 - margin.top - margin.bottom;
    		var chart = d3.select('.pop-age-chart')
    			.attr('width', width + margin.left + margin.right)

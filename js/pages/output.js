@@ -2,13 +2,13 @@ var App = App || {};
 
 (function() {
 	App.initOutput = function() {
-		console.log(App.outputs);
 		if ($.isEmptyObject(App.outputs)) {
 			hasher.setHash('');
 			return false;
 		}
 		
 		// define variables
+		var windowWidth = $(window).width();
 		var isSeasonal = (App.inputs.malaria_timing === 'seasonal');
 
 
@@ -22,10 +22,10 @@ var App = App || {};
 			.classed('text-success', isRecommended);
 			
 		// attach tooltip to question mark beside rec text
-		var nonIntContentStr = '<b>Non-integrated interventions</b> is the default strategy and the status quo. ' +
-			'It refers to the schedule the user is currently following for distributing medical countermeasures and vector control interventions.';
-		var intContentStr = '<b>Integrated interventions</b> entails distributing medical countermeasures and vector control interventions for both diseases ' +
-			'according to a schedule which the literature suggests is effective for reducing the prevalence of malaria and schistosomiasis.';
+		var nonIntContentStr = '<b>Non-integrated interventions</b> represents the current strategy using the ' +
+			'user-supplied schedule for schistosomiasis and malaria control measures';
+		var intContentStr = '<b>Integrated interventions</b> entails distributing schistosomiasis and malaria ' +
+			'control measures together and prior to any seasonal increase in malaria transmission.';
 		var recContentStr = 'This is the <b>recommended</b> strategy for the user.';
 		if (isRecommended) intContentStr += ' ' + recContentStr;
 		else nonIntContentStr += ' ' + recContentStr;
@@ -73,8 +73,9 @@ var App = App || {};
 			{type: 'with integration', disease: 'malaria', value: App.outputs.integrated.malaria}
 		];
 		
-		var margin = {top: 10, right: 20, bottom: 80, left: 80};
-		var width = 650 - margin.left - margin.right;
+		var margin = {top: 10, right: 20, bottom: 80, left: 65};
+		var chartWidth = (windowWidth < 670) ? windowWidth - 20 : 650;
+		var width = chartWidth - margin.left - margin.right;
 		var height = 300 - margin.top - margin.bottom;
    		var chart = d3.select('.output-bar-chart')
    			.attr('width', width + margin.left + margin.right)
@@ -133,9 +134,10 @@ var App = App || {};
 			.text('% Prevalence');
 		
 		// add legend
+		var legendXCoord = (chartWidth < 450) ? 0 : (chartWidth-450)/2;
 		var legend = chart.append('g')
 			.attr('class', 'legend')
-			.attr('transform', 'translate(100,' + (height+50) + ')');
+			.attr('transform', 'translate(' + legendXCoord + ',' + (height+50) + ')');
 		var legendGroups = legend.selectAll('g')
 			.data(Util.getUnique(barData.map(function(d) { return d.type; })))
 			.enter().append('g')
@@ -186,7 +188,8 @@ var App = App || {};
 			+App.inputs.irs_month_num === +recOutput.spray_month &&
 			+App.inputs.itn_month_num === +recOutput.net_month);
 		var timelineMargin = {top: 20, right: 105, bottom: (isSeasonal ? 105 : 70), left: 105};
-		var timelineWidth = 800 - margin.left - margin.right;
+		var timelineTotalWidth = (windowWidth < 820) ? windowWidth - 20 : 800;
+		var timelineWidth = timelineTotalWidth - margin.left - margin.right;
 		var timHeight = 60;
 		var timSep = 20;
 		var timelineHeight = currMonthsEqualRec ? timHeight : 2*timHeight + timSep;
