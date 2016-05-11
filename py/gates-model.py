@@ -4,7 +4,7 @@ Gates Foundation Malaria and Schistosomiasis Intervention Timing Model
 @author: Mike Van Maele, Justin Kerr
 
 Created on Wed Jan 27, 2016
-Updated on Mon Apr 18, 2016
+Updated on Mon May 11, 2016
 """
 
 "Python Standard Libraries (versions listed)"
