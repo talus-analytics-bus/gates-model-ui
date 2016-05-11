@@ -101,7 +101,7 @@ D_PROTECT = 20      #Number of days malaria treatment protects against re-
                     #infection (default is 20) (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
 F_ASYMP = 0.28      #The fraction of people infected with malaria who are
                     #asymptomatic (do not get treatment) (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
-F_TREATED = 0.8     #Likelihood of being treated with ACT (Uganda Ministry of Health (2015))
+F_TREATED = 0.76     #Likelihood of being treated with ACT (Uganda Ministry of Health (2015))
 F_SYMP_TREATED = (1 - F_ASYMP)*F_TREATED #The fraction of people who get 
                                         #malaria, are symptomatic, and get treatment
 F_SYMP_UNTREATED = (1 - F_ASYMP)*(1 - F_TREATED) #The fraction of people who get malaria,
