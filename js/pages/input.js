@@ -32,9 +32,9 @@ var App = App || {};
 		
 		/* --------------------- Population Section ----------------------- */
 		var popAgeData = [
-			{age: 'under 5', value: App.inputs ? App.inputs.pop1 : 0.20},
-			{age: '5-15', value: App.inputs ? App.inputs.pop2 : 0.34},
-			{age: '16+', value: App.inputs ? App.inputs.pop3 : 0.46},
+			{age: 'under 5', value: App.inputs ? App.inputs.pop1 : 0.18},
+			{age: '5-15', value: App.inputs ? App.inputs.pop2 : 0.30},
+			{age: '16+', value: App.inputs ? App.inputs.pop3 : 0.52},
 		];
 		
 		// population age section
