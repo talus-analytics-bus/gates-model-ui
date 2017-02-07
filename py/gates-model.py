@@ -29,7 +29,7 @@ import dateutil.relativedelta as date
 start = time.time()
 
 #Load from JS GUI
-USE_GUI = True
+USE_GUI = False
 X_TICKS = 60 #number of days along x-axis ticks
 DEBUG_MODE = True
 if USE_GUI:
@@ -41,7 +41,7 @@ else:
     UI_INPUTS['use_integration'] = False
 
 #Show plots or not
-SHOW_PLOTS = False
+SHOW_PLOTS = True
 if (SHOW_PLOTS):
     import matplotlib.pyplot as plt
 
