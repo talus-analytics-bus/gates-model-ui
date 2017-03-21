@@ -1,0 +1,1 @@
+{"spray_month": "05", "malaria": 0.3867860000000007, "net_month": "05", "pzq_month": "05", "use_integration": true, "schisto": 0.3450000000000169}

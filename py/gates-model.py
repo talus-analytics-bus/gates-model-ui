@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Gates Foundation Malaria and Schistosomiasis Intervention Timing Model
 @author: Mike Van Maele, Justin Kerr
@@ -36,10 +35,20 @@ if USE_GUI:
     for line in sys.stdin:
         UI_INPUTS = json.loads(line)
 else:
-    JSON_FILE = open("debug/debug_inputs.json")    
+    RUN_NAME = "032117-gates-call"
+    JSON_FILE = open("output/" + RUN_NAME + "/debug_inputs.json")    
     UI_INPUTS = json.load(JSON_FILE)
     UI_INPUTS['use_integration'] = False
-
+             
+F_TREATED = 0.80     #Likelihood of being treated with ACT (Uganda Ministry of Health (2015))
+    
+#F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Ndeffo Mbah et al. (2014)) 1.16 TO 2.74
+F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Ndeffo Mbah et al. (2014))
+IS_COUPLED = ""
+if F_SCHISTO_COINFECTION_MOD is 1.0:
+    IS_COUPLED = "-uncoupled-" + str(sys.argv[1])
+else:
+    IS_COUPLED = "-coupled-" + str(sys.argv[1])
 #Show plots or not
 SHOW_PLOTS = True
 if (SHOW_PLOTS):
@@ -47,6 +56,13 @@ if (SHOW_PLOTS):
 
 #With or without integration
 USE_INTEGRATION = bool(int(UI_INPUTS["use_integration"]))
+#With or without integration?
+if USE_INTEGRATION:
+    integration = ", with Integration"
+    fn_int = "_with_integration"
+else:
+    integration = ", without Integration"
+    fn_int = "_without_integration"
 
 #Initialize user-specified inputs (pulled from GUI)
 N_PEOPLE = int(UI_INPUTS["n_people"])    #Number of people to simulate
@@ -72,7 +88,7 @@ if UI_INPUTS.has_key("malaria_peak_month_num"):
                                 #from 1 (i.e., January = 1)
 else:
     PEAK_TRANS_MONTHS = []
-N_BASELINE_INF_BITES = UI_INPUTS["malaria_rate"]  #Baseline infectious mosquito bites per year for
+N_BASELINE_INF_BITES = float(UI_INPUTS["malaria_rate"])  #Baseline infectious mosquito bites per year for
                             #the transmission of malaria. Can be low (20),
                             #medium (100), or high (250).
 IRS_CHECKED = bool(int(UI_INPUTS["irs"]))  #Can indoor residual insecticide spraying be used?
@@ -93,15 +109,16 @@ if not ITN_CHECKED:
 
 #Initialize non-user-specified, constant inputs
 CUR_YEAR = 2016
-N_DAYS_BURN_INIT = 365 #Baseline number of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
+N_DAYS_BURN_INIT = 365*2 #Baseline number of days to burn in the model to steady-state values. Note that the burn period can be longer if the model starts in the middle of malaria season
 N_DAYS_BURN = N_DAYS_BURN_INIT #Duration of the burn in period (may vary)
 N_DAYS_SIM = 365 #Duration of the simulation
-    
+
+P_INFECT = 0.25 #Proability of successful human inoculation upon an infectious bite (Ndeffo Mbah et al. (2014))
 D_PROTECT = 20      #Number of days malaria treatment protects against re-
                     #infection (default is 20) (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
 F_ASYMP = 0.28      #The fraction of people infected with malaria who are
                     #asymptomatic (do not get treatment) (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
-F_TREATED = 0.76     #Likelihood of being treated with ACT (Uganda Ministry of Health (2015))
+
 F_SYMP_TREATED = (1 - F_ASYMP)*F_TREATED #The fraction of people who get 
                                         #malaria, are symptomatic, and get treatment
 F_SYMP_UNTREATED = (1 - F_ASYMP)*(1 - F_TREATED) #The fraction of people who get malaria,
@@ -109,11 +126,13 @@ F_SYMP_UNTREATED = (1 - F_ASYMP)*(1 - F_TREATED) #The fraction of people who get
 BREAKPOINT_1 = F_SYMP_TREATED #Used when randomly binning malaria infectives
 BREAKPOINT_2 = F_SYMP_TREATED + F_SYMP_UNTREATED
 
+FRAC_BITES_IN_SEASON = 0.8 #Fraction of AEIR that occur in malaria season
+if MALARIA_TRANS_PATTERN is "constant":
+    FRAC_BITES_IN_SEASON = 0.0
 D_MALARIA = 5 #Malaria infection lasts about 5 days (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
 D_PAT_ASYMP_MALARIA = 180 #Patent malaria infection lasts 180 days (Ndeffo Mbah et al. (2014) and Griffin et al. (2010)) 
 D_SUBPAT_ASYMP_MALARIA = 180 #Subpatent malaria infection lasts 180 days (Ndeffo Mbah et al. (2014) and Griffin et al. (2010))
 INIT_P_MALARIA_BASELINE =  1.0 - math.exp(-1.0 * float(N_BASELINE_INF_BITES) * (1 / 365.0)) #Baseline daily prob. of getting malaria.
-F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Ndeffo Mbah et al. (2014))
 P_MALARIA_SEASONAL_MOD = 5.0  #Factor by which the daily prob. of getting malaria
                             #increases during malaria season (Kelly-Hope and McKenzie 2009; based on difference between places with 7 or more months of rain vs. 6 or fewer)
 NET_EFFICACY =  0.53 #(average of results from Eisele et al. (2010) and Guyatt et al. (2002))
@@ -149,6 +168,9 @@ class Person( object ):
     #Total number of people in memory
     count = 0
     
+    #Total number of people with deterministic schisto so far
+    schisto_count = 0
+    
     #Totals by age bin (0-4, 5-15, and 16+)
     age_bin_counts = {'0-4':0, '5-15':0, '16+':0}
     
@@ -167,11 +189,20 @@ class Person( object ):
         self.protection_days_left = -1 #days left of malaria protection
         
         # Schisto parameters #------------------------------------------------#
-        get_schisto_runif = runif()
-        if get_schisto_runif < P_SCHISTO:
-            self.has_schisto = True #do they have schistosomiasis?
+        
+        #Deterministic schisto
+        if Person.schisto_count < float(N_PEOPLE * P_SCHISTO):
+            self.has_schisto = True
+            Person.schisto_count = Person.schisto_count + 1.0
         else:
             self.has_schisto = False
+#        #Stochastic schisto
+#        get_schisto_runif = runif()
+#        if get_schisto_runif < P_SCHISTO:
+#            self.has_schisto = True #do they have schistosomiasis?
+#        else:
+#            self.has_schisto = False
+            
         self.has_PZQ = False #were they given PZQ at T_PZQ?
 
         # Intervention parameters #-------------------------------------------#
@@ -199,6 +230,7 @@ class People( list ):
         self.D = 0.0
         self.A = 0.0
         self.U = 0.0
+        self.debug_aeir = 0.0 #validate that simulated aeir is approx input aeir
         
     def update_interventions_and_infections( self, app):
 #    def update_interventions_and_infections( self, app, vectors):
@@ -307,28 +339,43 @@ class People( list ):
             #If the person is currently protected from malaria by having
             #received ACT, skip them. Otherwise, continue.            
             is_protected = cur_person.protection_days_left > 0
+
             if not is_protected:
                 #Check the person's intervention and schisto flags and modify
                 #their P_MALARIA value accordingly
-                cur_AEIR = float(N_BASELINE_INF_BITES) #for not using mosquitoes
+               # cur_AEIR = N_BASELINE_INF_BITES #for not using mosquitoes
+                TEMP = N_BASELINE_INF_BITES
                 if app.is_malaria_season[t]:
-                    cur_AEIR *= P_MALARIA_SEASONAL_MOD
-                if cur_person.has_schisto:
-                    # cur_p_malaria *= F_SCHISTO_COINFECTION_MOD
-                    cur_AEIR *= F_SCHISTO_COINFECTION_MOD
+                    cur_AEIR = (FRAC_BITES_IN_SEASON * TEMP)/app.debug_days_in_season
+                else:
+                    #do non-seasonal AEIR
+                    cur_AEIR = (TEMP - (FRAC_BITES_IN_SEASON * TEMP))/(365.0 - app.debug_days_in_season)
                 if cur_person.has_net:
-                    # cur_p_malaria *= (1 - NET_EFFICACY)
                     cur_AEIR *= (1 - NET_EFFICACY)
                 if cur_person.has_spray:
-                    # cur_p_malaria *= (1 - SPRAY_EFFICACY)
                     cur_AEIR *= (1 - SPRAY_EFFICACY)
-                cur_p_malaria = 1.0 - math.exp(-1.0 * cur_AEIR * (1.0 / 365.0))
-                if cur_p_malaria > 1:
-                    cur_p_malaria = 1
+                if cur_person.has_schisto:
+                    cur_AEIR *= F_SCHISTO_COINFECTION_MOD
                     
+                cur_p_malaria = 1.0 - math.exp(-1.0 * cur_AEIR)
+                
+                if cur_p_malaria > 1.0:
+                    cur_p_malaria = 1.0
+                
+                got_malaria = False
+                got_bitten_runif = runif()
+                #got_infected_runif = runif()
+                got_bitten = got_bitten_runif < cur_p_malaria
+                #got_infected = got_infected_runif < P_INFECT
+                #got_malaria = got_bitten and got_infected
+                got_malaria = got_bitten
+                
                 #Randomly test whether the person gets malaria this day     
-                get_malaria_runif = runif()
-                if get_malaria_runif < cur_p_malaria:
+                if got_malaria:
+                    #Increment person's total malaria episode counter (symp or asymp)
+                    if t > N_DAYS_BURN:
+                        app.n_malaria_cases = app.n_malaria_cases + 1
+                    
                     #If the current person already has asymptomatic malaria,
                     #or if they don't have malaria yet:
                     has_pat_malaria = cur_person.pat_malaria_days_left > 0
@@ -347,6 +394,10 @@ class People( list ):
                         #Bin into one of three categories below:
                         #SYMPTOMATIC, TREATED
                         if symp_treat_runif < BREAKPOINT_1:
+                            #Increment person's total symp malaria cases
+                            if t > N_DAYS_BURN:
+                                app.n_symp_malaria_cases = app.n_symp_malaria_cases + 1
+                            
                             #Set symp malaria values:                            
                             cur_person.is_symptomatic = True
                             cur_person.symp_malaria_days_left = D_MALARIA
@@ -365,6 +416,10 @@ class People( list ):
                             
                         #SYMPTOMATIC, UNTREATED
                         elif symp_treat_runif >= BREAKPOINT_1 and symp_treat_runif < BREAKPOINT_2:
+                            #Increment person's total symp malaria cases
+                            if t > N_DAYS_BURN:
+                                app.n_symp_malaria_cases = app.n_symp_malaria_cases + 1
+                            
                             #Set symp malaria values:                            
                             cur_person.is_symptomatic = True
                             cur_person.symp_malaria_days_left = D_MALARIA
@@ -404,6 +459,11 @@ class People( list ):
                             
                     #If the person already has untreated symptomatic malaria:
                     else:
+                        #Increment person's total symp malaria cases. Assumes we count
+                        #"reinfection" episodes as unique episodes
+                        if t > N_DAYS_BURN:
+                            app.n_symp_malaria_cases = app.n_symp_malaria_cases + 1
+                            
                         #Keep them in the symptomatic, untreated bin and
                         #restart their malaria illness timer
                         #Set symp malaria values:                            
@@ -497,7 +557,6 @@ class People( list ):
 class App( object ):
     """Class defining application parameters and output writing functions."""
     #Values
-    cur_time_step = 0
     N_DAYS_TOT = N_DAYS_SIM + N_DAYS_BURN
     is_malaria_season = [False]*N_DAYS_TOT
     
@@ -515,17 +574,16 @@ class App( object ):
     def __init__( self ):
         #Initialize baseline AEIR (for time zero)
         self.AEIR = float(N_BASELINE_INF_BITES)
+        self.debug_days_in_season = 0.0
+        self.debug_tot_season_days = 0.0
+        self.debug_tot_nonseason_days = 0.0
+        self.n_symp_malaria_cases = 0 #num of times person got a symptomatic malaria case
+        self.n_malaria_cases = 0 #num of times person got symp or asymp malaria case
         
     def write_prevalence( self ):
         #Writes prevalence values and graphs them
     
-        #With or without integration?
-        if USE_INTEGRATION:
-            integration = ", with Integration"
-            fn_int = "_with_integration"
-        else:
-            integration = ", without Integration"
-            fn_int = "_without_integration"
+        
                 
         #Load number of people in each age bin
         n_people_0_4 = Person.age_bin_counts["0-4"]        
@@ -546,7 +604,7 @@ class App( object ):
         header_str = ["Time (d)","0-4 y/o","5-15 y/o","16+ y/o","All"]
         headers = header_str + spaces + header_str + spaces + header_str
         
-        with open('output/output' + fn_int + '.csv', 'wb') as csvfile:
+        with open('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '.csv', 'wb') as csvfile:
             writer = csv.writer(csvfile, quoting = csv.QUOTE_NONNUMERIC)
             title = ["Prevalence of schistosomiasis by age group vs. time (d)"] + title_spaces + ["Prevalence of malaria by age group vs. time (d)"] + title_spaces + ["Prevalence of coinfection by age group vs. time (d)"]
             writer.writerow(title)
@@ -609,17 +667,20 @@ class App( object ):
             plt.legend();
             if DEBUG_MODE:
                 y_shift = 0.0
-                #PZQ
-                plt.plot((self.t_pzq-N_DAYS_BURN)/30.0,0.5,'.');
-                plt.text((self.t_pzq-N_DAYS_BURN)/30.0,0.5 + y_shift,"t_pzq: " + pzq_date.isoformat(),rotation=45)
+                if F_PZQ_TARGET_COV > 0.0:
+                    #PZQ
+                    plt.plot((self.t_pzq-N_DAYS_BURN)/30.0,0.5,'.');
+                    plt.text((self.t_pzq-N_DAYS_BURN)/30.0,0.5 + y_shift,"t_pzq: " + pzq_date.isoformat(),rotation=45)
                 
-                #Nets
-                plt.plot((self.t_net-N_DAYS_BURN)/30.0,0.6,'.');
-                plt.text((self.t_net-N_DAYS_BURN)/30.0,0.6 + y_shift,"t_net: " + net_date.isoformat(),rotation=45);
+                if ITN_CHECKED:
+                    #Nets
+                    plt.plot((self.t_net-N_DAYS_BURN)/30.0,0.6,'.');
+                    plt.text((self.t_net-N_DAYS_BURN)/30.0,0.6 + y_shift,"t_net: " + net_date.isoformat(),rotation=45);
                 
-                #Sprays
-                plt.plot((self.t_spray-N_DAYS_BURN)/30.0,0.7,'.');
-                plt.text((self.t_spray-N_DAYS_BURN)/30.0,0.7 + y_shift,"t_spray: " + spray_date.isoformat(),rotation=45);       
+                if IRS_CHECKED:
+                    #Sprays
+                    plt.plot((self.t_spray-N_DAYS_BURN)/30.0,0.7,'.');
+                    plt.text((self.t_spray-N_DAYS_BURN)/30.0,0.7 + y_shift,"t_spray: " + spray_date.isoformat(),rotation=45);       
                 
                 if not self.t_season_start == -1:
                     for cur_season in range(0,len(self.t_season_start)):
@@ -652,8 +713,8 @@ class App( object ):
     ##            for i, txt in enumerate(n):
     ##                plt.annotate(txt, (x[i],y[i]))
             
-            plt.savefig('output/output_graph_all_ages' + fn_int + '.png', format='png', dpi=dpi)
-            plt.savefig('output/output_graph_all_ages' + fn_int + '.svg', format='svg')
+            plt.savefig('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '.png', format='png', dpi=dpi)
+            plt.savefig('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '.svg', format='svg')
             plt.close()
     #        plt.show()
            
@@ -724,7 +785,29 @@ class App( object ):
         "spray_month":irs_output,\
         "use_integration":USE_INTEGRATION,\
         }       
+        output2 = {\
+        "schisto":schisto_avg_prev,\
+        "malaria":malaria_avg_prev,\
+        "n_malaria_cases":self.n_malaria_cases,\
+        "n_symp_malaria_cases":self.n_symp_malaria_cases,\
+        "pzq_month":self.pzq_date.strftime("%m"),\
+        "net_month":itn_output,\
+        "spray_month":irs_output,\
+        "use_integration":USE_INTEGRATION,\
+        }   
         print json.dumps(output)
+        with open('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '.txt', 'wb') as csvfile:
+            
+            csvfile.write(json.dumps(output2))
+        csvfile.close()
+        
+        with open('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '-validation'+'.txt', 'wb') as csvfile2:
+            
+#            csvfile2.write("asymp and symp\t" + str(app.n_malaria_cases) + "\t" + str(100.0 * (app.n_malaria_cases / (N_PEOPLE * (N_DAYS_SIM/365.0)))))
+#            csvfile2.write("\tsymp only\t" + str(app.n_symp_malaria_cases) + "\t" + str(100.0 * (app.n_symp_malaria_cases / (N_PEOPLE * (N_DAYS_SIM/365.0)))))
+            csvfile2.write(str(100.0 * (app.n_symp_malaria_cases / (N_PEOPLE * (N_DAYS_SIM/365.0)))))
+        csvfile2.close()
+            
         return output
         
 if __name__ == '__main__':
@@ -850,15 +933,19 @@ if __name__ == '__main__':
                 end_tstep = start_tstep + (cur_date_plus_one_month - cur_date).days
                 is_malaria_season_tmp[start_tstep:end_tstep] = \
                     [True]*(end_tstep - start_tstep)
+                print (end_tstep - start_tstep)
+                app.debug_days_in_season = app.debug_days_in_season + (end_tstep - start_tstep)
             cur_date = cur_date_plus_one_month
         #Handle last day of simulation (first of the month)
         cur_month = ((sim_start_month - 1 + 12) % 12) + 1
         if cur_month in PEAK_TRANS_MONTHS:
+            print (end_tstep - start_tstep)
             cur_date_plus_one_day = cur_date + ONE_DAY
             start_tstep = (cur_date - burn_start_date).days
             end_tstep = start_tstep + (cur_date_plus_one_day - cur_date).days
             is_malaria_season_tmp[start_tstep:end_tstep] = \
                 [True]*(end_tstep - start_tstep)
+            app.debug_days_in_season = app.debug_days_in_season + (end_tstep - start_tstep)
         is_malaria_season = is_malaria_season_tmp[0:N_DAYS_TOT]
         app.is_malaria_season = is_malaria_season
         

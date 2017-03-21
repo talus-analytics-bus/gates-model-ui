@@ -1,0 +1,1 @@
+{"spray_month": "N/A", "malaria": 0.5080979452054758, "n_malaria_cases": 9810, "pzq_month": "07", "n_symp_malaria_cases": 7045, "use_integration": false, "schisto": 0.3749999999999993, "net_month": "N/A"}

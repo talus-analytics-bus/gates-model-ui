@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <title>FRAM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="img/favicon.ico">
+    
+    <!-- ----- CSS Files ----- -->
+ 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:800,600,400,300' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/bootstrap-multiselect.css" rel="stylesheet">
+  <link href="css/bootstrap-slider.css" rel="stylesheet">
+  <link href="css/nprogress.css" rel="stylesheet">
+  <link href="css/leaflet.css" rel="stylesheet">
+  <link href="css/leaflet.draw.css" rel="stylesheet">
+  <link href="css/odometer-theme-minimal.css" rel="stylesheet">
+  <link href="css/tooltipster.css" rel="stylesheet">
+  <link href="css/tooltipster-shadow.css" rel="stylesheet">
+  <link href="css/jquery-ui.min.css" rel="stylesheet">
+ 	<link href="css/main.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div class="navbar navbar-default">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="index.html">Flood Resilience Assessment Model (FRAM)</a>
+    </div>
+  </div>
+  <div id="page-content"></div>
+    
+  <!-- ----------- TEMPLATES ------------- -->
+  <script id="home-template" type="text/x-handlebars-template">
+  	<div class="container">
+      <div class="page-title">Flood Resilience Assessment Model (FRAM)</div>
+      <div class="page-description">
+        Select the affected location of the flood below. Adjust population and infrastructure as necessary and click the "Submit" button below to view the results. 
+      </div>
+      <div class="input-content">
+        <div class="block-link-container">
+          <div class="block-link" name="inundation">
+            <div class="block-link-title">Flood Extent</div>
+          </div>
+          <div class="block-link" name="location">
+            <div class="block-link-title">Location</div>
+          </div>
+          <div class="block-link" name="population">
+            <div class="block-link-title">Population</div>
+          </div>
+          <div class="block-link" name="infra">
+            <div class="block-link-title">Infrastructure</div>
+          </div>
+          <div class="block-link" name="gauges">
+            <div class="block-link-title">Water Gauges</div>
+          </div>
+        </div>
+        <div class="input-block-container">
+          <div class="input-block" name="inundation">
+            <div class="input-block-title">Flood Extent</div>
+            <div class="inundation-slider-container">
+              <div class="inundation-slider-title">Storm Surge Height (in feet)</div>
+              <input class="inundation-slider">
+            </div>
+          </div>
+          <div class="input-block" name="location">
+            <div class="input-block-title">Event Location</div>
+            <div class="location-resolution-container">
+              <span>Select locations by:</span>
+              <select class="location-resolution-select form-control">
+                <option value="polygon">Polygon</option>
+                <option value="latlon">Latitude/Longitude</option>
+                <option value="county">County</option>
+                <option value="cbsa">City</option>
+              </select>
+            </div>
+            <div class="location-content" res="latlon">
+              <div>
+                Longitude:
+                <input class="w-longitude-input latlon-input form-control" value="-83.00">
+                to
+                <input class="e-longitude-input latlon-input form-control" value="-81.00">
+              </div>
+              <div class="margin-top-20">
+                Latitude:
+                <input class="n-latitude-input latlon-input form-control" value="38.50">
+                to
+                <input class="s-latitude-input latlon-input form-control" value="36.50">
+              </div>
+            </div>
+            <div class="location-content" res="polygon">
+              <div class="input-description">
+                Use the scroll wheel to zoom in and out or hold the "Shift" button to draw a square to zoom in. Use the buttons on the upper left hand side of the map to draw polygons or circles to indicate the event location.
+              </div>
+              <div>
+                <div id="location-map"></div>
+              </div>
+              <div class="chosen-counties-list"></div>
+            </div>
+            <div class="location-content" res="county">
+              <div class="row">
+                <div class="col-md-6">
+                  <div>
+                    <span>Select a state:</span>
+                    <select class="state-select form-control"></select>
+                  </div>
+                  <div class="margin-top-20">
+                    <span>Select one or more counties:</span>
+                    <select class="county-select form-control" multitple="multiple"></select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="location-county-list-container">
+                    <div class="center bold">Selected Counties:</div>
+                    <div class="location-county-list"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="location-content" res="cbsa">
+              <span>Select a city or metropolitan region: </span>
+              <select class="cbsa-select form-control"></select>
+            </div>
+          </div>
+          <div class="input-block" name="population">
+            <div class="input-block-title">Population</div>
+            <div class="input-description">
+              The following are the default population numbers based on the 2016 US Census and the Flood Insurance Rate Maps (FIRMs).
+              <i>Modify as necessary.</i>
+            </div>
+            <div class="margin-top-20">
+              <table class="input-to-text-table">
+                <tr>
+                  <td>
+                    <input class="total-pop-input form-control">
+                    <div class="total-pop-default-value-box default-value-box">
+                      <span>default: </span>
+                      <span class="total-pop-default-value bold"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <span>people located in the affected region</span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div>
+              <table class="input-to-text-table">
+                <tr>
+                  <td>
+                    <input class="nsfha-pop-input form-control">
+                    <div class="nsfha-pop-default-value-box default-value-box">
+                      <span>default: </span>
+                      <span class="nsfha-pop-default-value bold"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <span>people located in the Non-Special Flood Hazard Area (NSFHA)</span>
+                    <img class="nsfha-info-img question-img" src="img/question-mark.png">
+                  </td>
+                </tr>
+              </table>
+            </div>
+             <div>
+              <table class="input-to-text-table">
+                <tr>
+                  <td>
+                    <input class="sfha-pop-input form-control">
+                    <div class="sfha-pop-default-value-box default-value-box">
+                      <span>default: </span>
+                      <span class="sfha-pop-default-value bold"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <span>people located in the Special Flood Hazard Area (SFHA)</span>
+                    <img class="sfha-info-img question-img" src="img/question-mark.png">
+                  </td>
+                </tr>
+              </table>
+            </div>
+         </div>
+          <div class="input-block" name="infra">
+            <div class="input-block-title">Infrastructure</div>
+            <div class="input-description">
+              Select the dataset used to identify critical infrastructure in the affected regions:
+            </div>
+            <select class="infra-dataset-select form-control margin-top-10">
+              <option value="hazus">HAZUS</option>
+              <option value="hsip">HSIP Gold</option>
+            </select>
+            <div class="input-description margin-top-20">
+              Order the infrastructure types by priority, with the greatest priority at the top of the list:
+            </div>
+            <div class="infra-type-priority-container">
+              <div class="ip-list-title">Drag to the list on the right to include</div>
+              <div class="infra-type-priority-list"></div>
+            </div>
+            <div class="infra-type-trash-container">
+              <div class="ip-list-title">Move up and down to sort by priority</div>
+              <div class="infra-type-trash-list"></div>
+            </div>
+          </div>
+          <div class="input-block" name="gauges">
+            <div class="input-block-title">NWS River Gauges</div>
+            <div class="input-description">
+              The default water gauge used to measure inundation levels has been selected.
+              To use a different water gauge for calculations, select one from the list below.
+            </div>
+            <div class="water-gauge-list"></div>
+          </div>
+        </div>
+      </div>
+      <div class="submit-input-button-container">
+        <div class="submit-input-button btn btn-primary">Submit</div>
+      </div>
+    </div>
+  </script>
+
+  <script id="output-template" type="text/x-handlebars-template">
+    <div class="container">
+      <div class="page-title">Community Flood Risk</div>
+      <div class="output-block">
+        <div class="output-map-content">
+          <div id="output-map"></div>
+          <div class="map-options">
+            <div class="basemap-options-container map-options-container">
+              <div class="map-options-title">Map Options</div>
+              <div class="map-option-row" ind="inundation">
+                <input type="checkbox">
+                <span class="map-option-text">Show Flooding</span>
+                <div class="map-option-subrow">
+                  <input type="radio" ind="binary" checked>
+                  <span>Show Inundation Status</span>
+                  <div class="inundation-status-legend-container">
+                    <svg class="inundation-status-legend" width="300" height="40">
+                      <rect x="25" width="125" height="12" fill="#eee"/>
+                      <rect x="150" width="125" height="12" fill="#3182bd"/>
+                      <text x="87.5" y="28">Not inundated</text>
+                      <text x="212.5" y="28">Inundated</text>
+                    </svg>
+                    <div class="inundation-opacity-slider-container">
+                      <span>opacity: </span>
+                      <input class="inundation-opacity-slider">
+                    </div>
+                  </div>
+                </div>
+                <div class="map-option-subrow">
+                  <input type="radio" ind="depth">
+                  <span>Show Inundation Depth</span>
+                  <div class="inundation-depth-legend-container">
+                    <svg class="inundation-depth-legend" width="300" height="40">
+                      <defs>
+                        <linearGradient id="blue-gradient">
+                          <stop offset="0%" stop-color="#f7fbff" stop-opacity="0.8"/>
+                          <stop offset="12.5%" stop-color="#deebf7" stop-opacity="0.8"/>
+                          <stop offset="25%" stop-color="#c6dbef" stop-opacity="0.8"/>
+                          <stop offset="37.5%" stop-color="#9ecae1" stop-opacity="0.8"/>
+                          <stop offset="50%" stop-color="#6baed6" stop-opacity="0.8"/>
+                          <stop offset="62.5%" stop-color="#4292c6" stop-opacity="0.8"/>
+                          <stop offset="75%" stop-color="#2171b5" stop-opacity="0.8"/>
+                          <stop offset="87.5%" stop-color="#08519c" stop-opacity="0.8"/>
+                          <stop offset="100%" stop-color="#08306b" stop-opacity="0.8"/>
+                        </linearGradient>
+                      </defs>
+                      <rect x="25" width="250" height="12" fill="url(#blue-gradient)"/>
+                      <text x="25" y="30">0'</text>
+                      <text x="275" y="30">25'</text>
+                    </svg>
+                  </div>
+                </div>  
+              </div>
+              <div class="map-option-row" ind="infra">
+                <input type="checkbox">
+                <span class="map-option-text">Show Critical Infrastructure</span>
+              </div>
+              <div class="infra-category-container"></div>
+            </div>
+            <div class="flooding-options-container map-options-container">
+              <div class="map-options-title">Flooding Display Options</div>
+              <div class="map-option-row">
+                <div>Select the hurricane category</div>
+                <div class="hurricane-category-options">
+                  <div>
+                    <input type="radio" cat="1" checked>
+                    <span>Category 1</span>
+                  </div>
+                  <div>
+                    <input type="radio" cat="2">
+                    <span>Category 2</span>
+                  </div>
+                  <div>
+                    <input type="radio" cat="3">
+                    <span>Category 3</span>
+                  </div>
+                  <div>
+                    <input type="radio" cat="4">
+                    <span>Category 4</span>
+                  </div>
+                  <div>
+                    <input type="radio" cat="5">
+                    <span>Category 5</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="layers-options-container map-options-container">
+              <div class="map-options-title">Overlay</div>
+              <div class="map-option-row" ind="">
+                <input type="radio" checked>
+                <span class="map-option-text">None</span>
+              </div>
+              <div class="map-option-subheader">Inundation</div>
+              <div class="map-option-row" ind="cover">
+                <input type="radio">
+                <span class="map-option-text">% Land Inundated</span>
+                <img class="cover-info-icon small-question-img" src="img/question-mark.png">
+              </div>
+              <div class="map-option-subheader">Population</div>
+              <div class="map-option-row" ind="population">
+                <input type="radio">
+                <span class="map-option-text">Population Density</span>
+              </div>
+              <div class="map-option-row" ind="elder">
+                <input type="radio">
+                <span class="map-option-text">% Population 65+</span>
+              </div>
+              <div class="map-option-subheader">Infrastructure</div>
+              <div class="map-option-row" ind="housing">
+                <input type="radio">
+                <span class="map-option-text">Housing Units Density</span>
+              </div>
+            </div>
+            <div class="map-legend-container map-options-container">
+              <div class="map-options-title center">Legend</div>
+              <svg class="map-legend" width="280" height="60">
+                <rect width="50" height="12" x="15" />
+                <rect width="50" height="12" x="65" />
+                <rect width="50" height="12" x="115" />
+                <rect width="50" height="12" x="165" />
+                <rect width="50" height="12" x="215" />
+                <text class="map-legend-label-first" x="10" y="28"></text>
+                <text class="map-legend-label" x="65" y="28"></text>
+                <text class="map-legend-label" x="115" y="28"></text>
+                <text class="map-legend-label" x="165" y="28"></text>
+                <text class="map-legend-label" x="215" y="28"></text>
+                <text class="map-legend-label-last" x="265" y="28"></text>
+                <text class="map-legend-title" x="140" y="52"></text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="output-block">
+        <div class="output-block-title">Affected Critical Infrastructure</div>
+        <div class="inundation-table-container">
+          <table class="inundation-table table table-condensed table-hover">
+            <thead>
+              <tr>
+                <td></td>
+                <td>Water Level</td>
+                <td ind="name">Name</td>
+                <td ind="fips">Location</td>
+                <td ind="type">Type</td>
+                <td ind="inundation">
+                  Inundation Depth<br>(in feet)
+                  <img class="inundation-table-arrow table-arrow" src="img/chevron_down.png">
+                </td>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="inundation-table-show-more-bar show-more-bar">show more</div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+	
+	<!-- General Libraries -->
+	<script src="lib/jquery-3.1.0.min.js"></script>
+	<script src="lib/d3.min.js"></script>
+	
+	<!-- Routing Libraries -->
+  <script src="lib/signals.min.js"></script>
+  <script src="lib/crossroads.min.js"></script>
+  <script src="lib/hasher.min.js"></script>
+	<script src="lib/handlebars-v3.0.0.js"></script>
+
+  <!-- Misc Libraries -->
+  <script src="lib/leaflet.js"></script>
+  <script src="lib/leaflet.draw.js"></script>
+  <script src="lib/nprogress.min.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="lib/bootstrap-multiselect.js"></script>
+  <script src="lib/bootstrap-slider.min.js"></script>
+  <script src="lib/jquery-ui.min.js"></script>
+  <script src="lib/jquery.tooltipster.min.js"></script>
+  <script src="lib/odometer.min.js"></script>
+
+	<!--<script src="build/lib.min.js"></script>-->
+    
+  <!-- Project Specific Files -->
+  <script src="js/utility.js"></script>
+  <script src="js/routing.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/persistence.js"></script>
+  <script src="js/components/maps.js"></script>
+  <script src="js/components/variables.js"></script>
+  <script src="js/pages/input.js"></script>
+  <script src="js/pages/output.js"></script>
+  <script src="js/init.js"></script>
+  <!--<script src="build/bundle.min.js"></script>-->
+</body>
+</html>
