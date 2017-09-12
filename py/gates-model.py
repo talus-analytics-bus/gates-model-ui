@@ -925,27 +925,28 @@ if __name__ == '__main__':
         t_season_start = list()
         t_season_end = list()
         
-        for i in range(0,12):
-            cur_month = ((sim_start_month - 1 + i) % 12) + 1
-            cur_date_plus_one_month = cur_date + ONE_MONTH
-            if cur_month in PEAK_TRANS_MONTHS:
-                start_tstep = (cur_date - burn_start_date).days
-                end_tstep = start_tstep + (cur_date_plus_one_month - cur_date).days
-                is_malaria_season_tmp[start_tstep:end_tstep] = \
-                    [True]*(end_tstep - start_tstep)
-                print (end_tstep - start_tstep)
-                app.debug_days_in_season = app.debug_days_in_season + (end_tstep - start_tstep)
-            cur_date = cur_date_plus_one_month
-        #Handle last day of simulation (first of the month)
-        cur_month = ((sim_start_month - 1 + 12) % 12) + 1
-        if cur_month in PEAK_TRANS_MONTHS:
-            print (end_tstep - start_tstep)
-            cur_date_plus_one_day = cur_date + ONE_DAY
-            start_tstep = (cur_date - burn_start_date).days
-            end_tstep = start_tstep + (cur_date_plus_one_day - cur_date).days
-            is_malaria_season_tmp[start_tstep:end_tstep] = \
-                [True]*(end_tstep - start_tstep)
-            app.debug_days_in_season = app.debug_days_in_season + (end_tstep - start_tstep)
+        #Add seasonal periods while the current date days is still
+        #less than the current simulation days
+        seasonsRemain = True
+        while seasonsRemain:
+            for i in range(0,12):
+                cur_month = ((sim_start_month - 1 + i) % 12) + 1
+                print ['cur_month = ', cur_month]
+                cur_date_plus_one_month = cur_date + ONE_MONTH
+                if cur_month in PEAK_TRANS_MONTHS:
+                    start_tstep = (cur_date - burn_start_date).days
+                    end_tstep = start_tstep + (cur_date_plus_one_month - cur_date).days
+                    is_malaria_season_tmp[start_tstep:end_tstep] = \
+                        [True]*(end_tstep - start_tstep)
+                    print (end_tstep - start_tstep)
+                cur_date = cur_date_plus_one_month
+                print ''
+                #If days passed is greater than total sim days, then stop
+                days_since_sim_start = (cur_date - sim_start_date).days
+                if days_since_sim_start > N_DAYS_SIM:
+                    seasonsRemain = False; #TODO make sure final season days accounted for
+                    break
+        
         is_malaria_season = is_malaria_season_tmp[0:N_DAYS_TOT]
         app.is_malaria_season = is_malaria_season
         
@@ -959,7 +960,12 @@ if __name__ == '__main__':
         
         if is_malaria_season[N_DAYS_TOT-1]:
             t_season_end.append(N_DAYS_TOT)
-                
+
+        
+        #Make days in season the days per year in season
+        app.debug_days_in_season = is_malaria_season[N_DAYS_BURN:].count(True);
+        app.debug_days_in_season = app.debug_days_in_season / (N_DAYS_SIM / 365.0);
+        
         #Set intervention times
         #PZQ
         app.t_pzq = (pzq_date - burn_start_date).days
