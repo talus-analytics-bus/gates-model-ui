@@ -34,6 +34,7 @@ DEBUG_MODE = False
 if USE_GUI:
     for line in sys.stdin:
         UI_INPUTS = json.loads(line)
+    RUN_NAME = "user_run"
 else:
     RUN_NAME = "032117-gates-call"
     JSON_FILE = open("output/" + RUN_NAME + "/debug_inputs.json")    
@@ -52,7 +53,7 @@ else:
     IS_COUPLED = "-coupled";
     # IS_COUPLED = "-coupled-" + str(sys.argv[1])
 #Show plots or not
-SHOW_PLOTS = True
+SHOW_PLOTS = False
 if (SHOW_PLOTS):
     import matplotlib.pyplot as plt
 
@@ -606,11 +607,55 @@ class App( object ):
         header_str = ["Time (d)","0-4 y/o","5-15 y/o","16+ y/o","All"]
         headers = header_str + spaces + header_str + spaces + header_str
         
-        with open('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '.csv', 'wb') as csvfile:
-            writer = csv.writer(csvfile, quoting = csv.QUOTE_NONNUMERIC)
-            title = ["Prevalence of schistosomiasis by age group vs. time (d)"] + title_spaces + ["Prevalence of malaria by age group vs. time (d)"] + title_spaces + ["Prevalence of coinfection by age group vs. time (d)"]
-            writer.writerow(title)
-            writer.writerow(headers)
+        if not USE_GUI:
+            with open('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '.csv', 'wb') as csvfile:
+                writer = csv.writer(csvfile, quoting = csv.QUOTE_NONNUMERIC)
+                title = ["Prevalence of schistosomiasis by age group vs. time (d)"] + title_spaces + ["Prevalence of malaria by age group vs. time (d)"] + title_spaces + ["Prevalence of coinfection by age group vs. time (d)"]
+                writer.writerow(title)
+                writer.writerow(headers)
+                for t in range(0, N_DAYS_TOT):
+                    # Schisto output #----------------------------------------------------#
+                    y["schisto"]["0-4"][t] = self.prevalence_schisto["0-4"][t]
+                    y["schisto"]["5-15"][t] = self.prevalence_schisto["5-15"][t]
+                    y["schisto"]["16+"][t] = self.prevalence_schisto["16+"][t]
+                    schisto_prev_all = \
+                        (y["schisto"]["0-4"][t] * n_people_0_4 + \
+                        y["schisto"]["5-15"][t] * n_people_5_15 + \
+                        y["schisto"]["16+"][t] * n_people_16_plus) / \
+                        N_PEOPLE
+                    y["schisto"]["All"][t] = schisto_prev_all
+                    cur_output_schisto = [t,y["schisto"]["0-4"][t],y["schisto"]["5-15"][t],y["schisto"]["16+"][t],y["schisto"]["All"][t]]
+     
+                    # Malaria output #----------------------------------------------------#
+                    y["malaria"]["0-4"][t] = self.prevalence_malaria["0-4"][t]
+                    y["malaria"]["5-15"][t] = self.prevalence_malaria["5-15"][t]
+                    y["malaria"]["16+"][t] = self.prevalence_malaria["16+"][t]
+                    malaria_prev_all = \
+                        (y["malaria"]["0-4"][t] * n_people_0_4 + \
+                        y["malaria"]["5-15"][t] * n_people_5_15 + \
+                        y["malaria"]["16+"][t] * n_people_16_plus) / \
+                        N_PEOPLE
+                    y["malaria"]["All"][t] = malaria_prev_all
+                    cur_output_malaria = [t,y["malaria"]["0-4"][t],y["malaria"]["5-15"][t],y["malaria"]["16+"][t],y["malaria"]["All"][t]]
+
+                    # Coinfection output #------------------------------------------------#
+                    y["coinfection"]["0-4"][t] = self.prevalence_coinfection["0-4"][t]
+                    y["coinfection"]["5-15"][t] = self.prevalence_coinfection["5-15"][t]
+                    y["coinfection"]["16+"][t] = self.prevalence_coinfection["16+"][t]
+                    coinfection_prev_all = \
+                        (y["coinfection"]["0-4"][t] * n_people_0_4 + \
+                        y["coinfection"]["5-15"][t] * n_people_5_15 + \
+                        y["coinfection"]["16+"][t] * n_people_16_plus) / \
+                        N_PEOPLE
+                    y["coinfection"]["All"][t] = coinfection_prev_all
+                    cur_output_coinfection = [t,y["coinfection"]["0-4"][t],y["coinfection"]["5-15"][t],y["coinfection"]["16+"][t],y["coinfection"]["All"][t]]
+
+                    writer.writerow(cur_output_schisto + spaces + cur_output_malaria + spaces + cur_output_coinfection)
+                self.prevalence_schisto["All"] = y["schisto"]["All"]
+                self.prevalence_malaria["All"] = y["malaria"]["All"]
+                self.prevalence_coinfection["All"] = y["coinfection"]["All"]
+            csvfile.close()
+        else:
             for t in range(0, N_DAYS_TOT):
                 # Schisto output #----------------------------------------------------#
                 y["schisto"]["0-4"][t] = self.prevalence_schisto["0-4"][t]
@@ -648,11 +693,9 @@ class App( object ):
                 y["coinfection"]["All"][t] = coinfection_prev_all
                 cur_output_coinfection = [t,y["coinfection"]["0-4"][t],y["coinfection"]["5-15"][t],y["coinfection"]["16+"][t],y["coinfection"]["All"][t]]
 
-                writer.writerow(cur_output_schisto + spaces + cur_output_malaria + spaces + cur_output_coinfection)
             self.prevalence_schisto["All"] = y["schisto"]["All"]
             self.prevalence_malaria["All"] = y["malaria"]["All"]
             self.prevalence_coinfection["All"] = y["coinfection"]["All"]
-        csvfile.close()
             
         # Plotting #----------------------------------------------------------#
         if (SHOW_PLOTS):
