@@ -11,6 +11,7 @@ app.get('/', function(req, res) {
 });
 app.get(/^(.+)$/, function(req, res) {
 	if (req.params[0] === '/runModel') {
+		console.log('running model!')
 		// set up python shell and send inputs to script
 		var pyshell = new PythonShell('py/gates-model.py', {mode: 'json'});
 		pyshell.on('message', function(results) {
