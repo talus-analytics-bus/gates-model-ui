@@ -11,3 +11,15 @@ node_modules/
 .pydevproject
 .DS_Store
 # Elastic Beanstalk Files.elasticbeanstalk/*!.elasticbeanstalk/*.cfg.yml!.elasticbeanstalk/*.global.yml
+.idea/gates-model-ui.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.sass-cache/2f33f679c7fb427733e17d7dc4ea5dbba92872f4/_input.scssc
+.sass-cache/2f33f679c7fb427733e17d7dc4ea5dbba92872f4/_output.scssc
+.sass-cache/3728058e590a50cbeea552522b0bb2f9da662653/main.scssc
+.sass-cache/d9c8ef49473b2bdc847e37d0af7cfe44c0539eba/_charts.scssc
+.sass-cache/d9c8ef49473b2bdc847e37d0af7cfe44c0539eba/_images.scssc
+.sass-cache/f2a012c3d02e41aa59b5bf6a18f5f66629fb344d/_classes.scssc
+.sass-cache/f2a012c3d02e41aa59b5bf6a18f5f66629fb344d/_mixins.scssc
+sass/css
