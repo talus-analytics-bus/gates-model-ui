@@ -1,9 +1,10 @@
 """
+current
 Gates Foundation Malaria and Schistosomiasis Intervention Timing Model
 @author: Mike Van Maele, Justin Kerr
 
 Created on Wed Jan 27, 2016
-Updated on Mon May 11, 2016
+Updated on Mon Sep 18, 2017
 """
 
 "Python Standard Libraries (versions listed)"
@@ -788,28 +789,28 @@ class App( object ):
         "spray_month":irs_output,\
         "use_integration":USE_INTEGRATION,\
         }       
-        output2 = {\
-        "schisto":schisto_avg_prev,\
-        "malaria":malaria_avg_prev,\
-        "n_malaria_cases":self.n_malaria_cases,\
-        "n_symp_malaria_cases":self.n_symp_malaria_cases,\
-        "pzq_month":self.pzq_date.strftime("%m"),\
-        "net_month":itn_output,\
-        "spray_month":irs_output,\
-        "use_integration":USE_INTEGRATION,\
-        }   
+        # output2 = {\
+        # "schisto":schisto_avg_prev,\
+        # "malaria":malaria_avg_prev,\
+        # "n_malaria_cases":self.n_malaria_cases,\
+        # "n_symp_malaria_cases":self.n_symp_malaria_cases,\
+        # "pzq_month":self.pzq_date.strftime("%m"),\
+        # "net_month":itn_output,\
+        # "spray_month":irs_output,\
+        # "use_integration":USE_INTEGRATION,\
+        # }   
         print json.dumps(output)
-        with open('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '.txt', 'wb') as csvfile:
+#         with open('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '.txt', 'wb') as csvfile:
             
-            csvfile.write(json.dumps(output2))
-        csvfile.close()
+#             csvfile.write(json.dumps(output2))
+#         csvfile.close()
         
-        with open('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '-validation'+'.txt', 'wb') as csvfile2:
+#         with open('output/' + RUN_NAME + '/' + RUN_NAME + fn_int + IS_COUPLED + '-validation'+'.txt', 'wb') as csvfile2:
             
-#            csvfile2.write("asymp and symp\t" + str(app.n_malaria_cases) + "\t" + str(100.0 * (app.n_malaria_cases / (N_PEOPLE * (N_DAYS_SIM/365.0)))))
-#            csvfile2.write("\tsymp only\t" + str(app.n_symp_malaria_cases) + "\t" + str(100.0 * (app.n_symp_malaria_cases / (N_PEOPLE * (N_DAYS_SIM/365.0)))))
-            csvfile2.write(str(100.0 * (app.n_symp_malaria_cases / (N_PEOPLE * (N_DAYS_SIM/365.0)))))
-        csvfile2.close()
+# #            csvfile2.write("asymp and symp\t" + str(app.n_malaria_cases) + "\t" + str(100.0 * (app.n_malaria_cases / (N_PEOPLE * (N_DAYS_SIM/365.0)))))
+# #            csvfile2.write("\tsymp only\t" + str(app.n_symp_malaria_cases) + "\t" + str(100.0 * (app.n_symp_malaria_cases / (N_PEOPLE * (N_DAYS_SIM/365.0)))))
+#             csvfile2.write(str(100.0 * (app.n_symp_malaria_cases / (N_PEOPLE * (N_DAYS_SIM/365.0)))))
+#         csvfile2.close()
             
         return output
         
