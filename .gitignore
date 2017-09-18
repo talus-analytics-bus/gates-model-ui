@@ -11,3 +11,6 @@ node_modules/
 .pydevproject
 .DS_Store
 # Elastic Beanstalk Files.elasticbeanstalk/*!.elasticbeanstalk/*.cfg.yml!.elasticbeanstalk/*.global.yml
+
+# Model outputs (only produced in debug mode)
+py/output/
