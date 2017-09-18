@@ -28,9 +28,9 @@ import dateutil.relativedelta as date
 start = time.time()
 
 #Load from JS GUI
-USE_GUI = False
+USE_GUI = True
 X_TICKS = 60 #number of days along x-axis ticks
-DEBUG_MODE = True
+DEBUG_MODE = False
 if USE_GUI:
     for line in sys.stdin:
         UI_INPUTS = json.loads(line)
