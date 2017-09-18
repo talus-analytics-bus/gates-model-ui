@@ -46,9 +46,11 @@ F_TREATED = 0.80     #Likelihood of being treated with ACT (Uganda Ministry of H
 F_SCHISTO_COINFECTION_MOD = 1.85 #Source: (Ndeffo Mbah et al. (2014))
 IS_COUPLED = ""
 if F_SCHISTO_COINFECTION_MOD is 1.0:
-    IS_COUPLED = "-uncoupled-" + str(sys.argv[1])
+    IS_COUPLED = "-uncoupled";
+    # IS_COUPLED = "-uncoupled-" + str(sys.argv[1])
 else:
-    IS_COUPLED = "-coupled-" + str(sys.argv[1])
+    IS_COUPLED = "-coupled";
+    # IS_COUPLED = "-coupled-" + str(sys.argv[1])
 #Show plots or not
 SHOW_PLOTS = True
 if (SHOW_PLOTS):
@@ -931,16 +933,16 @@ if __name__ == '__main__':
         while seasonsRemain:
             for i in range(0,12):
                 cur_month = ((sim_start_month - 1 + i) % 12) + 1
-                print ['cur_month = ', cur_month]
+                # print ['cur_month = ', cur_month]
                 cur_date_plus_one_month = cur_date + ONE_MONTH
                 if cur_month in PEAK_TRANS_MONTHS:
                     start_tstep = (cur_date - burn_start_date).days
                     end_tstep = start_tstep + (cur_date_plus_one_month - cur_date).days
                     is_malaria_season_tmp[start_tstep:end_tstep] = \
                         [True]*(end_tstep - start_tstep)
-                    print (end_tstep - start_tstep)
+                    # print (end_tstep - start_tstep)
                 cur_date = cur_date_plus_one_month
-                print ''
+                # print ''
                 #If days passed is greater than total sim days, then stop
                 days_since_sim_start = (cur_date - sim_start_date).days
                 if days_since_sim_start > N_DAYS_SIM:
