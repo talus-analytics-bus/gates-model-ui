@@ -507,7 +507,7 @@ rect {
 .background-container > div:nth-child(n+2) {
   margin-top: 20px; }
 .background-container .container {
-  max-width: 800px;
+  max-width: 900px;
   padding: 0px 50px 50px;
   margin-right: auto;
   margin-left: auto; }
