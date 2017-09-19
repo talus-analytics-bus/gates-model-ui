@@ -1,9 +1,16 @@
 @import 'helpers/classes';
 @import 'helpers/mixins';
+@import 'helpers/colors';
+@import 'helpers/borders';
 @import 'components/charts';
 @import 'components/images';
 @import 'pages/input';
 @import 'pages/output';
+@import 'pages/background';
+@import 'components/footer';
+@import 'components/headers';
+@import 'components/navbar';
+
 
 body { font-family: 'Open Sans', sans-serif; }
 
@@ -23,7 +30,7 @@ table input.form-control {
 
 /* --- Custom Elements --- */
 .container {
-  max-width: 900px;
+  /*max-width: 900px;*/
   padding: 0px 0px 50px;
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
@@ -62,28 +69,10 @@ table input.form-control {
   }
 }
 
-/* --- Nav Bar --- */
-.navbar { margin-bottom: 0px; }
-.header-wrapper {
-  position: relative;
-  padding: 20px;
-  text-align: center;
+#page-content {
+  margin-top: 51px;
+  min-height: 100px;
 }
-.header {
-  position: relative;
-  display: inline-block;
-}
-.header-title {
-  font-size: 2.5em;
-  font-weight: 300;
-  cursor: pointer;
-}
-.logo {
-  position: absolute;
-  top: 19px;
-  left: 20px;
-}
-
 
 /* --- Bootstrap Overrides --- */
 .text-success,

@@ -22,6 +22,11 @@ var Routing = {};
         	App.initOutput();
         	window.scrollTo(0, 0);
         });
+        crossroads.addRoute('/background', function() {
+            loadTemplate('background');
+            App.initBackground();
+            window.scrollTo(0, 0);
+        });
 
         // setup hasher for subscribing to hash changes and browser history
         hasher.prependHash = '';

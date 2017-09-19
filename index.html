@@ -16,17 +16,71 @@
    	<link href='css/main.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
-    <div class="navbar navbar-default">
-    	<div class="header-wrapper">
-    		<div class="header">
-    			<!--<div class="header-title">Malaria/Schisto Integration - Decision Support Tool</div>-->
-    			<div class="header-title">Integrated Malaria/Schisto Control Strategies</div>
-    		</div>
-			<!--<img class="logo" src="img/gates-logo.png" alt="Bill & Melinda Gates Foundation" width="250" height="50">-->
-    	</div>
-    </div>
-    <div id="page-content"></div>
-    
+
+
+	<!-- App logo and name -->
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+
+				<!--<a class="navbar-brand" href="#">Talus Analytics</a>-->
+			</div>
+			<div class="collapse navbar-collapse" id="navbar-collapse-1">
+
+				<div class="navbar-logo-container">
+					<img class="logo" src="img/logo-app.png" alt="Talus DST">
+					<div class="tool-name">Integrated Neglected Tropical Diseases</div>
+				</div>
+				<ul class="nav navbar-nav navbar-left">
+					<li><a href="#">Home</a></li>
+
+					<li><a href="#background">Background</a></li>
+				</ul>
+			</div><!-- /.navbar-collapse -->
+		</div><!-- /.container-fluid -->
+	</nav>
+
+	<!-- Page content -->
+	<div id="page-content"></div>
+
+	<!-- Footer -->
+	<div class="footer">
+		<table>
+			<tbody>
+			<tr>
+				<th>
+					<a href="https://www.georgetown.edu/" target="_blank">
+						<img
+								alt="Georgetown University"
+								class="logo-georgetown"
+								src="img/logo-georgetown.png"
+						/>
+					</a>
+				</th>
+				<th>
+					<span class="built-by">Built by</span>
+				</th>
+				<th>
+					<a href="http://www.talusanalytics.com" target="_blank">
+						<img
+								alt="Talus Analytics"
+								class="logo-talus"
+								src="img/logo-talus.png"
+						/>
+					</a>
+				</th>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+
     <!-- ----------- TEMPLATES ------------- -->
     <script id="home-template" type="text/x-handlebars-template">
     	<div class="input-container container">
@@ -417,33 +471,53 @@
     		</div>
 		</div>
 	</script>
-		
+
+	<script id="background-template" type="text/x-handlebars-template">
+		<div class="background-container">
+			<div class="container container-text">
+				<h1>Background</h1>
+				<div>
+					<h2>Acknowledgements</h2>
+					<p>We are grateful for the comments from two anonymous reviewers, whose suggestions greatly improved the final manuscript. We would also like to thank Djibril Sangare (Malaria Research and Training Center, Bamako, Mali), Moses Adriko (Vector Control Division, Ministry of Health, Kampala, Uganda), and Mohammed Mahdy (University of Science and Tehcnology, Sana’a, Yemen) for their support throughout the project and specifically their considerate feedback on the prototype decision-support tool and ideas for improvement. Finally, we would like to acknowledge the research assistance provided by Andrea Vaught (Georgetown University) and the support in developing and testing the model by Michael Van Maele (Talus Analytics).
+					</p>
+				</div>
+				<div>
+					<h2>Project Overview</h2>
+					<p>
+						Managing infectious disease requires rapid and effective response to support decision making. The decisions are complex and require understanding of the diseases, disease intervention and control measures, and the disease-relevant characteristics of the local community. Though disease modeling frameworks have been developed to address these questions, the complexity of current models presents a significant barrier to community-level decision makers in using the outputs of the most scientifically robust methods to support pragmatic decisions about implementing a public health response effort, even for endemic diseases with which they are already familiar. Here, we describe the development of an application available for mobile devices or on the internet, with a simple user interface, to support on-the-ground decision-making for integrating disease control programs, given local conditions and practical constraints. The model upon which the tool is built provides predictive analysis for the effectiveness of integration of schistosomiasis and malaria control, two diseases with extensive geographical and epidemiological overlap, and which result in significant morbidity and mortality in affected regions. Working with data from countries across sub-Saharan Africa and the Middle East, we present a proof-of-principle method and corresponding prototype tool to provide guidance on how to optimize integration of vertical disease control programs. This method and tool demonstrate significant progress in effectively translating the best available scientific models to support practical decision making on the ground with the potential to significantly increase the efficacy and cost-effectiveness of disease control.
+					</p>
+
+				</div>
+			</div>
+		</div>
+	</script>
 	
 	<!-- General Libraries -->
-	<!--<script src="lib/jquery-2.2.0.min.js"></script>
+	<script src="lib/jquery-2.2.0.min.js"></script>
 	<script src="lib/d3.min.js"></script>
 	<script src="lib/bootstrap.min.js"></script>
 	<script src="lib/bootstrap-multiselect.js"></script>
 	<script src="lib/jquery.noty.packaged.min.js"></script>
 	<script src="lib/nprogress.min.js"></script>
-	<script src="lib/queue.min.js"></script>-->
+	<script src="lib/queue.min.js"></script>
 	
 	<!-- Routing Libraries -->
-    <!--<script src="lib/signals.min.js"></script>
+    <script src="lib/signals.min.js"></script>
     <script src="lib/crossroads.min.js"></script>
     <script src="lib/hasher.min.js"></script>
 	<script src="lib/handlebars-v3.0.0.js"></script>
-	<script src="lib/jquery.tooltipster.min.js"></script>-->
+	<script src="lib/jquery.tooltipster.min.js"></script>
 	
-	<script src="build/lib.min.js"></script>
+	<!--<script src="build/lib.min.js"></script> -->
     
     <!-- Project Specific Files -->
-    <!--<script src="js/utility.js"></script>
+    <script src="js/utility.js"></script>
     <script src="js/routing.js"></script>
     <script src="js/pages/input.js"></script>
     <script src="js/pages/output.js"></script>
+	<script src="js/pages/background.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/init.js"></script>-->
-    <script src="build/bundle.min.js"></script>
+    <script src="js/init.js"></script>
+    <!-- <script src="build/bundle.min.js"></script> -->
 </body>
 </html>
