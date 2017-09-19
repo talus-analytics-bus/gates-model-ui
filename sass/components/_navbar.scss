@@ -3,7 +3,7 @@
 	@include gradient(#fff, #f0f0f0);
 
 	.container {
-		/*max-width: 900px;*/
+		max-width: 900px;
 		/*padding: 0px 0px 50px;*/
 		border: none;
 		padding-right: 15px;
@@ -11,6 +11,13 @@
 		margin-right: auto;
 		margin-left: auto;
 		padding-bottom: 0px;
+	}
+
+	@media (min-width: 768px) {
+		.collapse {
+			margin-right: -15px;
+			margin-left: -15px;
+		}
 	}
 }
 .navbar .navbar-brand {

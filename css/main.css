@@ -486,7 +486,7 @@ h2, h3, h4, h5 {
   background: -ms-linear-gradient(top, #fff, #f0f0f0);
   background: -o-linear-gradient(top, #fff, #f0f0f0); }
   .navbar .container {
-    /*max-width: 900px;*/
+    max-width: 900px;
     /*padding: 0px 0px 50px;*/
     border: none;
     padding-right: 15px;
@@ -494,6 +494,10 @@ h2, h3, h4, h5 {
     margin-right: auto;
     margin-left: auto;
     padding-bottom: 0px; }
+  @media (min-width: 768px) {
+    .navbar .collapse {
+      margin-right: -15px;
+      margin-left: -15px; } }
 
 .navbar .navbar-brand {
   color: #555; }
