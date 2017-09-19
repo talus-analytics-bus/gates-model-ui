@@ -159,7 +159,7 @@ rect {
 
 /* --- Input Page --- */
 .input-container {
-  max-width: 800px; }
+  max-width: 900px; }
 
 .home-description {
   display: inline-block;
@@ -272,7 +272,7 @@ rect {
 
 /* --- Output Sections --- */
 .output-container {
-  max-width: 720px;
+  max-width: 900px;
   padding-bottom: 50px; }
   .output-container .title {
     font-size: 1.4em; }
