@@ -1,0 +1,35 @@
+/* Header Styles */
+h1 {
+	color: #AA0000;
+	font-family: Helvetica;
+	font-weight: bold;
+	font-size: 2em;
+	margin-bottom: 1.2rem;
+}
+h2 {
+	font-family: Helvetica;
+	font-size: 1.5em;
+	/*-webkit-margin-before: 0.83em;
+	-webkit-margin-after: 0.83em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;*/
+	margin-bottom: 0.8rem;
+	font-weight: bold;
+}
+h3 {
+	font-family: Helvetica;
+	font-weight: bold;
+	font-size: 1.25em;
+}
+h4 {
+	font-family: Helvetica;
+	font-weight: bold;
+	font-size: 1.15em;
+}
+h5 {
+	font-family: Helvetica;
+	font-size: 1.05em;
+}
+h2, h3, h4, h5 {
+	color: #333;
+}

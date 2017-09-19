@@ -1,0 +1,23 @@
+.footer {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  font-size: 0.9em;
+  border-top: 1px solid #999;
+  border-bottom: 1px solid #999;
+  color: #555;
+  @include gradient(#fcfcfc, #f0f0f0);
+
+  .logo-talus {
+    height: 42px;
+  }
+  .logo-georgetown {
+    height: 90px;
+  }
+  .built-by {
+    padding-left: 80px;
+  }
+  table {
+    margin: 1em auto;
+  }
+}
