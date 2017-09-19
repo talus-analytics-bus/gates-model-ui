@@ -2,4 +2,11 @@
 	& > div:nth-child(n+2) {
 		margin-top: 20px;
 	}
+
+	.container {
+		/*max-width: 900px;*/
+		padding: 0px 50px 50px;
+		margin-right: auto;
+		margin-left: auto;
+	}
 }
