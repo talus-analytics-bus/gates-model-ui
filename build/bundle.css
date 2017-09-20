@@ -529,7 +529,8 @@ rect {
   background: -ms-linear-gradient(top, #fcfcfc, #f0f0f0);
   background: -o-linear-gradient(top, #fcfcfc, #f0f0f0); }
   .footer .logo-talus {
-    height: 42px; }
+    height: 90px;
+    padding-left: 50px; }
   .footer .logo-georgetown {
     height: 90px; }
   .footer .built-by {

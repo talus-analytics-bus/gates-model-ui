@@ -17,11 +17,11 @@
     "url": "https://github.com/talus-analytics/gates-model-ui/issues"
   },
   "dependencies": {
-    "express": "~4.13.1",
+    "express": "^4.13.4",
     "gulp": "~3.9.0",
     "gulp-concat": "~2.6.0",
-    "gulp-uglify": "~1.5.1",
     "gulp-rename": "~1.2.2",
+    "gulp-uglify": "~1.5.1",
     "python-shell": "~0.3.0"
   }
 }
