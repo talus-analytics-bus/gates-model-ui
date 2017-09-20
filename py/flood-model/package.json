@@ -49,8 +49,14 @@
       "Odometer": true
     },
     "rules": {
-      "indent": ["error", "tab"],
-      "no-use-before-define": ["error", "nofunc"],
+      "indent": [
+        "error",
+        "tab"
+      ],
+      "no-use-before-define": [
+        "error",
+        "nofunc"
+      ],
       "no-console": "off"
     }
   }
