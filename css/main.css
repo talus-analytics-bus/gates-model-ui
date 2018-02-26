@@ -298,8 +298,9 @@ rect {
   max-width: 900px;
   padding-bottom: 50px; }
   .output-container .title {
-    font-size: 1.4em; }
+    font-size: 2.1em; }
   .output-container .description {
+    font-size: 1.5em;
     margin-top: 20px;
     max-width: 700px; }
 
@@ -356,13 +357,14 @@ rect {
     top: 7px;
     padding-right: 20px;
     width: 150px;
-    text-align: right;
-    font-size: 1.1em; }
+    text-align: right; }
   .output-table tbody td:nth-child(n+3) {
     font-size: 1.8em;
     width: 100px; }
   .output-table tbody tr:nth-child(2) td:nth-child(n+3) {
     font-weight: 700; }
+  .output-table .output-name {
+    font-size: 1.25em; }
 
 /* --- Percentage Chart --- */
 .output-chart-container {
