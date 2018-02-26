@@ -112,32 +112,31 @@
   g.tick > text {
     font-size: 1.25em;
   }
-  // g.x.axis > g.tick > text {
-  //   font-size: 1.25em;
-  // }
+    text.axis-label {
+      font-size: 1.33em;
+    }
 
-  text.axis-label {
-    font-size: 1.33em;
   }
-
-}
-.schisto-prevalence-container .explanation-icon {
-  position: relative;
-  top: -1px;
-  left: 10px;
-}
-.schisto-prevalence { width: 70px; }
-.malaria-month-container {
-  .row { padding: 0px 20px; }
-  .row > div {
-    padding-top: 10px;
-    text-align: center;
+  .schisto-prevalence-container .explanation-icon {
+    position: relative;
+    top: -3px;
+    left: 10px;
   }
-  .malaria-month-label { cursor: pointer; }
-}
-.malaria-trans-rate-select {
-  option:first-child { color: #3c763d; }
-  option:nth-child(2) { color: #8a6d3b; }
-  option:nth-child(3) { color: #a94442; }
-}
-.select-sep-text { margin: 0px 7px; }
+  .schisto-prevalence { width: 70px; }
+  .malaria-month-container {
+    .row { padding: 0px 20px; }
+    .row > div {
+      padding-top: 10px;
+      text-align: center;
+    }
+    .malaria-month-label { 
+      font-size: 1.25em;
+      cursor: pointer;
+    }
+  }
+  .malaria-trans-rate-select {
+    option:first-child { color: #3c763d; }
+    option:nth-child(2) { color: #8a6d3b; }
+    option:nth-child(3) { color: #a94442; }
+  }
+  .select-sep-text { margin: 0px 7px; }

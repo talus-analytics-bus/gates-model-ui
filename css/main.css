@@ -268,7 +268,7 @@ rect {
 
 .schisto-prevalence-container .explanation-icon {
   position: relative;
-  top: -1px;
+  top: -3px;
   left: 10px; }
 
 .schisto-prevalence {
@@ -280,6 +280,7 @@ rect {
   padding-top: 10px;
   text-align: center; }
 .malaria-month-container .malaria-month-label {
+  font-size: 1.25em;
   cursor: pointer; }
 
 .malaria-trans-rate-select option:first-child {
@@ -593,10 +594,16 @@ table input.form-control {
   display: inline-block;
   margin-right: 10px; }
 
-.checkbox-label {
-  font-size: 1.25em;
+.dropdown-menu > li > a > label > input[type="checkbox"] {
   position: relative;
   top: -2px;
+  left: -7px; }
+
+.checkbox-label,
+label.checkbox {
+  font-size: 1.25em;
+  position: relative;
+  top: 1.5px;
   left: 4px;
   cursor: pointer; }
 
