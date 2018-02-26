@@ -32,6 +32,7 @@ var App = App || {};
 				callback('error', null);
 			})
 			.done(function(data) {
+				console.log(data);
 				if (data.hasOwnProperty('error')) callback(data.error, null);
 				else callback(null, data);
 			});
