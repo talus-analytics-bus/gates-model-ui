@@ -177,7 +177,7 @@ rect {
   background: -ms-linear-gradient(top, #fdfdfd, #e9e9e9);
   background: -o-linear-gradient(top, #fdfdfd, #e9e9e9); }
   .input-section .title {
-    font-size: 1.4em;
+    font-size: 2.1em;
     padding: 20px 30px 20px;
     cursor: pointer;
     -webkit-touch-callout: none;
@@ -188,9 +188,17 @@ rect {
     user-select: none; }
   .input-section .main-contents > div:last-child {
     padding-bottom: 20px; }
+  .input-section .main-contents .select-label {
+    font-size: 1.25em; }
+  .input-section .main-contents input, .input-section .main-contents select {
+    font-size: 1.25em; }
+  .input-section .main-contents .btn-group > button {
+    font-size: 14px;
+    font-size: 1.25em; }
   .input-section .subtitle {
-    font-size: 1.2em; }
+    font-size: 1.8em; }
   .input-section .description {
+    font-size: 1.25em;
     margin-top: 10px; }
   .input-section .contents {
     margin-top: 10px; }
@@ -199,7 +207,7 @@ rect {
   display: inline-block;
   position: relative;
   top: -1px;
-  padding: 0px 8px;
+  padding: 0px 10px;
   border: 2px solid rgba(0, 0, 0, 0.85);
   margin-right: 5px;
   font-size: 0.85em;
@@ -228,6 +236,12 @@ rect {
 
 .pop-age-table {
   margin-top: 5px; }
+  .pop-age-table thead {
+    font-size: 1.33em; }
+    .pop-age-table thead tr td:first-child {
+      min-width: 150px; }
+  .pop-age-table tbody, .pop-age-table input {
+    font-size: 1.25em; }
   .pop-age-table input {
     text-align: right;
     width: 90px; }
@@ -235,14 +249,22 @@ rect {
     position: relative;
     top: 5px;
     width: 110px; }
+  .pop-age-table tbody tr td:nth-child(2) {
+    text-align: right;
+    font-size: 14px; }
   .pop-age-table tbody tr:last-child td:nth-child(2) {
     text-align: right;
     position: relative;
+    font-size: inherit;
     top: 5px;
-    right: 12px; }
+    right: 9px; }
 
 .pop-age-chart {
-  margin-left: -65px; }
+  margin-left: -15px; }
+  .pop-age-chart g.tick > text {
+    font-size: 1.25em; }
+  .pop-age-chart text.axis-label {
+    font-size: 1.33em; }
 
 .schisto-prevalence-container .explanation-icon {
   position: relative;
@@ -572,6 +594,7 @@ table input.form-control {
   margin-right: 10px; }
 
 .checkbox-label {
+  font-size: 1.25em;
   position: relative;
   top: -2px;
   left: 4px;
@@ -585,6 +608,8 @@ table input.form-control {
   display: none;
   text-align: center;
   margin-top: 20px; }
+  .next-button-container .btn {
+    font-size: 1.33em; }
 
 .submit-container {
   padding-top: 30px;

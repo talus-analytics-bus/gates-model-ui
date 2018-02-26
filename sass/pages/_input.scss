@@ -14,21 +14,46 @@
   @include gradient(#fdfdfd, #e9e9e9);
   
   .title {
-    font-size: 1.4em;
+    font-size: 2.1em;
+    // font-size: 1.4em;
     padding: 20px 30px 20px;
     cursor: pointer;
     @include noselect;
   }
-  .main-contents > div:last-child { padding-bottom: 20px; }
-  .subtitle { font-size: 1.2em; }
-  .description {margin-top: 10px; }
-  .contents { margin-top: 10px; }
+
+  .main-contents > div:last-child { 
+    padding-bottom: 20px; 
+  }
+
+  .main-contents {
+   .select-label {
+    font-size: 1.25em;
+  }
+
+  input, select {
+    font-size:1.25em;
+  }
+
+  .btn-group > button {
+    font-size: 14px;
+    font-size: 1.25em;
+  }
+}
+
+.subtitle { font-size: 1.8em; }
+// .subtitle { font-size: 1.2em; }
+.description { 
+  font-size: 1.25em;
+  margin-top: 10px;
+}
+// .description {margin-top: 10px; }
+.contents { margin-top: 10px; }
 }
 .input-step-num {
   display: inline-block;
   position: relative;
   top: -1px;
-  padding: 0px 8px;
+  padding: 0px 10px;
   border: 2px solid rgba(0,0,0,0.85);
   margin-right: 5px;
   font-size: 0.85em;
@@ -49,7 +74,17 @@
 }
 .pop-age-warning { display: none; }
 .pop-age-table {
+  thead {
+    font-size: 1.33em;
+    tr td:first-child {
+      min-width: 150px;
+    }
+  }
+  tbody, input {
+    font-size: 1.25em;
+  }
   margin-top: 5px;
+
   input {
     text-align: right;
     width: 90px;
@@ -59,15 +94,32 @@
     top: 5px;
     width: 110px;
   }
+  tbody tr td:nth-child(2) {
+    text-align: right;
+    font-size: 14px;
+  }
   tbody tr:last-child td:nth-child(2) {
     text-align: right;
     position: relative;
+    font-size: inherit;
     top: 5px;
-    right: 12px;
+    right: 9px;
   }
 }
 .pop-age-chart {
-  margin-left: -65px;
+  margin-left: -15px;
+
+  g.tick > text {
+    font-size: 1.25em;
+  }
+  // g.x.axis > g.tick > text {
+  //   font-size: 1.25em;
+  // }
+
+  text.axis-label {
+    font-size: 1.33em;
+  }
+
 }
 .schisto-prevalence-container .explanation-icon {
   position: relative;
