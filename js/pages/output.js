@@ -73,7 +73,7 @@ var App = App || {};
 			{type: 'with integration', disease: 'malaria', value: App.outputs.integrated.malaria}
 		];
 		
-		var margin = {top: 10, right: 20, bottom: 80, left: 65};
+		var margin = {top: 10, right: 25, bottom: 80, left: 70};
 		var chartWidth = (windowWidth < 670) ? windowWidth - 20 : 650;
 		var width = chartWidth - margin.left - margin.right;
 		var height = 300 - margin.top - margin.bottom;

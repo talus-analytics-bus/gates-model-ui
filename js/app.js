@@ -9,21 +9,39 @@ var App = App || {};
 	App.notionalOutputs = [
 	  {
 	    "spray_month": "08",
-	    "malaria": 0.37790136986301465,
+	    "malaria": 0.386,
 	    "net_month": "08",
 	    "pzq_month": "08",
 	    "use_integration": true,
-	    "schisto": 0.34499999999999975
+	    "schisto": 0.34
 	  },
 	  {
 	    "spray_month": "01",
-	    "malaria": 0.4329643835616432,
+	    "malaria": 0.44,
 	    "net_month": "11",
 	    "pzq_month": "04",
 	    "use_integration": false,
-	    "schisto": 0.3430000000000001
+	    "schisto": 0.34
 	  }
 	];
+	// App.notionalOutputs = [
+	//   {
+	//     "spray_month": "08",
+	//     "malaria": 0.37790136986301465,
+	//     "net_month": "08",
+	//     "pzq_month": "08",
+	//     "use_integration": true,
+	//     "schisto": 0.34499999999999975
+	//   },
+	//   {
+	//     "spray_month": "01",
+	//     "malaria": 0.4329643835616432,
+	//     "net_month": "11",
+	//     "pzq_month": "04",
+	//     "use_integration": false,
+	//     "schisto": 0.3430000000000001
+	//   }
+	// ];
 	
 	App.initialize = function() {
 		// get cookies if its exists
