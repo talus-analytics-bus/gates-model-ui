@@ -6,6 +6,8 @@ var App = App || {};
 
 	// Debug mode notional outputs
 	App.useNotionalOutputs = true;
+
+	// Figure 4 outputs
 	App.notionalOutputs = [
 	  {
 	    "spray_month": "08",
@@ -24,6 +26,27 @@ var App = App || {};
 	    "schisto": 0.34
 	  }
 	];
+
+	// // Figure 5 outputs
+	// App.notionalOutputs = [
+	//   {
+	//     "spray_month": "08",
+	//     "malaria": 0.366,
+	//     "net_month": "08",
+	//     "pzq_month": "08",
+	//     "use_integration": true,
+	//     "schisto": 0.34
+	//   },
+	//   {
+	//     "spray_month": "01",
+	//     "malaria": 0.39,
+	//     "net_month": "11",
+	//     "pzq_month": "04",
+	//     "use_integration": false,
+	//     "schisto": 0.34
+	//   }
+	// ];
+
 	// App.notionalOutputs = [
 	//   {
 	//     "spray_month": "08",
