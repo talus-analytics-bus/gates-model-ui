@@ -300,7 +300,7 @@ rect {
   .output-container .title {
     font-size: 2.1em; }
   .output-container .description {
-    font-size: 1.5em;
+    font-size: 1.25em;
     margin-top: 20px;
     max-width: 700px; }
 
@@ -317,12 +317,13 @@ rect {
 
 .output-description {
   padding: 20px 30px;
-  border-bottom: 1px solid #ccc; }
+  border-bottom: 1px solid #ccc;
+  font-size: 1.25em; }
 
 /* --- Recommendation Text and Table --- */
 .output-recommendation {
-  font-size: 1.7em;
-  margin-top: 10px; }
+  font-size: 2em;
+  margin: 10px 0 0 30px; }
   .output-recommendation img {
     position: relative;
     top: -2px;
@@ -346,7 +347,7 @@ rect {
   display: inline-block;
   text-align: center;
   margin-top: 10px;
-  margin-left: -20px; }
+  margin-left: 30px; }
   .output-table thead td {
     font-size: 1.1em; }
   .output-table tbody td:first-child {
@@ -373,6 +374,12 @@ rect {
 
 .output-bar-chart rect {
   stroke: rgba(0, 0, 0, 0.7); }
+.output-bar-chart g.tick > text {
+  font-size: 1.25em; }
+.output-bar-chart text.axis-label {
+  font-size: 1.33em; }
+.output-bar-chart text.legend-label {
+  font-size: 1.25em; }
 
 /* --- Timeline --- */
 .output-timeline-rec-text {

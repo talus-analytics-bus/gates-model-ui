@@ -141,12 +141,13 @@ var App = App || {};
 		var legendGroups = legend.selectAll('g')
 			.data(Util.getUnique(barData.map(function(d) { return d.type; })))
 			.enter().append('g')
-				.attr('transform', function(d, i) { return 'translate(' + (200*i) + ')'; });
+				.attr('transform', function(d, i) { return 'translate(' + (225*i) + ')'; });
 		legendGroups.append('rect')
 			.attr('width', 15)
 			.attr('height', 15)
 			.style('fill', function(d) { return (d === 'without integration') ? 'url(#diagonal-stripe-1)' : 'steelblue'; });
 		legendGroups.append('text')
+			.attr('class','legend-label')
 			.attr('transform', 'translate(25,13)')
 			.text(function(d) { return d; });
 		
