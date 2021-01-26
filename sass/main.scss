@@ -1,23 +1,87 @@
-@import 'helpers/classes';
-@import 'helpers/mixins';
-@import 'helpers/colors';
-@import 'helpers/borders';
-@import 'components/charts';
-@import 'components/images';
-@import 'pages/input';
-@import 'pages/output';
-@import 'pages/background';
-@import 'components/footer';
-@import 'components/headers';
-@import 'components/navbar';
+@import "helpers/classes";
+@import "helpers/mixins";
+@import "helpers/colors";
+@import "helpers/borders";
+@import "components/charts";
+@import "components/images";
+@import "pages/input";
+@import "pages/output";
+@import "pages/background";
+@import "components/footer";
+@import "components/headers";
+@import "components/navbar";
 
+body {
+  font-family: "Open Sans", sans-serif;
+  color: $black;
+  font-size: 16px;
+  line-height: normal;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: $black;
+    font-family: "Raleway", sans-serif;
+  }
+  h1 {
+    margin-top: 30px;
+  }
+  h2 {
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+  p {
+    line-height: 22px;
+  }
+}
 
-body { font-family: 'Open Sans', sans-serif; }
+.btn {
+  border: 2px solid #023f88;
+  border-radius: 5px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: $primary-dark-blue;
+  padding: 10px 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  display: inline-block;
+  &:hover {
+    background-color: #f4f4f4;
+  }
+  &:active,
+  &:hover:active {
+    box-shadow: 5px 5px 15px 0 #b3b3b3;
+    -webkit-box-shadow: 5px 5px 15px 0 #b3b3b3;
+    background-color: white;
+    color: $primary-dark-blue;
+    border-color: $primary-dark-blue;
+  }
+  cursor: pointer;
+}
 
+.btn-primary {
+  background: linear-gradient(180deg, rgba(2, 63, 136, 0.85) 0%, #023f88 100%);
+  color: white;
+  &:hover {
+    background: white;
+    color: $primary-dark-blue;
+  }
+}
 /* --- General Elements --- */
-b { font-weight: 600; }
-ul { margin: 10px 0px; }
-input.form-control { display: inline-block; }
+b {
+  font-weight: 600;
+}
+ul {
+  margin: 10px 0px;
+}
+input.form-control {
+  display: inline-block;
+}
 .table,
 select.form-control {
   display: inline-block;
@@ -70,8 +134,7 @@ table input.form-control {
 }
 
 #page-content {
-  margin-top: 51px;
-  min-height: 100px;
+  margin-top: 90px;
 }
 
 /* --- Bootstrap Overrides --- */
@@ -82,4 +145,6 @@ table input.form-control {
 }
 
 /* --- Multiselect Overrides --- */
-.multiselect .caret { margin-left: 5px; }
+.multiselect .caret {
+  margin-left: 5px;
+}
