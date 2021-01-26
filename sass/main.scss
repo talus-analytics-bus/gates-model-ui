@@ -124,11 +124,6 @@ table input.form-control {
   padding-top: 30px;
   border-top: 1px solid #ccc;
   text-align: center;
-  .btn {
-    font-size: 1.2em;
-    padding: 8px 16px;
-    @include border-radius(8px);
-  }
 }
 
 #page-content {
