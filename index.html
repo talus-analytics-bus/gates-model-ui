@@ -1,532 +1,605 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-125673579-1"></script>
-	<script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-125673579-1"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-        gtag('config', 'UA-125673579-1');
-	</script>
+      gtag("config", "UA-125673579-1");
+    </script>
 
-
-	<meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Integrated Control of NTDs</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="img/favicon.ico">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="img/favicon.ico" />
+
     <!-- ----- CSS Files ----- -->
- 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,600,400,300' rel='stylesheet' type='text/css'>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
-    <link href="css/tooltipster.min.css" rel="stylesheet" type="text/css">
-    <link href="css/tooltipster-light.css" rel="stylesheet" type="text/css">
-    <link href="css/nprogress.css" rel="stylesheet" type="text/css">
-   	<link href='css/main.css' rel='stylesheet' type='text/css'>
-</head>
-<body>
+    <link
+      href="http://fonts.googleapis.com/css?family=Open+Sans:700,600,400,300"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="css/bootstrap-multiselect.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="css/tooltipster.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/tooltipster-light.css" rel="stylesheet" type="text/css" />
+    <link href="css/nprogress.css" rel="stylesheet" type="text/css" />
+    <link href="css/main.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <!-- App logo and name -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar-collapse-1"
+            aria-expanded="false"
+          >
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
 
+          <!--<a class="navbar-brand" href="#">Talus Analytics</a>-->
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse-1">
+          <div class="navbar-logo-container">
+            <img class="logo" src="img/logo-app.png" alt="Talus DST" />
+            <div class="tool-name">Integrated Control of NTDs</div>
+          </div>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Home</a></li>
 
-	<!-- App logo and name -->
-	<nav class="navbar navbar-default navbar-fixed-top">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
+            <li><a href="#background">Background</a></li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container-fluid -->
+    </nav>
 
-				<!--<a class="navbar-brand" href="#">Talus Analytics</a>-->
-			</div>
-			<div class="collapse navbar-collapse" id="navbar-collapse-1">
+    <!-- Page content -->
+    <div id="page-content"></div>
 
-				<div class="navbar-logo-container">
-					<img class="logo" src="img/logo-app.png" alt="Talus DST">
-					<div class="tool-name">Integrated Control of NTDs</div>
-				</div>
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#">Home</a></li>
-
-					<li><a href="#background">Background</a></li>
-				</ul>
-			</div><!-- /.navbar-collapse -->
-		</div><!-- /.container-fluid -->
-	</nav>
-
-	<!-- Page content -->
-	<div id="page-content"></div>
-
-	<!-- Footer -->
-	<div class="footer">
-		<table>
-			<tbody>
-			<tr>
-				<th>
-					<a href="https://www.georgetown.edu/" target="_blank">
-						<img
-								alt="Georgetown University"
-								class="logo-georgetown"
-								src="img/logo-georgetown.png"
-						/>
-					</a>
-				</th>
-
-				<th>
-					<a href="http://www.talusanalytics.com" target="_blank">
-						<img
-								alt="Talus Analytics"
-								class="logo-talus"
-								src="img/logo-talus.png"
-						/>
-					</a>
-				</th>
-			</tr>
-			</tbody>
-		</table>
-	</div>
-
+    <!-- Footer -->
+    <div class="footer">
+      <div class="content">
+        <a target="_blank" href="https://ghssidea.org">
+          <img
+            src="img/logo-title.png"
+            alt="International Disease and Events Analysis"
+          />
+        </a>
+        <a target="_blank" href="https://ghss.georgetown.edu/">
+          <img
+            src="img/logo-georgetown.png"
+            alt="Georgetown University Center for Global Health Science and Security"
+          />
+        </a>
+        <a target="_blank" href="http://talusanalytics.com/">
+          <img src="img/logo-talus.png" alt="Talus Analytics, LLC" />
+        </a>
+      </div>
+    </div>
 
     <!-- ----------- TEMPLATES ------------- -->
     <script id="home-template" type="text/x-handlebars-template">
-    	<div class="input-container container">
-    		<div class="center">
-	    		<div class="home-description">
-					The Integrated Control Strategies for Neglected Tropical Diseases (NTDs) tool predicts prevalence changes following integration of schistosomiasis and malaria
-	    			control measures to help users decide whether to implement an integration program.
-	    			<br><br>
-	    			<!--Please review the three sets of input values below to determine whether they match the factors
-	    			in your region. Update only the default values necessary to match population and prevalence to your region
-	    			and to reflect the integration strategy you want to test. When you finish reviewing the input values, click submit.-->
-	    			Update the sets of input values below to match the factors in your region and click the "Submit" button when finished.
-	    		</div>
-	    	</div>
-    		<div class="input-section" name="pop-age">
-    			<div class="title">
-    				<div class="input-step-num">1</div>
-    				Population
-    			</div>
-    			<div class="main-contents">
-	    			<div class="input-subsection">
-	    				<div class="subtitle">Age Distribution</div>
-		    			<div class="description">Please input the closest estimate of age distribution relative to your location.</div>
-		    			<div class="pop-age-warning warning margin-top-10">Age distribution percentages must add up to 100%.</div>
-		    			<div class="contents row">
-		    				<div class="col-md-5">
-				    			<table class="pop-age-table table table-condensed">
-				    				<thead>
-				    					<tr>
-				    						<td>Age Range</td>
-				    						<td>% Distribution</td>
-				    					</tr>
-				    				</thead>
-				    				<tbody>
-						    			<tr>
-						    				<td>under 5</td>
-						    				<td><input class="percent-input form-control"></td>
-						    			</tr>
-						    			<tr>
-						    				<td>5-15</td>
-						    				<td><input class="percent-input form-control"></td>
-						    			</tr>
-						    			<tr>
-						    				<td>16+</td>
-						    				<td><input class="percent-input form-control"></td>
-						    			</tr>
-						    			<tr>
-						    				<td>Total</td>
-						    				<td>100%</td>
-						    			</tr>
-				    				</tbody>
-				    			</table>
-				    		</div>
-				    		<div class="col-md-7">
-				    			<svg class="pop-age-chart"></svg>
-				    		</div>
-			    		</div>
-			    	</div>
-			    	<div class="next-button-container">
-				    	<div class="btn btn-primary" name="pop-age">Next</div>
-			    	</div>
-			    </div>
-    		</div>
-    		<div class="input-section" name="schisto">
-    			<div class="title">
-    				<div class="input-step-num">2</div>
-    				Schistosomiasis
-    			</div>
-    			<div class="main-contents">
-	    			<div class="input-subsection">
-		    			<div class="subtitle">Praziquantel Mass Drug Administration</div>
-		    			<div class="contents">
-		    				<div class="schisto-prevalence-container">
-		    					<div class="select-label">Schistosomiasis Prevalence:</div>
-		    					<input class="schisto-prevalence form-control" value="45%">
-		    					<img src="img/question-mark.png" class="explanation-icon small">
-		    				</div>
-		    				<div class="margin-top-10">
-			    				<div class="select-label">Target % Coverage:</div>
-			    				<select class="schisto-coverage-select form-control">
-			    					<option value="0.3">30%</option>
-			    					<option value="0.5">50%</option>
-			    					<option value="0.8" selected>80%</option>
-			    					<option value="1">100%</option>
-			    				</select>
-			    			</div>
-			    			<div class="margin-top-10">
-			    				<div class="select-label">Age Range:</div>
-			    				<select class="schisto-age-select form-control" multiple="multiple">
-			    					<option value="0-4">under 5 years old</option>
-			    					<option value="5-15" selected>5-15 years old</option>
-			    					<option value="16+">16+ years old</option>
-			    				</select>
-			    			</div>
-			    			<div class="margin-top-10">
-			    				<div class="select-label">Current Distribution Month:</div>
-			    				<select class="schisto-month-select form-control">
-				    				<option value="1">January</option>
-				    				<option value="2">February</option>
-				    				<option value="3">March</option>
-				    				<option value="4" selected>April</option>
-				    				<option value="5">May</option>
-				    				<option value="6">June</option>
-				    				<option value="7">July</option>
-				    				<option value="8">August</option>
-				    				<option value="9">September</option>
-				    				<option value="10">October</option>
-				    				<option value="11">November</option>
-				    				<option value="12">December</option>
-			    				</select>
-			    			</div>
-		    			</div>
-		    		</div>
-			    	<div class="next-button-container">
-				    	<div class="btn btn-primary">Next</div>
-			    	</div>
-			    </div>
-    		</div>
-    		<div class="input-section" name="malaria">
-    			<div class="title">
-    				<div class="input-step-num">3</div>
-    				Malaria
-    			</div>
-    			<div class="main-contents">
-	    			<div class="input-subsection" name="malaria-transmission-pattern">
-		    			<div class="subtitle">Malaria Transmission Pattern</div>
-		    			<div class="contents">
-		    				<div>
-				    			<div class="select-label">Timing:</div>
-				    			<select class="malaria-timing-select form-control">
-				    				<option value="seasonal">Seasonal</option>
-				    				<option value="constant">Constant</option>
-				    			</select>
-				    		</div>
-				    		<div class="malaria-month-container margin-top-10">
-				    			<div class="select-label">Peak Transmission Month(s):</div>
-				    			<div class="row">
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox" checked>
-				    					<div class="malaria-month-label">Jan</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox" checked>
-				    					<div class="malaria-month-label">Feb</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox">
-				    					<div class="malaria-month-label">Mar</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox">
-				    					<div class="malaria-month-label">Apr</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox">
-				    					<div class="malaria-month-label">May</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox">
-				    					<div class="malaria-month-label">Jun</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox">
-				    					<div class="malaria-month-label">Jul</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox">
-				    					<div class="malaria-month-label">Aug</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox" checked>
-				    					<div class="malaria-month-label">Sep</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox" checked>
-				    					<div class="malaria-month-label">Oct</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox" checked>
-				    					<div class="malaria-month-label">Nov</div>
-				    				</div>
-				    				<div class="col-sm-1 col-xs-2">
-				    					<input type="checkbox" checked>
-				    					<div class="malaria-month-label">Dec</div>
-				    				</div>
-				    			</div>
-				    		</div>
-			    		</div>
-			    	</div>
-		    		<div class="input-subsection" name="malaria-transmission-rate">
-		    			<div class="subtitle">Malaria Transmission Rate</div>
-		    			<div class="contents">
-			    			<div class="select-label">Baseline infectious bites per year:</div>
-			    			<select class="malaria-trans-rate-select form-control">
-			    				<option value="20">< 20 (Low)</option>
-			    				<option value="100">20-200 (Medium)</option>
-			    				<option value="250" selected>201+ (High)</option>
-			    			</select>
-			    		</div>
-		    		</div>
-		    		<div class="input-subsection" name="irs">
-		    			<div class="subtitle">Indoor Residual Insecticide Spraying (IRS)</div>
-		    			<div class="contents">
-		    				<div>
-		    					<input type="checkbox" class="irs-checkbox" checked>
-		    					<span class="checkbox-label irs-checkbox-label">check this box if IRS is an option</span>
-		    				</div>
-		    				<div class="irs-true-contents margin-top-10">
-			    				<div class="select-label">Target % Coverage:</div>
-			    				<select class="irs-coverage-select form-control">
-			    					<option value="0.3">30%</option>
-			    					<option value="0.5">50%</option>
-			    					<option value="0.8" selected>80%</option>
-			    					<option value="1">100%</option>
-			    				</select>
-			    			</div>
-			    			<div class="irs-true-contents margin-top-10">
-			    				<div class="select-label">Current Distribution Month:</div>
-			    				<select class="irs-month-select form-control">
-				    				<option value="1" selected>January</option>
-				    				<option value="2">February</option>
-				    				<option value="3">March</option>
-				    				<option value="4">April</option>
-				    				<option value="5">May</option>
-				    				<option value="6">June</option>
-				    				<option value="7">July</option>
-				    				<option value="8">August</option>
-				    				<option value="9">September</option>
-				    				<option value="10">October</option>
-				    				<option value="11">November</option>
-				    				<option value="12">December</option>
-			    				</select>
-			    			</div>
-		    			</div>
-		    		</div>
-		    		<div class="input-subsection" name="nets">
-		    			<div class="subtitle">Insecticide Treated Bed Nets (ITN)</div>
-		    			<div class="contents">
-		    				<div>
-		    					<input type="checkbox" class="itn-checkbox" checked>
-		    					<span class="checkbox-label itn-checkbox-label">check this box if ITN is an option</span>
-		    				</div>
-		    				<div class="itn-true-contents margin-top-10">
-			    				<div class="select-label">Target % Coverage:</div>
-			    				<select class="itn-coverage-select form-control">
-			    					<option value="0.3">30%</option>
-			    					<option value="0.5">50%</option>
-			    					<option value="0.8" selected>80%</option>
-			    					<option value="1">100%</option>
-			    				</select>
-			    			</div>
-			    			<div class="itn-true-contents margin-top-10">
-			    				<div class="select-label">Current Distribution Month:</div>
-			    				<select class="itn-month-select form-control">
-				    				<option value="1">January</option>
-				    				<option value="2">February</option>
-				    				<option value="3">March</option>
-				    				<option value="4">April</option>
-				    				<option value="5">May</option>
-				    				<option value="6">June</option>
-				    				<option value="7">July</option>
-				    				<option value="8">August</option>
-				    				<option value="9">September</option>
-				    				<option value="10">October</option>
-				    				<option value="11" selected>November</option>
-				    				<option value="12">December</option>
-			    				</select>
-			    			</div>
-		    			</div>
-		    		</div>
-		    		<div class="next-button-container"></div>
-			    </div>
-	   		</div>
-    		<div class="submit-container">
-    			<div class="input-submit-button btn btn-primary">Submit</div>
-    		</div>
-    	</div>
+      <div class="input-container container">
+      	<div class="center">
+      		<div class="home-description">
+      The Integrated Control Strategies for Neglected Tropical Diseases (NTDs) tool predicts prevalence changes following integration of schistosomiasis and malaria
+      			control measures to help users decide whether to implement an integration program.
+      			<br><br>
+      			<!--Please review the three sets of input values below to determine whether they match the factors
+      			in your region. Update only the default values necessary to match population and prevalence to your region
+      			and to reflect the integration strategy you want to test. When you finish reviewing the input values, click submit.-->
+      			Update the sets of input values below to match the factors in your region and click the "Submit" button when finished.
+      		</div>
+      	</div>
+      	<div class="input-section" name="pop-age">
+      		<div class="title">
+      			<div class="input-step-num">1</div>
+      			Population
+      		</div>
+      		<div class="main-contents">
+      			<div class="input-subsection">
+      				<div class="subtitle">Age Distribution</div>
+       			<div class="description">Please input the closest estimate of age distribution relative to your location.</div>
+       			<div class="pop-age-warning warning margin-top-10">Age distribution percentages must add up to 100%.</div>
+       			<div class="contents row">
+       				<div class="col-md-5">
+         			<table class="pop-age-table table table-condensed">
+         				<thead>
+         					<tr>
+         						<td>Age Range</td>
+         						<td>% Distribution</td>
+         					</tr>
+         				</thead>
+         				<tbody>
+      	    			<tr>
+      	    				<td>under 5</td>
+      	    				<td><input class="percent-input form-control"></td>
+      	    			</tr>
+      	    			<tr>
+      	    				<td>5-15</td>
+      	    				<td><input class="percent-input form-control"></td>
+      	    			</tr>
+      	    			<tr>
+      	    				<td>16+</td>
+      	    				<td><input class="percent-input form-control"></td>
+      	    			</tr>
+      	    			<tr>
+      	    				<td>Total</td>
+      	    				<td>100%</td>
+      	    			</tr>
+         				</tbody>
+         			</table>
+         		</div>
+         		<div class="col-md-7">
+         			<svg class="pop-age-chart"></svg>
+         		</div>
+        		</div>
+        	</div>
+        	<div class="next-button-container">
+         	<div class="btn btn-primary" name="pop-age">Next</div>
+        	</div>
+        </div>
+      	</div>
+      	<div class="input-section" name="schisto">
+      		<div class="title">
+      			<div class="input-step-num">2</div>
+      			Schistosomiasis
+      		</div>
+      		<div class="main-contents">
+      			<div class="input-subsection">
+       			<div class="subtitle">Praziquantel Mass Drug Administration</div>
+       			<div class="contents">
+       				<div class="schisto-prevalence-container">
+       					<div class="select-label">Schistosomiasis Prevalence:</div>
+       					<input class="schisto-prevalence form-control" value="45%">
+       					<img src="img/question-mark.png" class="explanation-icon small">
+       				</div>
+       				<div class="margin-top-10">
+        				<div class="select-label">Target % Coverage:</div>
+        				<select class="schisto-coverage-select form-control">
+        					<option value="0.3">30%</option>
+        					<option value="0.5">50%</option>
+        					<option value="0.8" selected>80%</option>
+        					<option value="1">100%</option>
+        				</select>
+        			</div>
+        			<div class="margin-top-10">
+        				<div class="select-label">Age Range:</div>
+        				<select class="schisto-age-select form-control" multiple="multiple">
+        					<option value="0-4">under 5 years old</option>
+        					<option value="5-15" selected>5-15 years old</option>
+        					<option value="16+">16+ years old</option>
+        				</select>
+        			</div>
+        			<div class="margin-top-10">
+        				<div class="select-label">Current Distribution Month:</div>
+        				<select class="schisto-month-select form-control">
+         				<option value="1">January</option>
+         				<option value="2">February</option>
+         				<option value="3">March</option>
+         				<option value="4" selected>April</option>
+         				<option value="5">May</option>
+         				<option value="6">June</option>
+         				<option value="7">July</option>
+         				<option value="8">August</option>
+         				<option value="9">September</option>
+         				<option value="10">October</option>
+         				<option value="11">November</option>
+         				<option value="12">December</option>
+        				</select>
+        			</div>
+       			</div>
+       		</div>
+        	<div class="next-button-container">
+         	<div class="btn btn-primary">Next</div>
+        	</div>
+        </div>
+      	</div>
+      	<div class="input-section" name="malaria">
+      		<div class="title">
+      			<div class="input-step-num">3</div>
+      			Malaria
+      		</div>
+      		<div class="main-contents">
+      			<div class="input-subsection" name="malaria-transmission-pattern">
+       			<div class="subtitle">Malaria Transmission Pattern</div>
+       			<div class="contents">
+       				<div>
+         			<div class="select-label">Timing:</div>
+         			<select class="malaria-timing-select form-control">
+         				<option value="seasonal">Seasonal</option>
+         				<option value="constant">Constant</option>
+         			</select>
+         		</div>
+         		<div class="malaria-month-container margin-top-10">
+         			<div class="select-label">Peak Transmission Month(s):</div>
+         			<div class="row">
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox" checked>
+         					<div class="malaria-month-label">Jan</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox" checked>
+         					<div class="malaria-month-label">Feb</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox">
+         					<div class="malaria-month-label">Mar</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox">
+         					<div class="malaria-month-label">Apr</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox">
+         					<div class="malaria-month-label">May</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox">
+         					<div class="malaria-month-label">Jun</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox">
+         					<div class="malaria-month-label">Jul</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox">
+         					<div class="malaria-month-label">Aug</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox" checked>
+         					<div class="malaria-month-label">Sep</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox" checked>
+         					<div class="malaria-month-label">Oct</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox" checked>
+         					<div class="malaria-month-label">Nov</div>
+         				</div>
+         				<div class="col-sm-1 col-xs-2">
+         					<input type="checkbox" checked>
+         					<div class="malaria-month-label">Dec</div>
+         				</div>
+         			</div>
+         		</div>
+        		</div>
+        	</div>
+       		<div class="input-subsection" name="malaria-transmission-rate">
+       			<div class="subtitle">Malaria Transmission Rate</div>
+       			<div class="contents">
+        			<div class="select-label">Baseline infectious bites per year:</div>
+        			<select class="malaria-trans-rate-select form-control">
+        				<option value="20">< 20 (Low)</option>
+        				<option value="100">20-200 (Medium)</option>
+        				<option value="250" selected>201+ (High)</option>
+        			</select>
+        		</div>
+       		</div>
+       		<div class="input-subsection" name="irs">
+       			<div class="subtitle">Indoor Residual Insecticide Spraying (IRS)</div>
+       			<div class="contents">
+       				<div>
+       					<input type="checkbox" class="irs-checkbox" checked>
+       					<span class="checkbox-label irs-checkbox-label">check this box if IRS is an option</span>
+       				</div>
+       				<div class="irs-true-contents margin-top-10">
+        				<div class="select-label">Target % Coverage:</div>
+        				<select class="irs-coverage-select form-control">
+        					<option value="0.3">30%</option>
+        					<option value="0.5">50%</option>
+        					<option value="0.8" selected>80%</option>
+        					<option value="1">100%</option>
+        				</select>
+        			</div>
+        			<div class="irs-true-contents margin-top-10">
+        				<div class="select-label">Current Distribution Month:</div>
+        				<select class="irs-month-select form-control">
+         				<option value="1" selected>January</option>
+         				<option value="2">February</option>
+         				<option value="3">March</option>
+         				<option value="4">April</option>
+         				<option value="5">May</option>
+         				<option value="6">June</option>
+         				<option value="7">July</option>
+         				<option value="8">August</option>
+         				<option value="9">September</option>
+         				<option value="10">October</option>
+         				<option value="11">November</option>
+         				<option value="12">December</option>
+        				</select>
+        			</div>
+       			</div>
+       		</div>
+       		<div class="input-subsection" name="nets">
+       			<div class="subtitle">Insecticide Treated Bed Nets (ITN)</div>
+       			<div class="contents">
+       				<div>
+       					<input type="checkbox" class="itn-checkbox" checked>
+       					<span class="checkbox-label itn-checkbox-label">check this box if ITN is an option</span>
+       				</div>
+       				<div class="itn-true-contents margin-top-10">
+        				<div class="select-label">Target % Coverage:</div>
+        				<select class="itn-coverage-select form-control">
+        					<option value="0.3">30%</option>
+        					<option value="0.5">50%</option>
+        					<option value="0.8" selected>80%</option>
+        					<option value="1">100%</option>
+        				</select>
+        			</div>
+        			<div class="itn-true-contents margin-top-10">
+        				<div class="select-label">Current Distribution Month:</div>
+        				<select class="itn-month-select form-control">
+         				<option value="1">January</option>
+         				<option value="2">February</option>
+         				<option value="3">March</option>
+         				<option value="4">April</option>
+         				<option value="5">May</option>
+         				<option value="6">June</option>
+         				<option value="7">July</option>
+         				<option value="8">August</option>
+         				<option value="9">September</option>
+         				<option value="10">October</option>
+         				<option value="11" selected>November</option>
+         				<option value="12">December</option>
+        				</select>
+        			</div>
+       			</div>
+       		</div>
+       		<div class="next-button-container"></div>
+        </div>
+      	</div>
+      	<div class="submit-container">
+      		<div class="input-submit-button btn btn-primary">Submit</div>
+      	</div>
+      </div>
     </script>
 
     <script id="output-template" type="text/x-handlebars-template">
-		<div class="output-container container">
-    		<div class="center">
-	    		<div class="output-description">
-	    			Based on the chosen parameters, the following strategy is recommended:
-	    			<div class="output-recommendation">
-	    				<span class="output-recommendation-text"></span>
-	    				<img class="explanation-icon" src="img/question-mark.png">
-	    			</div>
-	    		</div>
-	    	</div>
-			<div class="output-section">
-				<div class="title center">Prevalence</div>
-				<div class="description">
-					Below shows the <span class="text-success">reduced</span> or <span class="text-danger">increased</span> prevalence
+      <div class="output-container container">
+        <div class="center">
+          <div class="output-description">
+            Based on the chosen parameters, the following strategy is recommended:
+            <div class="output-recommendation">
+              <span class="output-recommendation-text"></span>
+              <img class="explanation-icon" src="img/question-mark.png" />
+            </div>
+          </div>
+        </div>
+        <div class="output-section">
+          <div class="title center">
+            Prevalence
+          </div>
+          <div class="description">
+            Below shows the
+            <span class="text-success">
+              reduced
+            </span>
+            or
+            <span class="text-danger">
+              increased
+            </span>
+            prevalence
 					of schistosomiasis and malaria treatment when using integrated control measures.
-					<br><br>
-					Integrated interventions are recommended if malaria prevalence is reduced by <b>5% or more</b>.
-				</div>
-				<div class="output-table-container">
-					<img class="explanation-icon" src="img/question-mark.png">
-					<img class="explanation-icon" src="img/question-mark.png">
-					<table class="output-table table table-condensed">
-						<thead>
-							<tr>
-								<td></td>
-								<td></td>
-								<td>schistosomiasis prevalence</td>
-								<td>malaria prevalence</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td></td>
-								<td>without integration</td>
-								<td></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td>with integration</td>
-								<td></td>
-								<td></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="output-chart-container">
-					<svg class="output-bar-chart">
-						<defs>
-							<pattern id="diagonal-stripe-1" patternUnits="userSpaceOnUse" width="10" height="10">
-								<image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+Cg==" x="0" y="0" width="10" height="10">
-								</image>
-							</pattern>
-						</defs>
-					</svg>
-				</div>
-			</div>
-			<div class="output-section">
-				<div class="title center">Distribution Strategy Timeline</div>
-				<div class="description">
-					This timeline shows the current and recommended distribution strategies for praziquantel (PZQ),
+            <br />
+            <br />
+            Integrated interventions are recommended if malaria prevalence is reduced by
+            <b>
+              5% or more
+            </b>
+            .
+          </div>
+          <div class="output-table-container">
+            <img class="explanation-icon" src="img/question-mark.png" />
+            <img class="explanation-icon" src="img/question-mark.png" />
+            <table class="output-table table table-condensed">
+              <thead>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    schistosomiasis prevalence
+                  </td>
+                  <td>
+                    malaria prevalence
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td>
+                    without integration
+                  </td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    with integration
+                  </td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="output-chart-container">
+            <svg class="output-bar-chart">
+              <defs>
+                <pattern
+                  id="diagonal-stripe-1"
+                  patternUnits="userSpaceOnUse"
+                  width="10"
+                  height="10"
+                >
+                  <image
+                    xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+Cg=="
+                    x="0"
+                    y="0"
+                    width="10"
+                    height="10"
+                  />
+                </pattern>
+              </defs>
+            </svg>
+          </div>
+        </div>
+        <div class="output-section">
+          <div class="title center">
+            Distribution Strategy Timeline
+          </div>
+          <div class="description">
+            This timeline shows the current and recommended distribution strategies for praziquantel (PZQ),
 					indoor residual insecticide spraying (IRS), and insecticide treated bed nets (ITN) where applicable.
-					<div class="output-timeline-rec-text"></div>
-				</div>
-				<div class="output-table-container center">
-					<table class="output-strategy-table table table-condensed">
-						<thead>
-							<tr>
-								<td>Control Measure</td>
-								<td>Recommended Time to Execute</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>Praziquantel Mass Drug Distribution</td>
-								<td id="rec_pzq_month">April</td>
-							</tr>
-							<tr>
-								<td>Indoor Residual Insecticide Spraying (IRS)</td>
-								<td id="rec_spray_month">April</td>
-							</tr>
-							<tr>
-								<td>Insecticide Treated Bed Nets (ITN)</td>
-								<td id="rec_net_month">May</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="output-timeline-container">
-					<svg class="output-timeline"></svg>
-				</div>
-			</div>
-			<div class="assumption-section">
-				<div class="assumption-bar">
-					<img class="down-arrow" src="img/chevron_down.png">
-					<span>show assumptions</span>
-					<img class="down-arrow" src="img/chevron_down.png">
-				</div>
-				<div class="assumption-contents">
-					<ul>
-						<li>Assumption #1</li>
-						<li>Assumption #2</li>
-					</ul>
-				</div>
-			</div>
-    		<div class="submit-container">
-    			<div class="input-back-button btn btn-primary">Back to Inputs</div>
-    		</div>
-		</div>
-	</script>
+            <div class="output-timeline-rec-text"></div>
+          </div>
+          <div class="output-table-container center">
+            <table class="output-strategy-table table table-condensed">
+              <thead>
+                <tr>
+                  <td>
+                    Control Measure
+                  </td>
+                  <td>
+                    Recommended Time to Execute
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    Praziquantel Mass Drug Distribution
+                  </td>
+                  <td id="rec_pzq_month">
+                    April
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Indoor Residual Insecticide Spraying (IRS)
+                  </td>
+                  <td id="rec_spray_month">
+                    April
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Insecticide Treated Bed Nets (ITN)
+                  </td>
+                  <td id="rec_net_month">
+                    May
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="output-timeline-container">
+            <svg class="output-timeline"></svg>
+          </div>
+        </div>
+        <div class="assumption-section">
+          <div class="assumption-bar">
+            <img class="down-arrow" src="img/chevron_down.png" />
+            <span>
+              show assumptions
+            </span>
+            <img class="down-arrow" src="img/chevron_down.png" />
+          </div>
+          <div class="assumption-contents">
+            <ul>
+              <li>
+                Assumption #1
+              </li>
+              <li>
+                Assumption #2
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="submit-container">
+          <div class="input-back-button btn btn-primary">
+            Back to Inputs
+          </div>
+        </div>
+      </div>
+    </script>
 
-	<script id="background-template" type="text/x-handlebars-template">
-		<div class="background-container">
-			<div class="container container-text">
-				<h1>Background</h1>
-				<div>
-					<h2>Acknowledgements</h2>
-					<p>We are grateful for the comments from two anonymous reviewers, whose suggestions greatly improved the final manuscript. We would also like to thank Djibril Sangare (Malaria Research and Training Center, Bamako, Mali), Moses Adriko (Vector Control Division, Ministry of Health, Kampala, Uganda), and Mohammed Mahdy (University of Science and Tehcnology, Sana’a, Yemen) for their support throughout the project and specifically their considerate feedback on the prototype decision-support tool and ideas for improvement. Finally, we would like to acknowledge the research assistance provided by Andrea Vaught (Georgetown University) and the support in developing and testing the model by Michael Van Maele (Talus Analytics).
-					</p>
-				</div>
-				<div>
-					<h2>Project Overview</h2>
-					<p>
-						Managing infectious disease requires rapid and effective response to support decision making. The decisions are complex and require understanding of the diseases, disease intervention and control measures, and the disease-relevant characteristics of the local community. Though disease modeling frameworks have been developed to address these questions, the complexity of current models presents a significant barrier to community-level decision makers in using the outputs of the most scientifically robust methods to support pragmatic decisions about implementing a public health response effort, even for endemic diseases with which they are already familiar. Here, we describe the development of an application available for mobile devices or on the internet, with a simple user interface, to support on-the-ground decision-making for integrating disease control programs, given local conditions and practical constraints. The model upon which the tool is built provides predictive analysis for the effectiveness of integration of schistosomiasis and malaria control, two diseases with extensive geographical and epidemiological overlap, and which result in significant morbidity and mortality in affected regions. Working with data from countries across sub-Saharan Africa and the Middle East, we present a proof-of-principle method and corresponding prototype tool to provide guidance on how to optimize integration of vertical disease control programs. This method and tool demonstrate significant progress in effectively translating the best available scientific models to support practical decision making on the ground with the potential to significantly increase the efficacy and cost-effectiveness of disease control.
-					</p>
+    <script id="background-template" type="text/x-handlebars-template">
+      <div class="background-container">
+        <div class="container container-text">
+          <h1>
+            Background
+          </h1>
+          <div>
+            <h2>
+              Acknowledgements
+            </h2>
+            <p>
+              We are grateful for the comments from two anonymous reviewers, whose suggestions greatly improved the final manuscript. We would also like to thank Djibril Sangare (Malaria Research and Training Center, Bamako, Mali), Moses Adriko (Vector Control Division, Ministry of Health, Kampala, Uganda), and Mohammed Mahdy (University of Science and Tehcnology, Sana’a, Yemen) for their support throughout the project and specifically their considerate feedback on the prototype decision-support tool and ideas for improvement. Finally, we would like to acknowledge the research assistance provided by Andrea Vaught (Georgetown University) and the support in developing and testing the model by Michael Van Maele (Talus Analytics).
+            </p>
+          </div>
+          <div>
+            <h2>
+              Project Overview
+            </h2>
+            <p>
+              Managing infectious disease requires rapid and effective response to support decision making. The decisions are complex and require understanding of the diseases, disease intervention and control measures, and the disease-relevant characteristics of the local community. Though disease modeling frameworks have been developed to address these questions, the complexity of current models presents a significant barrier to community-level decision makers in using the outputs of the most scientifically robust methods to support pragmatic decisions about implementing a public health response effort, even for endemic diseases with which they are already familiar. Here, we describe the development of an application available for mobile devices or on the internet, with a simple user interface, to support on-the-ground decision-making for integrating disease control programs, given local conditions and practical constraints. The model upon which the tool is built provides predictive analysis for the effectiveness of integration of schistosomiasis and malaria control, two diseases with extensive geographical and epidemiological overlap, and which result in significant morbidity and mortality in affected regions. Working with data from countries across sub-Saharan Africa and the Middle East, we present a proof-of-principle method and corresponding prototype tool to provide guidance on how to optimize integration of vertical disease control programs. This method and tool demonstrate significant progress in effectively translating the best available scientific models to support practical decision making on the ground with the potential to significantly increase the efficacy and cost-effectiveness of disease control.
+            </p>
+          </div>
+        </div>
+      </div>
+    </script>
 
-				</div>
-			</div>
-		</div>
-	</script>
-	
-	<!-- General Libraries -->
-	<!--<script src="lib/jquery-2.2.0.min.js"></script>
+    <!-- General Libraries -->
+    <!--<script src="lib/jquery-2.2.0.min.js"></script>
 	<script src="lib/d3.min.js"></script>
 	<script src="lib/bootstrap.min.js"></script>
 	<script src="lib/bootstrap-multiselect.js"></script>
 	<script src="lib/jquery.noty.packaged.min.js"></script>
 	<script src="lib/nprogress.min.js"></script>
 	<script src="lib/queue.min.js"></script> -->
-	
-	<!-- Routing Libraries -->
-	<!--<script src="lib/signals.min.js"></script>
+
+    <!-- Routing Libraries -->
+    <!--<script src="lib/signals.min.js"></script>
     <script src="lib/crossroads.min.js"></script>
     <script src="lib/hasher.min.js"></script>
     <script src="lib/handlebars-v3.0.0.js"></script>
     <script src="lib/jquery.tooltipster.min.js"></script>-->
 
-	<script src="build/lib.min.js"></script>
-    
+    <script src="build/lib.min.js"></script>
+
     <!-- Project Specific Files -->
-	<!--<script src="js/utility.js"></script>
+    <!--<script src="js/utility.js"></script>
     <script src="js/routing.js"></script>
     <script src="js/pages/input.js"></script>
     <script src="js/pages/output.js"></script>
     <script src="js/pages/background.js"></script>
     <script src="js/app.js"></script>
     <script src="js/init.js"></script>-->
-	<script src="build/bundle.min.js"></script>
-</body>
+    <script src="build/bundle.min.js"></script>
+  </body>
 </html>

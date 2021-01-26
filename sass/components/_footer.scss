@@ -1,24 +1,45 @@
+$phone: "screen and (max-width : 812px)";
+$phone-narrow: "screen and (max-width : 550px)";
 .footer {
-  position: relative;
+  margin-top: 80px;
+  height: 90px;
   width: 100%;
-  text-align: center;
-  font-size: 0.9em;
-  border-top: 1px solid #999;
-  border-bottom: 1px solid #999;
-  color: #555;
-  @include gradient(#fcfcfc, #f0f0f0);
-
-  .logo-talus {
-    height: 80px;
-    padding-left: 50px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid $black;
+  .content {
+    display: flex;
+    flex-direction: row;
+    a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:not(:last-child) {
+        border-right: 1px solid $black;
+      }
+    }
+    img {
+      height: 40px;
+      padding: 0px 40px;
+    }
   }
-  .logo-georgetown {
-    height: 90px;
-  }
-  .built-by {
-    padding-left: 80px;
-  }
-  table {
-    margin: 1em auto;
+  @media #{$phone-narrow} {
+    height: unset;
+    margin-top: 40px;
+    padding: 10px 0px;
+    .content {
+      flex-direction: column;
+      a {
+        &:not(:last-child) {
+          border-right: 0px solid $black;
+        }
+      }
+      img {
+        height: 70px;
+        padding: 15px 0px;
+      }
+    }
   }
 }
