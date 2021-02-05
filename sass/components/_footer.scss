@@ -19,6 +19,12 @@ $phone-narrow: "screen and (max-width : 550px)";
       &:not(:last-child) {
         border-right: 1px solid $black;
       }
+      &:nth-child(2) {
+        //bump the height of GU logo slightly
+        img {
+          height: 50px;
+        }
+      }
     }
     img {
       height: 40px;
