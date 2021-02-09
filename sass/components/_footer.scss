@@ -25,6 +25,24 @@ $phone-narrow: "screen and (max-width : 550px)";
           height: 50px;
         }
       }
+      &.talus-logo {
+        position: relative;
+        .built-by {
+          font-family: "Raleway", sans-serif;
+          font-size: 9px;
+          font-weight: 600;
+          color: #404041;
+          position: absolute;
+          left: 40px;
+          top: 0px;
+          @media (max-width: 650px) {
+            left: 15%;
+          }
+          @media (max-width: 500px) {
+            display: none;
+          }
+        }
+      }
     }
     img {
       height: 40px;
@@ -40,6 +58,12 @@ $phone-narrow: "screen and (max-width : 550px)";
       a {
         &:not(:last-child) {
           border-right: 0px solid $black;
+        }
+        &:nth-child(2) {
+          //bump the height of GU logo slightly
+          img {
+            height: 70px;
+          }
         }
       }
       img {
