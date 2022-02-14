@@ -5,6 +5,35 @@
   & > div:nth-child(n + 2) {
     margin-top: 20px;
   }
+  .accessibility {
+    position: relative;
+    background-color: #fffae0aa;
+    border: 1px solid #f9efc2;
+    padding: 1em;
+    border-radius: 5px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    line-height: 1.8rem;
+    margin-bottom: 30px;
+
+    p {
+      margin-bottom: 0px;
+    }
+
+    &:before {
+      position: relative;
+      // top: 2px;
+      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 19.96'%3E%3Cpath d='M19.89 18.51l-9-18c-.34-.68-1.45-.68-1.79 0l-9 18c-.15.31-.14.68.04.97.18.29.5.47.85.47h18c.35 0 .67-.18.85-.47.19-.29.21-.66.05-.97zM9 7.96h2v6H9v-6zm1 9.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z' fill='%23FDAB15'/%3E%3C/svg%3E");
+      display: inline-block;
+      width: 23px;
+      height: 23px;
+      content: "";
+      margin-right: 20px;
+      background-repeat: no-repeat;
+      flex-shrink: 0;
+    }
+  }
 
   .container {
     max-width: 700px;
